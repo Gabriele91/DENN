@@ -1,0 +1,24 @@
+{
+    // Usare IntelliSense per informazioni sui possibili attributi.
+    // Al passaggio del mouse vengono visualizzate le descrizioni degli attributi esistenti.
+    // Per ulteriori informazioni, visitare: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "(Windows) Launch",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\build\\Debug\\DENN.exe",
+            "symbolSearchPath": "${workspaceFolder}\\build\\Debug",
+            "args": ["template/BP_MNIST.config"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+             },
+            "externalConsole": true
+        }
+    ]
+}

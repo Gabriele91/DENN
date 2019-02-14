@@ -1,0 +1,42 @@
+//
+//  main.cpp
+//  DENN
+//
+//  Created by Gabriele Di Bari on 14/11/17.
+//  Copyright © 2017 Gabriele. All rights reserved.
+//
+#include <iostream>
+#include <ctime>
+#include <fstream>
+#include <utility>
+#include "Denn/Denn.h"
+
+int main(int argc,const char** argv)
+{
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    using namespace Denn;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    if(argc == 1) return 0;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    Parameters parameters;
+    //parsing
+    switch(parameters.get_params(argc, argv))
+    {
+        default:   
+        case Parameters::SUCCESS:
+            break;
+        case Parameters::ONLYINFO:
+            return 0;   
+        case Parameters::FAIL:
+            std::cout << "Parameter error" << std::endl;
+            return 64; 
+    }
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    Instance::SPtr instance = InstanceFactory::create(parameters.m_instance, parameters);
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+    //execute test
+    if (!instance)            return 128;
+    if (!instance->execute()) return 255;
+    ////////////////////////////////////////////////////////////////////////////////////////////////
+return 0;
+}
