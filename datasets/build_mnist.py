@@ -1,33 +1,16 @@
 import os
-import gzip
-from io import StringIO
-from urllib import request
 from DennDBLib.creator import mnist
+from DennDBLib.utils import exists_or_download
 
-MNIST_PATH = "_dbcache_/mnist"
-
-def exists_or_download(filename, url, decompressedFile = False):
-    if not os.path.exists(filename):
-        print("Download:", filename, "from:",url)
-        response = request.urlopen(url)
-        if decompressedFile:
-            compressedFile = StringIO()
-            compressedFile.write(response.read())
-            compressedFile.seek(0)
-            decompressedFile = gzip.GzipFile(fileobj=compressedFile, mode='rb')
-            with open(filename,'wb') as output:
-                output.write(decompressedFile.read())
-        else:
-            with open(filename,'wb') as output:
-                output.write(response.read())
-                
+MNIST_PATH = os.path.join("_dbcache_","mnist")
+     
 def get_mnist(mnist_path):
     if not os.path.exists(mnist_path):
         os.makedirs(mnist_path)
     exists_or_download(os.path.join(mnist_path,"train-images-idx3-ubyte.gz"),"http://yann.lecun.com/exdb/mnist/train-images-idx3-ubyte.gz")
     exists_or_download(os.path.join(mnist_path,"train-labels-idx1-ubyte.gz"),"http://yann.lecun.com/exdb/mnist/train-labels-idx1-ubyte.gz")
     exists_or_download(os.path.join(mnist_path,"t10k-images-idx3-ubyte.gz"),"http://yann.lecun.com/exdb/mnist/t10k-images-idx3-ubyte.gz")
-    exists_or_download(os.path.join(mnist_path,"t10k-labels-idx1-ubyte.gZ"),"http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz")
+    exists_or_download(os.path.join(mnist_path,"t10k-labels-idx1-ubyte.gz"),"http://yann.lecun.com/exdb/mnist/t10k-labels-idx1-ubyte.gz")
     
 def main():
     get_mnist(MNIST_PATH)

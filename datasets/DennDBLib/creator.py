@@ -658,13 +658,13 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
 
     return generator
 
-def fashion_mnist(out_filename, source_folder=None, dest_folder=getcwd(),
+def fashion_mnist(out_filename, source_folder, dest_folder=getcwd(),
                   one_hot=True, normalized=True, out_type="float", balanced_classes=False,
                   n_batch=None, batch_size=None, validation_size=2000, save_stats=False):
     """Create a fashion mnist dataset for DENN."""
 
     dataset_params = {
-        'fashion_mnist_source_folder': source_folder or path.join("..", "source_data", "Fashion-MNIST"),
+        'fashion_mnist_source_folder': source_folder,
         'normalized': normalized,
         'onehot': one_hot
     }
@@ -691,7 +691,6 @@ def fashion_mnist(out_filename, source_folder=None, dest_folder=getcwd(),
         generator.save_stats(out_filename, dest_folder)
 
     return generator
-
 
 def gas_sensor_array_drift(out_filename, source_file=None, dest_folder=getcwd(),
                            one_hot=True, normalized=True, out_type="float", balanced_classes=False,
@@ -736,7 +735,6 @@ def gas_sensor_array_drift(out_filename, source_file=None, dest_folder=getcwd(),
 
     return generator
 
-
 def magic_gamma_telescope(out_filename, source_folder=None, dest_folder=getcwd(),
                           one_hot=True, normalized=True, out_type="float", balanced_classes=False,
                           n_batch=None, batch_size=None, validation_size=570, test_size=3040, save_stats=False):
@@ -779,7 +777,6 @@ def magic_gamma_telescope(out_filename, source_folder=None, dest_folder=getcwd()
         generator.save_stats(out_filename, dest_folder)
 
     return generator
-
 
 def qsar(out_filename, source_folder=None, dest_folder=getcwd(),
          one_hot=True, normalized=True, out_type="float", balanced_classes=False,

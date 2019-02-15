@@ -24,6 +24,14 @@
             "program": "${workspaceFolder}/datasets/build_mnist.py",
             "cwd": "${workspaceFolder}/datasets",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Build Fashion Mnist",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/datasets/build_fashion_mnist.py",
+            "cwd": "${workspaceFolder}/datasets",
+            "console": "integratedTerminal"
         }
     ]
 }
