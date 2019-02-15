@@ -31,6 +31,14 @@ def get_mnist(mnist_path):
     
 def main():
     get_mnist(MNIST_PATH)
+    print("Start generation: mnist.db.gz")
+    mnist('mnist.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           depth=1, 
+           normalized = False
+    )
     print("Start generation: mnist_novalidation.db.gz")
     mnist('mnist_novalidation.db', 
            source_folder = MNIST_PATH,
@@ -47,6 +55,15 @@ def main():
            dest_folder=os.getcwd(), 
            depth=1, 
            normalized = True
+    )
+    print("Start generation: mnist_novalidation_normalized.db.gz")
+    mnist('mnist_novalidation_normalized.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           depth=1, 
+           normalized = True, 
+           validation_size=0
     )
 
 
