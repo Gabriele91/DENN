@@ -5,7 +5,6 @@ import json
 import struct
 from collections import namedtuple
 from os import getcwd, path
-
 import numpy as np
 from tqdm import tqdm
 
