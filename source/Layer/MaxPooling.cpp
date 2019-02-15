@@ -7,7 +7,7 @@ namespace Denn
     MaxPooling::MaxPooling 
     (
       int in_width, int in_height, int in_channels
-    , int window_width, int window_height, int stride = 1
+    , int window_width, int window_height, int stride
     )
 	: PoolingLayer("max_pooling",
 		Shape(in_width, in_height, in_channels),
