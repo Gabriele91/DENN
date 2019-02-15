@@ -34,6 +34,15 @@ namespace Denn
 		ConstAlignedMapMatrix tmp((const Scalar*)nullptr, 0, 0);
 		denn_assert(0); return tmp;
 	}
+    AlignedMapMatrix       PoolingLayer::operator[](size_t i) 
+	{ 
+		denn_assert(0); return AlignedMapMatrix(nullptr, 0, 0); 
+	}
+	ConstAlignedMapMatrix  PoolingLayer::operator[](size_t i) const  
+	{
+		ConstAlignedMapMatrix tmp((const Scalar*)nullptr, 0, 0);
+		denn_assert(0); return tmp;
+	}
 	///////////////////////////////////////////////////////////////////////////
 	// Factory
 	struct LayerInfoLayer

@@ -111,6 +111,20 @@ namespace Denn
 		virtual ConstAlignedMapMatrix  operator[](size_t i) const override;
 	};
 
+	class PoolingLayer : public DerivableLayer
+	{
+	public:
+		PoolingLayer(const std::string& name, Shape in, Shape out)
+		: DerivableLayer(name, in, out)
+		{}
+
+		///////////////////////////////////////////////////////////////////////////
+		virtual size_t        size()  const override { return 0; }
+		virtual AlignedMapMatrix       operator[](size_t i) override;
+		virtual ConstAlignedMapMatrix  operator[](size_t i) const override;
+		///////////////////////////////////////////////////////////////////////////
+	};
+
 	template <>
 	inline Layer::Scalar distance_pow2<const Layer>(const Layer& a, const Layer& b)
 	{

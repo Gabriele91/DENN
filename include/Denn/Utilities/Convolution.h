@@ -59,9 +59,14 @@ namespace internal
 			return height_out * width_out;
 		}
 
-		int on_channel_kernel_size() const
+		int pool_size() const
 		{
 			return height_kernel * width_kernel;
+		}
+
+		int on_channel_kernel_size() const
+		{
+			return pool_size();
 		}
 
 		int kernel_size() const
