@@ -60,11 +60,17 @@ namespace Denn
 		ReadOnly<size_t>                m_degl_neighborhood { "degl_neighborhood", Scalar(1)   };
 		//TDE
 		ReadOnly<Scalar>				 m_trig_m        { "trig_m", Scalar(0.05) };
+		//Init distribution		
+		ReadOnly<std::string>	         m_distribution  { "distribution", "uniform" };
+		//uniform
+		ReadOnly<Scalar>	             m_uniform_max     { "uniform_max", Scalar( 1.0 ) };
+		ReadOnly<Scalar>	             m_uniform_min     { "uniform_min", Scalar(-1.0)  };
+		//normal
+		ReadOnly<Scalar>	             m_normal_mu     { "normal_mu", Scalar( 0.0 ) };
+		ReadOnly<Scalar>	             m_normal_sigma  { "normal_sigma", Scalar(0.01)  };
 		//DE common info
-		ReadOnly<Scalar>	             m_clamp_max     { "clamp_max",  Scalar( 10.0) };
-		ReadOnly<Scalar>	             m_clamp_min     { "clamp_min",  Scalar(-10.0) };
-		ReadOnly<Scalar>	             m_range_max     { "random_max", Scalar( 1.0 ) };
-		ReadOnly<Scalar>	             m_range_min     { "random_min", Scalar(-1.0)  };
+		ReadOnly<Scalar>	             m_clamp_max     { "clamp_max",  Scalar( 1.0) };
+		ReadOnly<Scalar>	             m_clamp_min     { "clamp_min",  Scalar(-1.0) };
 		ReadOnly<bool>	                 m_restart_enable{ "restart_enable", bool(false), false };
 		ReadOnly<long>	                 m_restart_count { "restart_count", size_t(-1)    };
 		ReadOnly<Scalar>	             m_restart_delta { "restart_delta", Scalar(0.001) };
@@ -78,10 +84,12 @@ namespace Denn
 		ReadOnly<std::string>                m_evolution_type    { "evolution_method","JDE" };
 		ReadOnly<std::string>                m_sub_evolution_type{ "sub_evolution_method","JDE" };
 		//backpropagation + SGD
-		ReadOnly<Scalar>					 m_learning_rate{ "learning_rate", Scalar(0.01) };
-		ReadOnly<Scalar>					 m_regularize	{ "regularize", Scalar(0.0) };
+		ReadOnly<Scalar>					 m_learning_rate{ "learning_rate", Scalar(0.001) };
+		ReadOnly<Scalar>					 m_decay	    { "decay", Scalar(0.00005) };
+		ReadOnly<Scalar>					 m_momentum	    { "momentum", Scalar(0.9) };
+		ReadOnly<bool>					     m_nesterov     { "nesterov", bool(true) };
 		//NN	
-		ReadOnly< std::string >				 m_network { "network" , "fully_connected(linear)", true };
+		ReadOnly< std::string >				 m_network { "network" , "fully_connected(,)", true };
 		//params info
 		std::vector< ParameterInfo >     m_params_info;
 	

@@ -297,14 +297,18 @@ namespace Denn
 					  m_algorithm.current_batch().features()
 					, m_algorithm.current_batch().labels()
 					, SGD(*parameters().m_learning_rate
-						 , *parameters().m_regularize)
+						 ,*parameters().m_decay
+						 ,*parameters().m_momentum
+						 ,*parameters().m_nesterov)
 				);
 				nn_l.fit
 				(	
 					  m_algorithm.current_batch().features()
 					, m_algorithm.current_batch().labels()
-					, SGD( *parameters().m_learning_rate
-					      ,*parameters().m_regularize)
+					, SGD(*parameters().m_learning_rate
+						 ,*parameters().m_decay
+						 ,*parameters().m_momentum
+						 ,*parameters().m_nesterov)
 				);
 			}
 			//lerp

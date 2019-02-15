@@ -435,21 +435,55 @@ namespace Denn
 	//gen random function
 	DennAlgorithm::RandomFunction DennAlgorithm::gen_random_func() const
 	{
-		Scalar min = m_params.m_range_min;
-		Scalar max = m_params.m_range_max;
-		return [this,min,max](Scalar x) -> Scalar
+		if(*m_params.m_distribution == "uniform")
 		{
-			return Scalar(main_random().uniform(min, max));
-		};
+			Scalar min = m_params.m_uniform_min;
+			Scalar max = m_params.m_uniform_max;
+			return [this,min,max](Scalar x) -> Scalar
+			{
+				return Scalar(main_random().uniform(min, max));
+			};
+		}
+		else if(*m_params.m_distribution == "normal")
+		{
+			Scalar mu = m_params.m_normal_mu;
+			Scalar sigma = m_params.m_normal_sigma;
+			return [this,mu,sigma](Scalar x) -> Scalar
+			{
+				return Scalar(main_random().normal(mu, sigma));
+			};
+		}
+		else 
+		{
+			denn_assert(0);
+			return [](Scalar) -> Scalar{ return 0; };
+		}
 	}
 	DennAlgorithm::RandomFunctionThread DennAlgorithm::gen_random_func_thread() const
-	{
-		Scalar min = m_params.m_range_min;
-		Scalar max = m_params.m_range_max;
-		return [this, min, max](Scalar x, size_t i) -> Scalar
+	{		
+		if(*m_params.m_distribution == "uniform")
 		{
-			return Scalar(population_random(i).uniform(min, max));
-		};
+			Scalar min = m_params.m_uniform_min;
+			Scalar max = m_params.m_uniform_max;
+			return [this,min,max](Scalar x, size_t i) -> Scalar
+			{
+				return Scalar(population_random(i).uniform(min, max));
+			};
+		}
+		else if(*m_params.m_distribution == "normal")
+		{
+			Scalar mu = m_params.m_normal_mu;
+			Scalar sigma = m_params.m_normal_sigma;
+			return [this,mu,sigma](Scalar x, size_t i) -> Scalar
+			{
+				return Scalar(population_random(i).normal(mu, sigma));
+			};
+		}
+		else 
+		{
+			denn_assert(0);
+			return [](Scalar, size_t i) -> Scalar{ return 0; };
+		}
 	}
 	//gen clamp function	
 	DennAlgorithm::ClampFunction DennAlgorithm::gen_clamp_func() const

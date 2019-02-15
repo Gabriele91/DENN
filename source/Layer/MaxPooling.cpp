@@ -105,5 +105,10 @@ namespace Denn
         }
         return m_grad_bottom;
     }
+    
+	void MaxPooling::update(const Optimizer& optimize)
+	{
+        /* none */
+	}
     //////////////////////////////////////////////////
 }

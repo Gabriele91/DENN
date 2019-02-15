@@ -234,19 +234,51 @@ namespace Denn
 		},	
 		ParameterInfo{
 			m_trig_m, "Probability of the mutation to be trigonometric (TDE)",{ "-tm" }
+        },        
+        ParameterInfo{ 
+            m_distribution, "Choose the distribution for initialization", { "-distr"  },
+            [this](Arguments& args) -> bool 
+            {
+                //get distribution
+				m_distribution = args.get_string() ;
+                //test
+                return
+                (
+                   *m_distribution ==  "uniform" 
+                || *m_distribution == "normal" 
+                );
+            } 
+            , { "string", { "uniform", "normal" } }
+        },   
+        ParameterInfo{ 
+              m_uniform_min
+			, { m_distribution,{ Variant("uniform") } }
+            , "Minimum size of weight in uniform initialization"
+            , { "-umin"  }
         },
-        
+        ParameterInfo{ 
+              m_uniform_max
+			, { m_distribution,{ Variant("uniform") } }
+            , "Maximum size of weight in uniform initialization"
+            , { "-umax"  }
+        },
+        ParameterInfo{ 
+              m_normal_mu
+			, { m_distribution,{ Variant("normal") } }
+            , "Mu parameter of normal distribution for initialization"
+            , { "-nmu"  }
+        },
+        ParameterInfo{ 
+              m_normal_sigma
+			, { m_distribution,{ Variant("normal") } }
+            , "Sigma parameter of normal distribution for initialization"
+            , { "-nsigma"  }
+        },
         ParameterInfo{ 
             m_clamp_min, "Minimum size of weight", { "-cmin"  }
         },
         ParameterInfo{ 
             m_clamp_max, "Maximum size of weight", { "-cmax"  }
-        },
-        ParameterInfo{ 
-            m_range_min, "Minimum size of weight in random initialization", { "-rmin"  }
-        },
-        ParameterInfo{ 
-            m_range_max, "Maximum size of weight in random initialization", { "-rmax"  }
         },
         ParameterInfo{ 
             m_restart_count, "Number of change of batches before restart (if accuracy not increase)", { "-rc"  }, 
@@ -267,7 +299,7 @@ namespace Denn
             } 
         },
         ParameterInfo{ 
-			m_learning_rate, "Learning rate of backpropagation for each pass", { "-lrbp"  },
+			m_learning_rate, "Learning rate of backpropagation for each pass", { "-lrate", "-lrbp"  },
             [this](Arguments& args) -> bool 
             {
 				m_learning_rate = args.get_double() ;
@@ -275,12 +307,23 @@ namespace Denn
             } 
         },
         ParameterInfo{ 
-			m_regularize, "Regularize of backpropagation for each pass", { "-rbp"  },
+			m_decay, "Decay factor of backpropagation for each pass", { "-dbp"  },
             [this](Arguments& args) -> bool 
             {
-				m_regularize = args.get_double() ;
-                return Scalar(0.0) <= *m_regularize;
+				m_decay = args.get_double() ;
+                return Scalar(0.0) <= *m_decay;
             } 
+        },    
+        ParameterInfo{ 
+			m_momentum, "Momentum of backpropagation for each pass", { "-mbp"  },
+            [this](Arguments& args) -> bool 
+            {
+				m_momentum = args.get_double() ;
+                return Scalar(0.0) <= *m_momentum;
+            } 
+        },       
+        ParameterInfo{ 
+			m_nesterov, "Momentum of backpropagation for each pass", { "-nbp"  }
         },       
 		ParameterInfo{
             m_network, "network layout", { "-nn"  },
@@ -348,6 +391,10 @@ namespace Denn
 		ParameterInfo{
 			"Print list of serializer",{ "--serializer-list",    "-slist" },
 			[this](Arguments& args) -> bool { std::cout << SerializeOutputFactory::names_of_serialize_outputs() << std::endl; return true; }
+		},
+		ParameterInfo{
+			"Print list of layers",{ "--layer-list",    "-llist" },
+			[this](Arguments& args) -> bool { std::cout << LayerFactory::names_of_layers() << std::endl; return true; }
 		},
         ParameterInfo{
             "Print the help", { "--help",    "-h"  },
