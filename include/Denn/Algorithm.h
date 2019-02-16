@@ -1,6 +1,5 @@
 #pragma once
 #include "Config.h"
-#include "CostFunction.h"
 #include "Evaluation.h"
 #include "DatasetLoader.h"
 #include "Parameters.h"

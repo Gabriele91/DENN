@@ -1,5 +1,5 @@
 #include "Denn/NeuralNetwork.h"
-#include "Denn/CostFunction.h"
+
 namespace Denn
 {	
 	////////////////////////////////////////////////////////////////

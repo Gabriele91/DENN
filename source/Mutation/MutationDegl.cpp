@@ -1,6 +1,5 @@
 #include "Denn/Mutation.h"
 #include "Denn/Algorithm.h"
-#include "Denn/CostFunction.h"
 #include <algorithm>
 #include <sstream>
 #include <iterator>

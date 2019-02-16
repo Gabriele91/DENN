@@ -1,5 +1,4 @@
 #include "Denn/Parameters.h"
-#include "Denn/Constants.h"
 #include "Denn/Utilities/Networks.h"
 #include <string>
 #include <cctype>
