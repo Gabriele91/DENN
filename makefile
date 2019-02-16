@@ -2,11 +2,11 @@
 MKDIR_P         ?=mkdir -p
 COMPILER        ?=g++
 TOP             ?=$(shell pwd)
-SCALAR	        ?= FLOAT
+SCALAR          ?= FLOAT
 HAVE_TERM       := $(shell echo $$TERM)
 VERION_COMPILER := `$(COMPILER) --version`
-USE_BLAS		:= false
-USE_OPENBLAS	:= false
+USE_BLAS        := false
+USE_OPENBLAS    := false
 
 ###################### SOURCE FILES #####################
 #program name
@@ -139,7 +139,7 @@ COLOR_CYAN = 6
 COLOR_WHITE = 7
 
 ################### COMPILER SECTION ##################
-all: directories show_debug_flags debug release
+all: directories debug release
 
 directories: ${O_DEBUG_DIR} ${O_RELEASE_DIR}
 
@@ -151,7 +151,7 @@ rebuild_release: clean_release release
 
 debug: directories show_debug_flags $(SOURCE_DEBUG_OBJS)
 	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_DEBUG_OBJS) $(LDFLAGS) -o $(O_DEBUG_PROG)
-	
+
 release: directories show_release_flags $(SOURCE_RELEASE_OBJS)
 	$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(SOURCE_RELEASE_OBJS) $(LDFLAGS) -o $(O_RELEASE_PROG)
 

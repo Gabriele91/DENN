@@ -1,18 +1,14 @@
-# DENN
+# DENN: Differential Evolution for Neural Networks
 
-## Differential Evolution for Neural Networks
-
-Denn is a framework designed and developed aims to train Deep Neural Networks 
+DENN is a framework designed and developed aims to train Deep Neural Networks 
 using the Differential Evolution as the optimizer.
 
----
-
-### Requirements
+## Requirements
 * C++14 Compiler
 * CMake
 * Python 3
     
-#### Dependencies    
+### Dependencies    
 * C++:
     * zlib
 * Python:
