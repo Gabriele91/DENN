@@ -16,10 +16,12 @@ namespace Denn
 		m_bias.resize(int(this->m_out_size));
 		m_bias.setZero();
 		//derivate
-		m_grad_w.resize(int(this->m_in_size), int(this->m_out_size));
-		m_grad_w.setZero();
-		m_grad_b.resize(int(this->m_out_size));
-		m_grad_b.setZero();
+		CODE_BACKPROPAGATION(
+			m_grad_w.resize(int(this->m_in_size), int(this->m_out_size));
+			m_grad_w.setZero();
+			m_grad_b.resize(int(this->m_out_size));
+			m_grad_b.setZero();
+		)
 	}
 	FullyConnected::FullyConnected
 	(
@@ -46,33 +48,38 @@ namespace Denn
 		const int n_sample = bottom.cols();
 		// top = w' * x + b
 		m_top.resize(int(out_size()), n_sample);
-		m_top = m_weight.transpose() * bottom;
+		m_top.noalias() = m_weight.transpose() * bottom;
 		m_top.colwise() += m_bias;
 		//return value
 		return m_top;
 	}
 	const Matrix&  FullyConnected::backpropagate(const Matrix& bottom, const Matrix& grad)
     {
-		const int n_sample = bottom.cols();
-		// d(L)/d(w') = d(L)/d(z) * x'
-		// d(L)/d(b) = \sum{ d(L)/d(z_i) }
-		m_grad_w = bottom * grad.transpose();
-		m_grad_b = grad.rowwise().sum();
-		// Compute d(L) / d_in = W * [d(L) / d(z)]
-		m_grad_bottom.resize(int(in_size()), n_sample);
-		m_grad_bottom.noalias() = m_weight * grad;
-		//return gradient
-		return m_grad_bottom;
+		CODE_BACKPROPAGATION(
+			const int n_sample = bottom.cols();
+			// d(L)/d(w') = d(L)/d(z) * x'
+			// d(L)/d(b) = \sum{ d(L)/d(z_i) }
+			m_grad_w = bottom * grad.transpose();
+			m_grad_b = grad.rowwise().sum();
+			// Compute d(L) / d_in = W * [d(L) / d(z)]
+			m_grad_bottom.resize(int(in_size()), n_sample);
+			m_grad_bottom.noalias() = m_weight * grad;
+			//return gradient
+		)
+		RETURN_BACKPROPAGATION(m_grad_bottom);
     }
 	void FullyConnected::update(const Optimizer& optimize)
 	{
-		AlignedMapColVector  w(m_weight.data(), m_weight.size());
-		AlignedMapColVector  b(m_bias.data(), m_bias.size());
-		ConstAlignedMapColVector dw(m_grad_w.data(), m_grad_w.size());
-		ConstAlignedMapColVector db(m_grad_b.data(), m_grad_b.size());
+		CODE_BACKPROPAGATION(
+			AlignedMapColVector  w(m_weight.data(), m_weight.size());
+			AlignedMapColVector  b(m_bias.data(), m_bias.size());
+			ConstAlignedMapColVector dw(m_grad_w.data(), m_grad_w.size());
+			ConstAlignedMapColVector db(m_grad_b.data(), m_grad_b.size());
 
-		optimize.update(w, dw);
-		optimize.update(b, db);
+			optimize.update(w, dw);
+			optimize.update(b, db);
+		)
+		BACKPROPAGATION_ASSERT
 	}
     //////////////////////////////////////////////////
 	size_t FullyConnected::size() const

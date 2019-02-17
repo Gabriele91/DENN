@@ -19,10 +19,12 @@ namespace Denn
 	{
 		// Set data dimension
 		m_kernels.resize(m_dim.kernel_size(), m_dim.channel_out);
-		m_grad_kernels.resize(m_dim.kernel_size(), m_dim.channel_out);
-		// Bias term
 		m_bias.resize(m_dim.channel_out);
-		m_grad_bias.resize(m_dim.channel_out);
+		// Backpropagation
+		CODE_BACKPROPAGATION(
+			m_grad_bias.resize(m_dim.channel_out);
+			m_grad_kernels.resize(m_dim.kernel_size(), m_dim.channel_out);
+		)
 	}
 	Convolutional::Convolutional
 	(
@@ -59,58 +61,67 @@ namespace Denn
 		// Each column is an observation
 		int n_sample = bottom.cols();
 		m_top.resize(int(out_size()), n_sample);
-		m_images.resize(n_sample);
-
+		//backpropagation buffer
+		CODE_BACKPROPAGATION(
+			m_images.resize(n_sample);
+		)
+		//Buffer
+        thread_local Matrix image;
+		//for each
 		for (int i = 0; i < n_sample; i++) 
 		{
 			// im2col
-			Matrix image;
 			internal::img_to_col(m_dim, bottom.col(i), image);
-			m_images[i] = image;
+			//save for backpropagation pass
+			CODE_BACKPROPAGATION(
+				m_images[i] = image;
+			)
 			// conv by product
-			Matrix result = image * m_kernels;  // result: (hw_out, channel_out)
+			AlignedMapMatrix result(m_top.col(i).data(), image.rows(), m_kernels.cols());
+			result.noalias() = image * m_kernels;
 			result.rowwise() += m_bias.transpose();
-			m_top.col(i) = Eigen::Map<ColVector>(result.data(), result.size());
 		}
 		//return
 		return m_top;
 	}
 	const Matrix&  Convolutional::backpropagate(const Matrix& bottom, const Matrix& grad)
 	{
-		int n_sample = bottom.cols();
-		m_grad_kernels.setZero();
-		m_grad_bias.setZero();
-		m_grad_bottom.resize(int(in_size()), n_sample);
-		m_grad_bottom.setZero();
+		CODE_BACKPROPAGATION(
+			int n_sample = bottom.cols();
+			m_grad_kernels.setZero();
+			m_grad_bias.setZero();
+			m_grad_bottom.resize(int(in_size()), n_sample);
+			m_grad_bottom.setZero();
 
-		for (int i = 0; i < n_sample; i++) 
-		{
-			// im2col of grad_top
-			Matrix grad_top_i = grad.col(i);
-			Matrix grad_top_i_col = Eigen::Map<Matrix>(grad_top_i.data(), m_dim.out_image_size(), m_dim.channel_out);
-			// d(L)/d(w) = \sum{ d(L)/d(z_i) * d(z_i)/d(w) }
-			m_grad_kernels += m_images[i].transpose() * grad_top_i_col;
-			// d(L)/d(b) = \sum{ d(L)/d(z_i) * d(z_i)/d(b) }
-			m_grad_bias += grad_top_i_col.colwise().sum().transpose();
-			// d(L)/d(x) = \sum{ d(L)/d(z_i) * d(z_i)/d(x) } = d(L)/d(z)_col * w'
-			Matrix grad_bottom_i_col = grad_top_i_col * m_kernels.transpose();
-			// col2im of grad_bottom
-			ColVector grad_bottom_i;
-			internal::col_to_img(m_dim, grad_bottom_i_col, grad_bottom_i);
-			m_grad_bottom.col(i) = grad_bottom_i;
-		}
-		//return gradient
-		return m_grad_bottom;
+			for (int i = 0; i < n_sample; i++) 
+			{
+				// im2col of grad_top
+				Matrix grad_top_i = grad.col(i);
+				Matrix grad_top_i_col = Eigen::Map<Matrix>(grad_top_i.data(), m_dim.out_image_size(), m_dim.channel_out);
+				// d(L)/d(w) = \sum{ d(L)/d(z_i) * d(z_i)/d(w) }
+				m_grad_kernels += m_images[i].transpose() * grad_top_i_col;
+				// d(L)/d(b) = \sum{ d(L)/d(z_i) * d(z_i)/d(b) }
+				m_grad_bias += grad_top_i_col.colwise().sum().transpose();
+				// d(L)/d(x) = \sum{ d(L)/d(z_i) * d(z_i)/d(x) } = d(L)/d(z)_col * w'
+				Matrix grad_bottom_i_col = grad_top_i_col * m_kernels.transpose();
+				// col2im of grad_bottom
+				internal::col_to_img(m_dim, grad_bottom_i_col, m_grad_bottom.col(i));
+			}
+		)
+        RETURN_BACKPROPAGATION(m_grad_bottom);
 	}
 	void Convolutional::update(const Optimizer& optimize)
 	{
-		AlignedMapColVector  w(m_kernels.data(), m_kernels.size());
-		AlignedMapColVector  b(m_bias.data(), m_bias.size());
-		ConstAlignedMapColVector dw(m_grad_kernels.data(), m_grad_kernels.size());
-		ConstAlignedMapColVector db(m_grad_bias.data(), m_grad_bias.size());
+		CODE_BACKPROPAGATION(
+			AlignedMapColVector  w(m_kernels.data(), m_kernels.size());
+			AlignedMapColVector  b(m_bias.data(), m_bias.size());
+			ConstAlignedMapColVector dw(m_grad_kernels.data(), m_grad_kernels.size());
+			ConstAlignedMapColVector db(m_grad_bias.data(), m_grad_bias.size());
 
-		optimize.update(w, dw);
-		optimize.update(b, db);
+			optimize.update(w, dw);
+			optimize.update(b, db);
+		)
+		BACKPROPAGATION_ASSERT
 	}
 	//////////////////////////////////////////////////
 	size_t Convolutional::size() const

@@ -19,7 +19,6 @@
 #include <Eigen/Eigen>
 #include <zlib.h>
 //defines
-#define USE_CROSS_ENTROPY_SAFE
 #define RANDOM_SAFE_MUTATION
 #define RANDOM_SAFE_CROSSOVER
 #define RANDOM_SAFE_EVOLUTION_METHOD
@@ -48,6 +47,19 @@
 	#define debug_message(_msg_)
 	#define denn_assert(_exp_) denn_noop
 	#define denn_assert_code(_code_)  _code_ ;
+#endif
+
+#if !defined(DISABLE_BACKPROPAGATION)
+#define BACKPROPAGATION true
+#define BACKPROPAGATION_ASSERT denn_noop;
+#define CODE_BACKPROPAGATION(...) __VA_ARGS__
+#define RETURN_BACKPROPAGATION(value) return value
+#else 
+#define BACKPROPAGATION false
+#define BACKPROPAGATION_ASSERT { MESSAGE("backpropagation does not supported"); exit(-1); };
+#define CODE_BACKPROPAGATION(...) 
+#define RETURN_BACKPROPAGATION(value) \
+	{ BACKPROPAGATION_ASSERT static Matrix __tmp__; return __tmp__; }
 #endif
 
 //core

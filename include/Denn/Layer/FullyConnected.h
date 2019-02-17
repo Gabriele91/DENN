@@ -44,8 +44,10 @@ namespace Denn
 		Matrix m_weight;  // Weight parameters, W(in_size x out_size)
 		ColVector m_bias; // Bias parameters, b(out_size x 1)
 		//backpropagation
-		Matrix m_grad_w;    // Derivative of weights
-		ColVector m_grad_b; // Derivative of bias
+		CODE_BACKPROPAGATION(
+			Matrix m_grad_w;    // Derivative of weights
+			ColVector m_grad_b; // Derivative of bias
+		)
 	};
 
 	REGISTERED_LAYER(

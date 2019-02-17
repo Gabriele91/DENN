@@ -80,7 +80,12 @@ namespace internal
 		}
 	};
 
-	inline void img_to_col(const ConvDims& dim,const ColVector& image, Matrix& data_col)
+	inline void img_to_col
+	(
+		const ConvDims& dim,
+		RefConstColVector image,
+		Matrix& data_col
+	)
 	{
 		int hw_in = dim.in_image_size();
 		int hw_kernel = dim.on_channel_kernel_size();
@@ -89,7 +94,6 @@ namespace internal
 		data_col.resize(hw_out, hw_kernel * dim.channel_in);
 		for (int c = 0; c < dim.channel_in; c++) 
 		{
-			ColVector map = image.block(hw_in * c, 0, hw_in, 1);  // c-th channel map
 			for (int i = 0; i < hw_out; i++) 
 			{
 				int step_h = i / dim.width_out;
@@ -107,14 +111,14 @@ namespace internal
 					{
 						//int pick_idx = start_idx + (j / width_kernel) * width_in + j % width_kernel;
 						int pick_idx = cur_row * dim.width_in + cur_col;
-						data_col(i, c * hw_kernel + j) = map(pick_idx);  // pick which pixel
+						data_col(i, c * hw_kernel + j) = image(hw_in * c + pick_idx);
 					}
 				}
 			}
 		}
 	}
 
-	inline void col_to_img(const ConvDims& dim, const Matrix& data_col, ColVector& image)
+	inline void col_to_img(const ConvDims& dim, const Matrix& data_col, RefColVector image)
 	{
 		int hw_in = dim.in_image_size();
 		int hw_kernel = dim.on_channel_kernel_size();
@@ -122,6 +126,7 @@ namespace internal
 		// col2im
 		image.resize(hw_in * dim.channel_in);
 		image.setZero();
+		//for each channels
 		for (int c = 0; c < dim.channel_in; c++)
 		{
 			for (int i = 0; i < hw_out; i++)

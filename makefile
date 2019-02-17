@@ -7,6 +7,7 @@ HAVE_TERM       := $(shell echo $$TERM)
 VERION_COMPILER := `$(COMPILER) --version`
 USE_BLAS        := false
 USE_OPENBLAS    := false
+DISABLE_BACKPROPAGATION := false
 
 ###################### SOURCE FILES #####################
 #program name
@@ -77,6 +78,11 @@ endif
 ifeq ($(shell uname -s),Darwin)
 #No OpenMP 
 RELEASE_FLAGS += -march=native
+endif
+
+#################### BACKPROPAGATION ##################
+ifeq ($(DISABLE_BACKPROPAGATION),true)
+C_FLAGS += -DDISABLE_BACKPROPAGATION 
 endif
 
 ######################### BLAS ########################

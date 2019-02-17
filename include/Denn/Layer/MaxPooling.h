@@ -39,9 +39,12 @@ namespace Denn
 		virtual void update(const Optimizer& optimize) override;
 		//////////////////////////////////////////////////
 	protected:    
-		//shape conv
-		internal::ConvDims m_dim;		           // dimensions of convolution
-        std::vector<std::vector<int> > m_max_idxs; // index of max values
+		// dimensions of convolution
+		internal::ConvDims m_dim;		         
+ 		// index of max values
+		CODE_BACKPROPAGATION(
+			std::vector<std::vector<int> > m_max_idxs;
+		)
 	};
 
 	REGISTERED_LAYER(

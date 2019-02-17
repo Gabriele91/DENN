@@ -92,42 +92,44 @@ namespace Denn
     
     const Matrix& AvgPooling::backpropagate(const Matrix& bottom, const Matrix& grad) 
     {
-        int n_sample = bottom.cols();
-        int hw_in = m_dim.in_image_size();
-        int hw_pool = m_dim.pool_size();
-        int hw_out = m_dim.out_image_size();
-        m_grad_bottom.resize(bottom.rows(), n_sample);
-        m_grad_bottom.setZero();
-        //dy/dx = 1/n
-        //dout = 1/n * din
-        //avg pooling
-        for (int i = 0; i < n_sample; i ++) 
-        {
-            for (int c = 0; c < m_dim.channel_in; c ++) 
+        CODE_BACKPROPAGATION(
+            int n_sample = bottom.cols();
+            int hw_in = m_dim.in_image_size();
+            int hw_pool = m_dim.pool_size();
+            int hw_out = m_dim.out_image_size();
+            m_grad_bottom.resize(bottom.rows(), n_sample);
+            m_grad_bottom.setZero();
+            //dy/dx = 1/n
+            //dout = 1/n * din
+            //avg pooling
+            for (int i = 0; i < n_sample; i ++) 
             {
-                for (int i_out = 0; i_out < hw_out; i_out ++) 
+                for (int c = 0; c < m_dim.channel_in; c ++) 
                 {
-                    int step_h = i_out / m_dim.width_out;
-                    int step_w = i_out % m_dim.width_out;
-                    // left-top idx of window in raw image
-                    int start_idx = step_h * m_dim.width_in * m_dim.stride + step_w * m_dim.stride;
-                    for (int i_pool = 0; i_pool < hw_pool; i_pool++) 
+                    for (int i_out = 0; i_out < hw_out; i_out ++) 
                     {
-                        if (start_idx % m_dim.width_in + i_pool % m_dim.width_kernel >= m_dim.width_in ||
-                            start_idx / m_dim.width_in + i_pool / m_dim.width_kernel >= m_dim.height_in) 
+                        int step_h = i_out / m_dim.width_out;
+                        int step_w = i_out % m_dim.width_out;
+                        // left-top idx of window in raw image
+                        int start_idx = step_h * m_dim.width_in * m_dim.stride + step_w * m_dim.stride;
+                        for (int i_pool = 0; i_pool < hw_pool; i_pool++) 
                         {
-                            continue;  // out of range
+                            if (start_idx % m_dim.width_in + i_pool % m_dim.width_kernel >= m_dim.width_in ||
+                                start_idx / m_dim.width_in + i_pool / m_dim.width_kernel >= m_dim.height_in) 
+                            {
+                                continue;  // out of range
+                            }
+                            //index
+                            int pick_idx = start_idx + (i_pool / m_dim.width_kernel) *
+                                        m_dim.width_in + i_pool % m_dim.width_kernel + c * hw_in;
+                            //test
+                            m_grad_bottom(pick_idx, i) += grad(c * hw_out + i_out, i) / hw_pool;
                         }
-                        //index
-                        int pick_idx = start_idx + (i_pool / m_dim.width_kernel) *
-                                       m_dim.width_in + i_pool % m_dim.width_kernel + c * hw_in;
-                        //test
-                        m_grad_bottom(pick_idx, i) += grad(c * hw_out + i_out, i) / hw_pool;
                     }
                 }
             }
-        }
-        return m_grad_bottom;
+        )
+        RETURN_BACKPROPAGATION(m_grad_bottom);
     }
     
 	void AvgPooling::update(const Optimizer& optimize)

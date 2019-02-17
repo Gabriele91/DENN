@@ -49,14 +49,17 @@ namespace Denn
 		internal::ConvDims m_dim;		// dimensions of convolution
 
 		//weight
-		std::vector<Matrix> m_images;
-		Matrix  m_kernels;		// Filter parameters. Total length is
+		Matrix  m_kernels;		// Kernels parameters. Total length is
 								// (in_channels x out_channels x filter_rows x filter_cols)
 								// See Utils/Convolution.h for its layout
-		Matrix 	m_grad_kernels; // Derivative of filters, same dimension as m_filter_data
-		//bias    
 		ColVector m_bias;	    // Bias term for the output channels, out_channels x 1. (One bias term per channel)
-		ColVector m_grad_bias;	// Derivative of bias, same dimension as m_bias
+		
+		//backpropagation
+		CODE_BACKPROPAGATION(
+			std::vector<Matrix> m_images;// Save input inmage in ff fase
+			Matrix 	m_grad_kernels; 	 // Derivative of filters, same dimension as m_filter_data
+			ColVector m_grad_bias;		 // Derivative of bias, same dimension as m_bias
+		)
 	};
 
 	REGISTERED_LAYER(

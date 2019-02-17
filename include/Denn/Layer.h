@@ -85,12 +85,15 @@ namespace Denn
 		{}
 
 		virtual const Matrix& ff_output() override { return m_top; }
-		virtual const Matrix& bp_output() override { return m_grad_bottom; }
+		virtual const Matrix& bp_output() override { RETURN_BACKPROPAGATION(m_grad_bottom); }
 
 	protected:
-
+		//ff
 		Matrix m_top;
-		Matrix m_grad_bottom;
+		//backpropagation
+		CODE_BACKPROPAGATION(
+			Matrix m_grad_bottom;
+		)
 
 	};
 

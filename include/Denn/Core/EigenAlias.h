@@ -4,6 +4,7 @@
 
 namespace Denn 
 {
+
 	template < typename T >
 	using RowArrayT = Eigen::Array<T, 1, Eigen::Dynamic>;
 	using RowArrayLD = Eigen::Array<long double, 1, Eigen::Dynamic>;
@@ -151,4 +152,41 @@ namespace Denn
 	using ConstAlignedMapColVectorD = typename ColVectorD::ConstAlignedMapType;
 	using ConstAlignedMapColVectorF = typename ColVectorF::ConstAlignedMapType;
 	using ConstAlignedMapColVector = typename ColVector::ConstAlignedMapType;
+
+	//Alios ref
+	template < typename PlainObjectType >
+	using RefT = Eigen::Ref< PlainObjectType >;
+	template < typename PlainObjectType, int Options, typename StrideType >
+	using RefTSride = Eigen::Ref< PlainObjectType, Options, StrideType >;
+
+	//alias
+	using RefColVectorLD = RefT< ColVectorLD >;
+	using RefColVectorD = RefT< ColVectorD >;
+	using RefColVectorF = RefT< ColVectorF >;
+	using RefColVector = RefT< ColVector >;
+
+	using RefConstColVectorLD = RefT<const ColVectorLD >;
+	using RefConstColVectorD = RefT<const ColVectorD >;
+	using RefConstColVectorF = RefT<const ColVectorF >;
+	using RefConstColVector = RefT<const ColVector >;
+
+	using RefRowVectorLD = RefTSride< RowVectorLD, 0, Eigen::InnerStride<> >;
+	using RefRowVectorD = RefTSride< RowVectorD, 0, Eigen::InnerStride<> >;
+	using RefRowVectorF = RefTSride< RowVectorF, 0, Eigen::InnerStride<> >;
+	using RefRowVector = RefTSride< RowVector, 0, Eigen::InnerStride<> >;
+
+	using RefConstRowVectorLD = RefTSride<const RowVectorLD, 0, Eigen::InnerStride<> >;
+	using RefConstRowVectorD = RefTSride<const RowVectorD, 0, Eigen::InnerStride<> >;
+	using RefConstRowVectorF = RefTSride<const RowVectorF, 0, Eigen::InnerStride<> >;
+	using RefConstRowVector = RefTSride<const RowVector, 0, Eigen::InnerStride<> >;
+
+	using RefMatrixLD = RefT< MatrixLD >;
+	using RefMatrixD = RefT< MatrixD >;
+	using RefMatrixF = RefT< MatrixF >;
+	using RefMatrix = RefT< Matrix >;
+
+	using RefConstMatrixLD = RefT<const MatrixLD >;
+	using RefConstMatrixD = RefT<const MatrixD >;
+	using RefConstMatrixF = RefT<const MatrixF >;
+	using RefConstMatrix = RefT<const Matrix >;
 }

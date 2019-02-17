@@ -56,7 +56,10 @@ namespace Denn
         m_top.resize(int(out_size()), n_sample);
         m_top.setZero(); 
         m_top.array() += std::numeric_limits<float>::lowest();
-        m_max_idxs.resize(n_sample, std::vector<int>(int(out_size()), 0));
+        //backpropagation
+        CODE_BACKPROPAGATION(
+            m_max_idxs.resize(n_sample, std::vector<int>(int(out_size()), 0));
+        )
         //max pooling
         for (int i = 0; i < n_sample; i ++) 
         {
@@ -83,7 +86,9 @@ namespace Denn
                         if (image(pick_idx) >= m_top(c * hw_out + i_out, i)) 
                         {  // max pooling
                             m_top(c * hw_out + i_out, i) = image(pick_idx);
-                            m_max_idxs[i][c * hw_out + i_out] = pick_idx;
+                            CODE_BACKPROPAGATION(
+                                m_max_idxs[i][c * hw_out + i_out] = pick_idx;
+                            )
                         }
                     }
                 }
@@ -94,16 +99,18 @@ namespace Denn
     
     const Matrix& MaxPooling::backpropagate(const Matrix& bottom, const Matrix& grad) 
     {
-        m_grad_bottom.resize(bottom.rows(), bottom.cols());
-        m_grad_bottom.setZero();
-        for (int i = 0; i < m_max_idxs.size(); i ++) 
-        {  // i-th sample
-            for (int j = 0; j < m_max_idxs[i].size(); j ++)
-            {
-                m_grad_bottom(m_max_idxs[i][j], i) += grad(j, i);
+        CODE_BACKPROPAGATION(
+            m_grad_bottom.resize(bottom.rows(), bottom.cols());
+            m_grad_bottom.setZero();
+            for (int i = 0; i < m_max_idxs.size(); i ++) 
+            {  // i-th sample
+                for (int j = 0; j < m_max_idxs[i].size(); j ++)
+                {
+                    m_grad_bottom(m_max_idxs[i][j], i) += grad(j, i);
+                }
             }
-        }
-        return m_grad_bottom;
+        )
+        RETURN_BACKPROPAGATION(m_grad_bottom);
     }
     
 	void MaxPooling::update(const Optimizer& optimize)
