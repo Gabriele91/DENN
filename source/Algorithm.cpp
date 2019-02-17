@@ -277,6 +277,12 @@ namespace Denn
 	{
 		//find best
 		auto curr = m_population.parents().best();
+		//revalue best of the best on the new batch
+		if(m_best_ctx.m_best)
+		{
+			m_best_ctx.m_eval =
+			m_best_ctx.m_best->m_eval = (*m_loss_function)((NeuralNetwork&)*m_best_ctx.m_best, current_batch());
+		}
 		//loss best
 		if (loss_function_compare(curr->m_eval, m_best_ctx.m_eval))
 		{
