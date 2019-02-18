@@ -2,7 +2,7 @@
 #include "Config.h"
 #include "Parameters.h"
 #include "NeuralNetwork.h"
-#include "DatasetLoader.h"
+#include "DataSetLoader.h"
 #include "Evaluation.h"
 #include "SerializeOutput.h"
 #include "RuntimeOutput.h"

@@ -1,7 +1,7 @@
 #pragma once
 #include "Config.h"
 #include "Evaluation.h"
-#include "DatasetLoader.h"
+#include "DataSetLoader.h"
 #include "Parameters.h"
 #include "Population.h"
 #include "Mutation.h"
