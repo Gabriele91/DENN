@@ -1,5 +1,7 @@
 #include <fstream>
-#include "Denn/InstanceUtils.h"
+#include "Denn/Parameters.h"
+#include "Denn/SerializeOutput.h"
+#include "Denn/Utilities/Build.h"
 
 namespace Denn
 {
@@ -39,7 +41,7 @@ namespace Denn
 	}
 
 	//build output stream
-	bool build_serialize(SerializeOutput::SPtr& serialize, std::ofstream& ofile, const Denn::Parameters& arguments)
+	bool build_serialize(SerializeOutput::SPtr serialize, std::ofstream& ofile, const Denn::Parameters& arguments)
 	{
 		////////////////////////////////////////////////////////////////////////////////////////////////
 		if (Denn::Filesystem::exists((const std::string&)arguments.m_output_filename) &&

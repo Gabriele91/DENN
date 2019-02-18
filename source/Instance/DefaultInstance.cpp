@@ -3,10 +3,11 @@
 #include "Denn/Evaluation.h"
 #include "Denn/RuntimeOutput.h"
 #include "Denn/SerializeOutput.h"
-#include "Denn/InstanceUtils.h"
+#include "Denn/DataSet.h"
+#include "Denn/DataSetLoader.h"
 #include "Denn/Algorithm.h"
-#include "Denn/DatasetLoader.h"
 #include "Denn/Utilities/Networks.h"
+#include "Denn/Utilities/Build.h"
 #include <fstream>
 
 namespace Denn
