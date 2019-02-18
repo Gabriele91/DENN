@@ -11,8 +11,8 @@
 #include  "Evaluation.h"
 
 //Dataset includes
-#include  "DatasetLoader.h"
-#include  "Dataset.h"
+#include  "DataSetLoader.h"
+#include  "DataSet.h"
 
 //Denn
 #include  "Algorithm.h"

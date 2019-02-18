@@ -1,6 +1,6 @@
 #pragma once
 #include "Config.h"
-#include "Dataset.h"
+#include "DataSet.h"
 #include "NeuralNetwork.h"
 #include "Individual.h"
 #include "Evaluation.h"
