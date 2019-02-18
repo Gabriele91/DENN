@@ -96,6 +96,12 @@ class Resource(object):
         self.outputs = np.delete(self.outputs, indexes, 0)
         return Resource(attributes, outputs)
 
+    def copy_fields(self, indexes):
+        """Copy items from this resource."""
+        attributes = self.attributes[indexes].copy()
+        outputs = self.outputs[indexes].copy()
+        return Resource(attributes, outputs)
+
     def split(self, num_of_splits):
         """Split the current resource."""
         attributes = np.array_split(self.attributes, num_of_splits)

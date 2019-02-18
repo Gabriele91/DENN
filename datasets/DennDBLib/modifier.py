@@ -1,6 +1,6 @@
 """Here you can find all dataset composers."""
 import numpy as np
-
+import random
 from .reader import Dataset, Resource
 from .analyzer import class_stats
 
@@ -59,6 +59,40 @@ def extract_to(dataset, from_, to_, num, direct_insert=True):
         item_to_extract -= len(resource)
         if item_to_extract == 0:
             break
+
+    if direct_insert:
+        target.insert(tmp)
+
+    return source, target, tmp
+
+
+def random_copy_to(dataset, from_, to_, num, direct_insert=True):
+    """Extract a portion of items to another Resource."""
+    assert isinstance(dataset, Dataset), "Not a valid Dataset object"
+    assert from_ == "train" or from_ == "validation" or from_ == "test", "Source set can be 'train', 'validation' or 'test'"
+    assert to_ == "train" or to_ == "validation" or to_ == "test", "Target set can be 'train', 'validation' or 'test'"
+    
+    source = getattr(dataset, from_)
+    target = getattr(dataset, to_)
+    tmp = Resource(np.array([]), np.array([]))
+    #percentage
+    if isinstance(num, float):
+        assert num >= 0 and num <= 1.0, "Not valid extraction percentage [{}]".format(num)
+        item_to_extract = int(len(source) * num)
+    else:
+        item_to_extract = num
+    #resources
+    fullsize = 0
+    for idx, resource in enumerate(source):
+        fullsize += len(resource)
+    #factor
+    factor = item_to_extract / fullsize
+    #get random copy
+    for idx, resource in enumerate(source):
+        lres = len(resource)
+        nsamples = int(lres*factor)
+        indexs = random.sample(range(0,lres), nsamples)
+        tmp += resource.copy_fields(indexs)
 
     if direct_insert:
         target.insert(tmp)
@@ -188,6 +222,7 @@ def convert_type(dataset, type_):
 MODIFIER_LIST = {
     'simple_shuffle': simple_shuffle,
     'extract_to': extract_to,
+    'random_copy_to': random_copy_to,
     'extract_to_with_class_ratio': extract_to_with_class_ratio,
     'merge_resources': merge_resources,
     'split': split,

@@ -563,7 +563,7 @@ class Generator(object):
 
 def mnist(out_filename, source_folder, dest_folder=getcwd(), depth=1,
           one_hot=True, normalized=True, out_type="float", balanced_classes=False,
-          n_batch=None, batch_size=None, validation_size=2000, save_stats=False):
+          n_batch=None, batch_size=None, validation_size=2000, validation_as_copy=False, save_stats=False):
     """Create a mnist dataset for DENN."""
 
     dataset_params = {
@@ -584,6 +584,12 @@ def mnist(out_filename, source_folder, dest_folder=getcwd(), depth=1,
             if action == "extract_to":
                 actions[idx] = (
                     type_, 'extract_to_with_class_ratio', args, kwargs)
+
+    if validation_as_copy:
+        for idx, (type_, action, args, kwargs) in enumerate(actions):
+            if action == "extract_to":
+                actions[idx] = (
+                    type_, 'random_copy_to', args, kwargs)
 
     if depth > 1:
         actions.append(('modifier', 'add_depth', (depth,), {}))

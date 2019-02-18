@@ -48,6 +48,24 @@ def main():
            normalized = True, 
            validation_size=0
     )
+    print("Start generation: mnist_cpvalidation.db.gz")
+    mnist('mnist_cpvalidation.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           depth=1, 
+           normalized = False,
+           validation_as_copy = True
+    )
+    print("Start generation: mnist_cpvalidation_normalized.db.gz")
+    mnist('mnist_cpvalidation_normalized.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           depth=1, 
+           normalized = True,
+           validation_as_copy = True
+    )
 
 
 if __name__ == '__main__':
