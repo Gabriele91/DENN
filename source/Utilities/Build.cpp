@@ -41,7 +41,7 @@ namespace Denn
 	}
 
 	//build output stream
-	bool build_serialize(SerializeOutput::SPtr serialize, std::ofstream& ofile, const Denn::Parameters& arguments)
+	bool build_serialize(SerializeOutput::SPtr& serialize, std::ofstream& ofile, const Denn::Parameters& arguments)
 	{
 		////////////////////////////////////////////////////////////////////////////////////////////////
 		if (Denn::Filesystem::exists((const std::string&)arguments.m_output_filename) &&

@@ -33,6 +33,7 @@ namespace Denn
 		NeuralNetwork nn;
 		std::string err;
 		//layer info
+		bool set_out_as_input = false;
 		bool first = true;
 		std::string type;
 		std::vector<int> shape;
@@ -66,7 +67,7 @@ namespace Denn
 				//activation not need inputs
 				if (LayerFactory::description(type)->m_shape_type == SHAPE_ACTIVATION)
 				{
-				    if (*ptr=='(')
+				    if (*ptr=='[')
 				    {
 				        err += type + " does not need params";
 				        return std::make_tuple(nn, err, false);
@@ -76,12 +77,12 @@ namespace Denn
 				}
 				else
 				{
-				    if (*ptr!='(')
+				    if (*ptr!='[')
 				    {
 				        err += type + " needs params";
 				        return std::make_tuple(nn, err, false);
 				    }
-					++ptr; //jump (
+					++ptr; //jump [
 				    state = S_READ_SHAPE;
 					continue;
 				}
@@ -101,14 +102,19 @@ namespace Denn
 					//next
 					ptr = outptr; continue;
 				}
-				else if (',')
+				else if (*ptr == ',')
 				{
 					state = S_READ_INPUTS;
 					//next
 					++ptr; continue;
 				}
-				else if (*ptr == ')')
+				else if (*ptr == ']')
 				{
+					//parser has read the inputs and not shapes
+					inputs = shape;
+					//void shape
+					shape.clear();
+					//go to end state
 					state = S_FINALIZE;
 					//next
 					++ptr; continue;
@@ -129,7 +135,7 @@ namespace Denn
 					//next
 					ptr = outptr; continue;
 				}
-				else if (*ptr == ')')
+				else if (*ptr == ']')
 				{
 					state = S_FINALIZE;
 					//next
@@ -190,6 +196,20 @@ namespace Denn
 				{
 					in_shape = nn[nn.size() - 1].out_size();
 				}
+				//except activation layer
+				if(!(description->shape_type() & SHAPE_ACTIVATION))
+				{
+					if(set_out_as_input)
+					{
+						err += "Only last layer can omit output info";
+						return std::make_tuple(nn, err, false);
+					}
+					else if(inputs.size() <= 0) //last layer can omitted output
+					{
+						inputs.push_back(out_shape1D);
+						set_out_as_input = true;
+					}
+				}
 				//test inputs
 				if (inputs.size() < description->inputs().min()
 				||  inputs.size() > description->inputs().max())
@@ -223,7 +243,7 @@ namespace Denn
 
 	TestNNStringOut  get_network_from_string_test(const std::string& network_string)
 	{
-		auto value = get_network_from_string(network_string, 1);
+		auto value = get_network_from_string(network_string, 1, 1);
 		return { std::get<1>(value), std::get<2>(value) };
 	}
 
@@ -270,7 +290,7 @@ namespace Denn
 			// default case
 			else 
 			{
-				out += (i ? " " : "") + type + "(" + shape + "," + inputs + ")";
+				out += (i ? " " : "") + type + "[" + shape + "," + inputs + "]";
 			}
 			//endline
 			out += "    ";

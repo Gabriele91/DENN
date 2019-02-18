@@ -148,14 +148,14 @@ namespace Denn
 
 	enum LayerShapeType
 	{
-		SHAPE_ACTIVATION = 0b000,
-		SHAPE_1D = 0b001,
-		SHAPE_2D = 0b010,
-		SHAPE_3D = 0b100,
-		SHAPE_1D_2D = 0b011,
-		SHAPE_1D_3D = 0b101,
-		SHAPE_2D_3D = 0b110,
-		SHAPE_1D_2D_3D = 0b111
+		SHAPE_ACTIVATION = 0b0001,
+		SHAPE_1D         = 0b0010,
+		SHAPE_2D         = 0b0100,
+		SHAPE_3D         = 0b1000,
+		SHAPE_1D_2D      = 0b0110,
+		SHAPE_1D_3D      = 0b1010,
+		SHAPE_2D_3D      = 0b1100,
+		SHAPE_1D_2D_3D   = 0b1110
 	};
 
 	struct LayerDescription
