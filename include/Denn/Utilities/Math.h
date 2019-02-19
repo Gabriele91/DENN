@@ -38,6 +38,39 @@ namespace Denn
 		//from JS
 		return std::fmod((std::fmod(value, base) + base), base);
 	}
+	
+	/* Mod mathlab style */
+	template < typename T >
+	inline constexpr T mod(const T& value,const T& base)
+	{
+		return positive_mod(value, base);
+	}
+
+	template <>
+	inline constexpr float mod(const float& value,const float& base)
+	{
+		return positive_fmod(value, base);
+	}
+
+	template <>
+	inline constexpr double mod(const double& value,const double& base)
+	{
+		return positive_fmod(value, base);
+	}
+
+	template <>
+	inline constexpr long double mod(const long double& value,const long double& base)
+	{
+		return positive_fmod(value, base);
+	}
+
+	//wrap around [min, max]
+	template < typename T >
+	inline constexpr T wrap_around(const T& value, const T& min,const T& max)
+	{
+		return positive_fmod(value-min, ((max+std::numeric_limits<T>::epsilon()*T(2))-min)) + min;
+	}
+
 
 	
 namespace Constants
