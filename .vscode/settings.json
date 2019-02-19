@@ -69,5 +69,7 @@
         "xtr1common": "cpp",
         "xtree": "cpp"
     },
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools"
+    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
+    "python.pythonPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\python.exe",
+    "C_Cpp.configurationWarnings": "Disabled"
 }

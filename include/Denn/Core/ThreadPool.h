@@ -37,7 +37,7 @@ namespace Denn
 			}
 		}
 
-		//add simple task
+		//add a task with return
 		template<class function>
 		inline auto push_task(function&& fun_task)
 		{
@@ -61,10 +61,9 @@ namespace Denn
 			return res;
 		}
 
-		//add a task + args
+		//add a task with return + args
 		template<class function, class... arguments>
-		inline auto push_task(function&& f, arguments&&... args)
-			->std::future<typename std::result_of<function(arguments...)>::type>
+		inline auto push_task(function&& f, arguments&&... args) -> std::future<typename std::result_of<function(arguments...)>::type>
 		{
 			//get return
 			using return_type = typename std::result_of<function(arguments...)>::type;
@@ -89,25 +88,46 @@ namespace Denn
 			return res;
 		}
 
-
-#if 0
-		//wait complate all tasks
-		void wait_all_taks() const
+		//add a simple task (no return, no args, no promes)
+		inline void push_simple_task(TaskFunction&& task)
 		{
-			while (m_workers_tasks.size()) {};
+			//lock
+			{
+				//lock m_woker_tasks
+				std::unique_lock<std::mutex> lock(this->m_workers_mutex);
+				// don't allow enqueueing after stopping the pool
+				if (this->m_workers_stop) throw std::runtime_error("push a task on stopped thread pool");
+				//push
+				this->m_workers_tasks.emplace(std::forward<TaskFunction>(task));
+			}
+			//notify push
+			m_workers_condition.notify_one();
 		}
-#endif 
+
+		//wait complate all tasks
+		void wait_all_tasks()
+		{
+			while (m_workers.size()) 
+			{
+				//lock
+				std::unique_lock<std::mutex> lock(m_workers_mutex);
+				//no more staks
+				if(m_workers_tasks.empty() && !m_tasks_in_execution)
+					return;
+			};
+		}
 
 		//init
 		inline void init(size_t n_threads)
 		{
 			//enable
 			this->m_workers_stop = false;
+			this->m_tasks_in_execution = 0;
 			//init
 			for (size_t i = 0; i < n_threads; ++i)
 			{
 				m_workers.emplace_back(
-					[this]()
+				[this]()
 				{
 					while (true)
 					{
@@ -117,7 +137,7 @@ namespace Denn
 							std::unique_lock<std::mutex> lock(this->m_workers_mutex);
 							//wait condition
 							this->m_workers_condition.wait(lock,
-								[this]()
+							[this]()
 							{
 								return this->m_workers_stop || !this->m_workers_tasks.empty();
 							});
@@ -128,9 +148,18 @@ namespace Denn
 							task = std::move(this->m_workers_tasks.front());
 							//pop
 							this->m_workers_tasks.pop();
+							//inc counter of task in execution
+							++m_tasks_in_execution;
 						}
 						//execute
 						task();
+						//dec counter
+						{
+							//lock thread
+							std::unique_lock<std::mutex> lock(this->m_workers_mutex);
+							//dec counter of task in execution
+							--m_tasks_in_execution;
+						}
 					}
 				}
 				);
@@ -155,7 +184,8 @@ namespace Denn
 
 	protected:
 
-		Workers			  m_workers;
+		Workers			  m_workers;		
+		size_t			  m_tasks_in_execution;
 		bool			  m_workers_stop;
 		Mutex			  m_workers_mutex;
 		Tasks			  m_workers_tasks;
