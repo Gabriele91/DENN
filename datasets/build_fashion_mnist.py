@@ -44,6 +44,22 @@ def main():
             normalized = True, 
             validation_size=0
     )
+    print("Start generation: fashion_mnist_cpvalidation.db.gz")
+    fashion_mnist('fashion_mnist_cpvalidation.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           normalized = False,
+           validation_as_copy = True
+    )
+    print("Start generation: fashion_mnist_cpvalidation_normalized.db.gz")
+    fashion_mnist('fashion_mnist_cpvalidation_normalized.db', 
+           source_folder = MNIST_PATH,
+           batch_size=2000, 
+           dest_folder=os.getcwd(), 
+           normalized = True,
+           validation_as_copy = True
+    )
 
 
 if __name__ == '__main__':

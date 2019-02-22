@@ -614,7 +614,6 @@ def mnist(out_filename, source_folder, dest_folder=getcwd(), depth=1,
     # for resource in generator.dataset.train.resources:
     #     print(len(resource))
 
-
 def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
           one_hot=True, normalized=True, out_type="float", balanced_classes=False, n_batch=None, batch_size=None, 
           validation_all_values = False, test_all_values = False, validation_size=0.1, test_size = 0.1, 
@@ -666,7 +665,7 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
 
 def fashion_mnist(out_filename, source_folder, dest_folder=getcwd(),
                   one_hot=True, normalized=True, out_type="float", balanced_classes=False,
-                  n_batch=None, batch_size=None, validation_size=2000, save_stats=False):
+                  n_batch=None, batch_size=None, validation_size=2000, validation_as_copy=False, save_stats=False):
     """Create a fashion mnist dataset for DENN."""
 
     dataset_params = {
@@ -688,6 +687,12 @@ def fashion_mnist(out_filename, source_folder, dest_folder=getcwd(),
             if action == "extract_to":
                 actions[idx] = (
                     type_, 'extract_to_with_class_ratio', args, kwargs)
+
+    if validation_as_copy:
+        for idx, (type_, action, args, kwargs) in enumerate(actions):
+            if action == "extract_to":
+                actions[idx] = (
+                    type_, 'random_copy_to', args, kwargs)
 
     generator = Generator('FashionMNISTDataset', dataset_params,
                           actions, out_type=out_type)
