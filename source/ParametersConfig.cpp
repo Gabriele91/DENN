@@ -1084,6 +1084,138 @@ namespace Denn
 	class ParametersParseHelp
     {
     public:
+		//////////////////////////////////////////////////////////////////////////////////
+		static bool conf_parse_cline_args
+		(
+			  VariableTable& context
+			, int nargs
+			, const char **vargs
+		)
+		{
+			enum State
+			{
+			  START
+			, NAME
+			, EQUAL
+			, VALUE
+			};
+			//Parse state
+			State state{ START };
+			//values
+			std::string name;
+			std::string value;
+			//parsing
+			for (int i = 0; i < nargs; ++i)
+			{
+				//ptr
+				const char* ptr = vargs[i];
+				//parse
+				while (*ptr)
+				{
+					switch (state)
+					{
+					case START:
+						//begin
+						conf_skip_line_space(ptr);
+						name.clear();
+						value.clear();
+						state = NAME;
+					break;
+					case NAME:
+						name = conf_name(ptr);
+						if (!name.size())
+						{
+							std::cerr << "Name argument is not valid" << std::endl;
+							return false;
+						}
+						state = EQUAL;
+					break;
+					case EQUAL:
+						if (*ptr != '=')
+						{
+							std::cerr << "\'=\' is not found" << std::endl;
+							return false;
+						}
+						++ptr;
+						state = VALUE;
+					break;
+					case VALUE:
+						while(*ptr) value += (*ptr++);
+						if (!value.size())
+						{
+							std::cerr << "Value argument is not valid" << std::endl;
+							return false;
+						}
+						state = START;
+						//add value
+						context.add_vairable(name, value);
+					break;
+					default:
+						return false;
+					break;
+					}
+				}
+
+			}
+			//parsing end state
+			return state == START;
+		}
+
+		static Parameters::ReturnType main
+		(
+          Parameters& params
+		, const std::vector< ParameterInfo >& params_info
+		, VariableTable& context
+		, size_t& line
+		, const char*& ptr
+		)
+		{
+			//cases
+			enum ParserState
+			{
+				PS_ARG,
+				PS_VAR,
+				PS_NETWORK,
+			};
+			//jump
+			conf_skip_space_and_comments(line, ptr);
+			//ptr before command
+			const char* ptr_pre_command = ptr;
+            //command
+            std::string command = conf_name(ptr);
+            //test
+            if (!command.size())
+			{
+                std::cerr << line << ": command not valid" << std::endl;
+                return Parameters::FAIL;
+			}
+			//parser state
+			ParserState state;
+				 if (command == "network") state = PS_NETWORK;
+			else if(command == "var")	   state = PS_VAR;
+			else 						   state = PS_ARG;
+			//cases
+			switch (state)
+			{
+				case PS_NETWORK:
+					// {....}
+					if (!conf_parse_net(params, context, line, ptr)) return Parameters::FAIL;
+				break;
+				case PS_VAR:
+					// var {....} or var ..., ...
+					if (!conf_parse_variables(params, context, line, ptr)) return Parameters::FAIL;
+				break;
+				default:
+					//reset ptr
+					ptr = ptr_pre_command;
+					//parse
+					if (!conf_parse_arg(params_info, context, line, ptr)) return Parameters::FAIL;
+				break;
+			}
+			return Parameters::SUCCESS;
+		}
+
+	protected:
         //////////////////////////////////////////////////////////////////////////////////
         static bool conf_parse_arg
         (
@@ -1094,6 +1226,8 @@ namespace Denn
             , ParameterInfo ower = ParameterInfo()
         )
         {
+			//jump
+			conf_skip_space_and_comments(line, ptr);
             //it's close
             if((*ptr) == '}') return true;
             //command
@@ -1194,7 +1328,9 @@ namespace Denn
             conf_skip_space_and_comments(line, ptr);
             return true;
         }
+		
         //////////////////////////////////////////////////////////////////////////////////
+		// network
         static bool conf_parse_net
         (
               Parameters& params
@@ -1205,10 +1341,20 @@ namespace Denn
         {
 			//jump
 			conf_skip_space_and_comments(line, ptr);
-            //it's close
-            if((*ptr) == '}') return true;
+            //{
+            if((*ptr) == '{')
+			{
+				++ptr;
+			}
+			else
+			{
+				std::cerr << line << ": network command need \'{\' " << std::endl;
+				return false;
+			}
 			//buffer
 			std::string nnlayout;
+			//jump spaces
+			conf_skip_space_and_comments(line, ptr);
             //from { to }
 			while (*ptr && ((*ptr) != '}'))
 			{
@@ -1229,6 +1375,16 @@ namespace Denn
 			    if(conf_skip_space_and_comments(line, ptr))
 				    nnlayout += " ";
 			}
+			//test '}'
+            if((*ptr) == '}')
+			{
+				++ptr;
+			}
+			else
+			{
+				std::cerr << line << ": network command need \'}\' " << std::endl;
+				return false;
+			}
 			//test
 			auto test_err_succ = get_network_from_string_test(nnlayout);
 			if (!std::get<1>(test_err_succ))
@@ -1236,16 +1392,64 @@ namespace Denn
 				std::cerr << line << ": network layout error: \'" << std::get<0>(test_err_succ) << std::endl;
 				return false;
 			}
-            //-- debug
-			//{
-			//   auto nn_err_succ = get_network_from_string(nnlayout, 1);
-			//   std::cout << "parser ok, test: "<< get_string_from_network(std::get<0>(nn_err_succ)) << std::endl;
-			//}
 			//save
 			params.m_network = nnlayout;
             return true;
         }
         //////////////////////////////////////////////////////////////////////////////////
+		// variables
+        static bool conf_parse_variables 
+        (
+              const Parameters& params
+            , VariableTable& context
+            , size_t& line
+            , const char*& ptr
+        )
+		{
+			//jump
+			conf_skip_space_and_comments(line, ptr);
+			// cases:
+			// 1: var '{' {<name> <exp>} '}'
+			// 2: var <name> <exp> {[, <name> <exp> ]}
+			if(*ptr == '{')
+			{
+				//jmp {
+				++ptr;
+				//jump spaces
+				conf_skip_space_and_comments(line, ptr);
+				//read all
+				while (*ptr && *ptr != '}')
+				{
+					if (!conf_parse_variable(params, context, line, ptr)) return false;
+					//search '}'
+					conf_skip_space_and_comments(line, ptr);
+				}
+				//test '}'
+				if((*ptr) == '}')
+				{
+					++ptr;
+				}
+				else
+				{
+					std::cerr << line << ": var list command need \'}\' " << std::endl;
+					return false;
+				}
+			}
+			else
+			{
+				while(true)
+				{
+					//<name> <exp>
+					if (!conf_parse_variable(params, context, line, ptr)) return false;
+					//search  ','
+					conf_skip_space_and_comments(line, ptr);
+					//test
+					if((*ptr) == ',') ++ptr;
+					else 			  break;
+				}
+			}
+			return true;
+		}
         static bool conf_parse_variable
         (
               const Parameters& params
@@ -1254,10 +1458,16 @@ namespace Denn
             , const char*& ptr
         )
         {
-            //it's close
-            if((*ptr) == '}') return true;
+			//jump
+			conf_skip_space_and_comments(line, ptr);
             //variable type
-            std::string variable_name = conf_name(ptr);
+            std::string variable_name = conf_name(ptr);			
+			//test name
+            if(!variable_name.size())
+			{
+				std::cerr << line << ": not valid variable name" << std::endl;
+				return false;
+			}
             //jump spaces
             conf_skip_line_space_and_comments(line, ptr);
             //exp parser
@@ -1275,88 +1485,14 @@ namespace Denn
             {
                 context.add_vairable(variable_name, exp.result().str());
             }
-            //jump spaces
-            conf_skip_space_and_comments(line, ptr);
+			//ok
             return true;
         }
-		//////////////////////////////////////////////////////////////////////////////////
-		static bool conf_parse_cline_args
-		(
-			  VariableTable& context
-			, int nargs
-			, const char **vargs
-		)
-		{
-			enum State
-			{
-			  START
-			, NAME
-			, EQUAL
-			, VALUE
-			};
-			//Parse state
-			State state{ START };
-			//values
-			std::string name;
-			std::string value;
-			//parsing
-			for (int i = 0; i < nargs; ++i)
-			{
-				//ptr
-				const char* ptr = vargs[i];
-				//parse
-				while (*ptr)
-				{
-					switch (state)
-					{
-					case START:
-						//begin
-						conf_skip_line_space(ptr);
-						name.clear();
-						value.clear();
-						state = NAME;
-					break;
-					case NAME:
-						name = conf_name(ptr);
-						if (!name.size())
-						{
-							std::cerr << "Name argument is not valid" << std::endl;
-							return false;
-						}
-						state = EQUAL;
-					break;
-					case EQUAL:
-						if (*ptr != '=')
-						{
-							std::cerr << "\'=\' is not found" << std::endl;
-							return false;
-						}
-						++ptr;
-						state = VALUE;
-					break;
-					case VALUE:
-						while(*ptr) value += (*ptr++);
-						if (!value.size())
-						{
-							std::cerr << "Value argument is not valid" << std::endl;
-							return false;
-						}
-						state = START;
-						//add value
-						context.add_vairable(name, value);
-					break;
-					default:
-						return false;
-					break;
-					}
-				}
-
-			}
-			//parsing end state
-			return state == START;
-		}
+        //////////////////////////////////////////////////////////////////////////////////
     };
     ////////////////////////////////////////////////////////////////////////////////// 
+
+
 	Parameters::ReturnType Parameters::from_config(const std::string& source, int nargs, const char **vargs)
     {
         //ptr
@@ -1372,62 +1508,14 @@ namespace Denn
         //parsing
         while (*ptr)
         {
-            //command
-            std::string command = conf_name(ptr);
-            //test
-            if (!command.size())
-            {
-                std::cerr << line << ": command not valid" << std::endl;
+			//get return
+			auto rtype=ParametersParseHelp::main(*this, m_params_info, context, line, ptr);
+			//test
+			if(rtype!=Parameters::SUCCESS)
+			{
+                std::cerr << line << ": parser error" << std::endl;
                 return FAIL;
-            }
-            //find '{'
-            conf_skip_space_and_comments(line, ptr);
-            //test
-            if (*ptr != '{')
-            {
-                std::cerr << line << ": { not found" << std::endl;
-                return FAIL;
-            }
-            //jump {
-            ++ptr;
-            conf_skip_space_and_comments(line, ptr);
-            //type
-            if (command == "variable")
-            {
-                do
-                {
-                    if (!ParametersParseHelp::conf_parse_variable(*this, context, line, ptr)) return FAIL;
-                }
-                while (*ptr && (*ptr) != '}');
-            }
-            else if (command == "network")
-            {
-				//parsing
-                do
-                {
-                    if (!ParametersParseHelp::conf_parse_net(*this, context, line, ptr)) return FAIL;
-                }
-                while (*ptr && (*ptr) != '}');
-                //-- debug
-            }
-            else if (command == "args")
-            {
-                do
-                {
-                    if (!ParametersParseHelp::conf_parse_arg(m_params_info, context, line, ptr)) return FAIL;
-                }
-                while (*ptr && (*ptr) != '}');
-            }
-            //test
-            if (*ptr != '}')
-            {
-                std::cerr << line << ": } not found" << std::endl;
-                return FAIL;
-            }
-            //jump }
-            ++ptr;
-            conf_skip_space_and_comments(line, ptr);
-            //loop
+			}
         }
 		//
         return SUCCESS;
