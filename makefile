@@ -179,19 +179,19 @@ show_release_flags:
 	$(call colorecho,$(COLOR_YELLOW),"[ Release flags: $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) ]")
 
 $(O_DEBUG_DIR)/%.o: $(S_DIR)/%.cpp
-	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(@) ]")
+	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(subst $(O_DEBUG_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
 $(O_RELEASE_DIR)/%.o: $(S_DIR)/%.cpp
-	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(@) ]")
+	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(subst $(O_RELEASE_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $< -o $@
 
 $(O_DEBUG_DIR)/%.o: $(S_DIR)/*/%.cpp
-	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(@) ]")
+	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(subst $(O_DEBUG_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(DEBUG_FLAGS) -c $< -o $@
 
 $(O_RELEASE_DIR)/%.o: $(S_DIR)/*/%.cpp
-	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(@) ]")
+	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(subst $(O_RELEASE_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $< -o $@
 
 # Clean
