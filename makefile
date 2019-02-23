@@ -8,9 +8,10 @@ VERION_COMPILER := `$(COMPILER) --version`
 USE_BLAS        := false
 USE_OPENBLAS    := false
 DISABLE_BACKPROPAGATION := false
+#program name
+EXE_NAME ?= DENN
 
 ###################### SOURCE FILES #####################
-#program name
 S_DIR  = $(TOP)/source/
 S_INC  = $(TOP)/include/
 
@@ -28,20 +29,20 @@ DIPS_LIBS = -lz
 ifeq ($(SCALAR),FLOAT)
 O_DEBUG_DIR    = $(TOP)/Debug/obj-float
 O_RELEASE_DIR  = $(TOP)/Release/obj-float
-O_DEBUG_PROG   = $(TOP)/Debug/DENN-float
-O_RELEASE_PROG = $(TOP)/Release/DENN-float
+O_DEBUG_PROG   = $(TOP)/Debug/$(EXE_NAME)-float
+O_RELEASE_PROG = $(TOP)/Release/$(EXE_NAME)-float
 C_FLAGS		  += -DUSE_FLOAT
 else ifeq ($(SCALAR),DOUBLE)
 O_DEBUG_DIR    = $(TOP)/Debug/obj-double
 O_RELEASE_DIR  = $(TOP)/Release/obj-double
-O_DEBUG_PROG   = $(TOP)/Debug/DENN-double
-O_RELEASE_PROG = $(TOP)/Release/DENN-double
+O_DEBUG_PROG   = $(TOP)/Debug/$(EXE_NAME)-double
+O_RELEASE_PROG = $(TOP)/Release/$(EXE_NAME)-double
 C_FLAGS		  += -DUSE_DOUBLE
 else ifeq ($(SCALAR),LONG_DOUBLE)
 O_DEBUG_DIR    = $(TOP)/Debug/obj-long-double
 O_RELEASE_DIR  = $(TOP)/Release/obj-long-double
-O_DEBUG_PROG   = $(TOP)/Debug/DENN-long-double
-O_RELEASE_PROG = $(TOP)/Release/DENN-long-double
+O_DEBUG_PROG   = $(TOP)/Debug/$(EXE_NAME)-long-double
+O_RELEASE_PROG = $(TOP)/Release/$(EXE_NAME)-long-double
 C_FLAGS		  += -DUSE_LONG_DOUBLE
 else 
 	$(error Set SCALAR=FLOAT|DOUBLE|LONG_DOUBLE)
