@@ -700,6 +700,23 @@ namespace Denn
 							     if (!test(args, 2, "atan2")) return std::atan2(number(args[0], "atan2"),number(args[1], "atan2")); else return {0};
 							 }
 				  }
+				//logic
+				, { "min", [&](FunctionArgs&& args) -> ExpValue
+							 {
+								 if(!args.size()) return {0};
+								 auto min_arg = number(args[0], "min");
+								 for(size_t i=1; i!=args.size(); ++i) min_arg = std::min(min_arg, number(args[i], "min"));
+								 return min_arg;
+							 }
+				  }
+				, { "max", [&](FunctionArgs&& args) -> ExpValue
+							 {
+								 if(!args.size()) return {0};
+								 auto max_arg = number(args[0], "max");
+								 for(size_t i=1; i!=args.size(); ++i) max_arg = std::max(max_arg, number(args[i], "max"));
+								 return max_arg;
+							 }
+				  }
 				//Time
 				, { "date",  [&](FunctionArgs&& args) -> ExpValue 
 							{ 
