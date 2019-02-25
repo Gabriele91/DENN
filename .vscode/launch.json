@@ -44,6 +44,14 @@
             "program": "${workspaceFolder}/datasets/build_fashion_mnist.py",
             "cwd": "${workspaceFolder}/datasets",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Build WDBC",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/datasets/build_wdbc.py",
+            "cwd": "${workspaceFolder}/datasets",
+            "console": "integratedTerminal"
         }
     ]
 }

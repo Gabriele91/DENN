@@ -151,7 +151,6 @@ class Resource(object):
             self.outputs = other.outputs
         return self
 
-
 class Container(object):
 
     """Special container for Train, Validation and Test sets."""
@@ -195,7 +194,6 @@ class Container(object):
                 return resource[target_idx]
             target_idx -= len(resource)
         raise IndexError()
-
 
 class Dataset(object):
 
@@ -258,7 +256,6 @@ class Dataset(object):
             [len(set_) for set_ in self.data.values()]
         )
 
-
 class MAGICGammaTelescopeDataset(Dataset):
 
     """MAGIC Gamma Telescope dataset."""
@@ -318,7 +315,6 @@ class MAGICGammaTelescopeDataset(Dataset):
         labels = np.array(labels)
 
         self.insert(Resource(data, labels))
-
 
 class QSARDataset(Dataset):
 
@@ -410,6 +406,42 @@ class QSARDataset(Dataset):
 
         self.insert(Resource(data, labels))
 
+class WDBCDataset(Dataset):
+    
+    def __init__(self, wdbc_source_folder=None, normalized=True, onehot=True):
+        super(WDBCDataset, self).__init__(normalized=normalized, onehot=onehot, kind='cls')
+        data = []
+        labels = []
+        attributes = ['user','class']
+        attributes.extend([str(x+1) for x in range(30)])
+
+        with open(path.join(wdbc_source_folder, "wdbc.data"), "rb") as csvfile:
+            file_wrapper = io.TextIOWrapper(csvfile, newline='')
+            reader = csv.DictReader(file_wrapper, delimiter=',', fieldnames=attributes)
+            rows = list(reader)
+            min_max = check_min_max(rows)
+            for row in rows:
+                new_data = []
+                for attr in attributes[2:]:
+                    tmp = float(row[attr])
+                    if normalized:
+                        tmp = (tmp - min_max[attr][0]) / (min_max[attr][1] - min_max[attr][0])
+                    new_data.append(tmp)
+                data.append(np.array(new_data))
+                if onehot:
+                    if row['class'] == 'M':
+                        labels.append(np.array([1, 0]))
+                    elif row['class'] == 'B':
+                        labels.append(np.array([0, 1]))
+                    else:
+                        raise("unkown class: "+str(row['class']))
+                else:
+                    labels.append(0 if row['class'] == 'M' else 1)
+
+        data = np.array(data)
+        labels = np.array(labels)
+        
+        self.insert(Resource(data, labels))
 
 def check_min_max(rows):
     """Check min and max in a csv table."""
@@ -427,7 +459,6 @@ def check_min_max(rows):
             except ValueError:
                 pass
     return min_max
-
 
 class GasSensorArrayDriftDataset(Dataset):
 
@@ -486,7 +517,6 @@ class GasSensorArrayDriftDataset(Dataset):
 
                     data = []
                     labels = []
-
 
 class MNISTDataset(Dataset):
 
@@ -561,7 +591,6 @@ class FashionMNISTDataset(Dataset):
         self.insert(Resource(train_images, train_labels))
         self.insert(Resource(test_images, test_labels), 'test')
 
-
 def load_mnist_images(file_name, normalized):
     """Load MNIST images."""
     with gzip.open(file_name, 'rb') as mnist_file:
@@ -573,7 +602,6 @@ def load_mnist_images(file_name, normalized):
             data = np.divide(data, 255.)
         data = data.reshape(num_images, rows * cols)
         return data
-
 
 def load_mnist_labels(file_name, onehot, num_classes=10):
     """Load MNIST image labels."""
@@ -596,5 +624,6 @@ READER_LIST = {
     'GasSensorArrayDriftDataset': GasSensorArrayDriftDataset,
     'MAGICGammaTelescopeDataset': MAGICGammaTelescopeDataset,
     'QSARDataset': QSARDataset,
+    'WDBCDataset': WDBCDataset,
     'NBitParity': NBitParity
 }
