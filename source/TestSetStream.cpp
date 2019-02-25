@@ -11,6 +11,8 @@ namespace Denn
 		m_batch_offset = rows_offset;
 		m_dataset->start_read_batch();
 		//init batch
+		m_batch.m_features_shape = Shape(m_dataset->get_main_header_info().m_n_features);
+		m_batch.m_labels_shape = Shape(m_dataset->get_main_header_info().m_n_classes); 
 		//int features
 		m_batch.features().conservativeResize
 		(
@@ -70,7 +72,8 @@ namespace Denn
 			if(!m_cache_cols_read)
 				m_dataset->read_batch(m_cache_batch);
 			//compute n rows to read
-			size_t to_read = std::min<size_t>(m_cache_batch.features().cols(), read_remaning);
+			size_t n_samples = m_cache_batch.features().cols() - m_cache_cols_read;
+			size_t to_read = std::min<size_t>(n_samples, read_remaning);
 			//copy all features
 			m_batch.features().block(0, offset, c_features, to_read).noalias() = m_cache_batch.features().block(0, m_cache_cols_read, c_features, to_read);
 			//copy all labels
