@@ -34,7 +34,7 @@ namespace Denn
 			//test file
 			if (!Denn::Filesystem::exists((const std::string&)parameters.m_dataset_filename))
 			{
-				std::cerr << "input file: \"" << *parameters.m_dataset_filename << "\" not exists!" << std::endl;
+				std::cerr << "input file: \"" << *parameters.m_dataset_filename << "\" does not exists!" << std::endl;
 				return; //exit
 			}
 			//get loader
@@ -42,7 +42,7 @@ namespace Denn
 			//test loader
 			if (!m_dataset)
 			{
-				std::cerr << "input file: \"" << *parameters.m_dataset_filename << "\" not supported!" << std::endl;
+				std::cerr << "input file: \"" << *parameters.m_dataset_filename << "\" does not supported!" << std::endl;
 				return; //exit
 			}			
 			//stream
