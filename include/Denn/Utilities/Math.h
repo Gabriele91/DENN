@@ -99,6 +99,12 @@ namespace Constants
 	{
 		return ScalarType(1.61803398874989484820458683436563811772031L);
 	}
+
+	template  < typename ScalarType = Scalar >
+	constexpr inline  ScalarType epsilon()
+	{
+		return std::numeric_limits<ScalarType>::epsilon();
+	}
 }
 
 namespace Activation

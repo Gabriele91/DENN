@@ -124,6 +124,21 @@ namespace Denn
 			m_layers[i]->update(opt);
 	}
 	/////////////////////////////////////////////////////////////////////////
+	//no 0 
+	void NeuralNetwork::no_0_weights()
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([](Scalar weight) -> Scalar
+			{ 			
+				const Scalar eps = SCALAR_EPS;
+				while(std::abs(weight) <= eps) weight += std::copysign(eps, weight);
+				return weight;
+			});
+		}
+	}
+	/////////////////////////////////////////////////////////////////////////
 	size_t NeuralNetwork::size() const
 	{
 		return m_layers.size();

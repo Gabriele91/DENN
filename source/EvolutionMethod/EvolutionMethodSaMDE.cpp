@@ -78,6 +78,8 @@ namespace Denn
 			(*m_mutations_list[method]) (dpopulation.parents(), i_target, i_output);
 			//call crossover
 			(*m_crossover)(dpopulation.parents(), i_target, i_output);
+			//no 0 wights
+			i_output.m_network.no_0_weights();
 			//debug
 			#ifdef DEBUG_SaMDE
 			m_winners[1][i_target] = method;

@@ -11,7 +11,7 @@ namespace Denn
         virtual Scalar operator () (const NeuralNetwork& network, const DataSet& dataset)
         {
 			const int n = dataset.features().cols();
-			const Scalar eps = 1e-8;
+			const Scalar eps = SCALAR_EPS;
 			const Matrix& pred = network.feedforward(dataset.features());
 			const Matrix& target = dataset.labels();
 			Scalar loss = -(target.array().cwiseProduct((pred.array() + eps).log())).sum() / Scalar(n);

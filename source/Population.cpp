@@ -126,12 +126,17 @@ namespace Denn
 					p_ref[i] = i_default->copy();
 					s_ref[i] = i_default->copy();
 					//build fun
-					auto rand_point = [=](Scalar x)->Scalar { return thread_random(x, i); };
+					auto rand_weight = [=](Scalar weight) -> Scalar
+					{ 
+						const Scalar eps = SCALAR_EPS;
+						while(std::abs(weight) <= eps) weight = thread_random(weight, i);
+						return weight;
+					};
 					//init
 					for (Layer::SPtr layer : p_ref[i]->m_network)
 					for (AlignedMapMatrix matrix : *layer)
 					{
-						matrix = matrix.unaryExpr(rand_point);
+						matrix = matrix.unaryExpr(rand_weight);
 					}
 					//eval
 					p_ref[i]->m_eval = loss_function((NeuralNetwork&)*p_ref[i], dataset);
@@ -154,11 +159,18 @@ namespace Denn
 				//copy layout
 				p_ref[i] = i_default->copy();
 				s_ref[i] = i_default->copy();
+				//build
+				auto rand_weight = [=](Scalar weight) -> Scalar
+				{ 
+					const Scalar eps = SCALAR_EPS;
+					while(std::abs(weight) <= eps) weight = random_func(weight);
+					return weight;
+				};
 				//init
 				for (Layer::SPtr layer : p_ref[i]->m_network)
 				for (AlignedMapMatrix matrix : *layer)	
 				{
-					matrix = matrix.unaryExpr(random_func);
+					matrix = matrix.unaryExpr(rand_weight);
 				}
 				//eval
 				p_ref[i]->m_eval = loss_function((NeuralNetwork&)*p_ref[i], dataset);
@@ -289,12 +301,17 @@ namespace Denn
 					p_ref[i]->copy_attributes(*i_default);
 					s_ref[i]->copy_attributes(*i_default);
 					//build fun
-					auto rand_point = [=](Scalar x)->Scalar { return thread_random(x, i); };
+					auto rand_weight = [=](Scalar weight) -> Scalar
+					{ 
+						const Scalar eps = SCALAR_EPS;
+						while(std::abs(weight) <= eps) weight = thread_random(weight, i);
+						return weight;
+					};
 					//init
 					for (Layer::SPtr layer : p_ref[i]->m_network)
 					for (AlignedMapMatrix matrix : *layer)
 					{
-						matrix = matrix.unaryExpr(rand_point);
+						matrix = matrix.unaryExpr(rand_weight);
 					}
 					//eval
 					p_ref[i]->m_eval = loss_function((NeuralNetwork&)*p_ref[i], dataset);
@@ -314,11 +331,18 @@ namespace Denn
 				//Copy default params
 				p_ref[i]->copy_attributes(*i_default);
 				s_ref[i]->copy_attributes(*i_default);
+				//build
+				auto rand_weight = [=](Scalar weight) -> Scalar
+				{ 
+					const Scalar eps = SCALAR_EPS;
+					while(std::abs(weight) <= eps) weight = random_func(weight);
+					return weight;
+				};
 				//init
 				for (Layer::SPtr layer : p_ref[i]->m_network)
 				for (AlignedMapMatrix matrix : *layer)
 				{
-					matrix = matrix.unaryExpr(random_func);
+					matrix = matrix.unaryExpr(rand_weight);
 				}
 				//eval
 				p_ref[i]->m_eval = loss_function((NeuralNetwork&)*p_ref[i], dataset);

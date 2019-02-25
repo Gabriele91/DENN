@@ -50,16 +50,16 @@
 #endif
 
 #if !defined(DISABLE_BACKPROPAGATION)
-#define BACKPROPAGATION true
-#define BACKPROPAGATION_ASSERT denn_noop;
-#define CODE_BACKPROPAGATION(...) __VA_ARGS__
-#define RETURN_BACKPROPAGATION(value) return value
+	#define BACKPROPAGATION true
+	#define BACKPROPAGATION_ASSERT denn_noop;
+	#define CODE_BACKPROPAGATION(...) __VA_ARGS__
+	#define RETURN_BACKPROPAGATION(value) return value
 #else 
-#define BACKPROPAGATION false
-#define BACKPROPAGATION_ASSERT { MESSAGE("backpropagation does not supported"); exit(-1); };
-#define CODE_BACKPROPAGATION(...) 
-#define RETURN_BACKPROPAGATION(value) \
-	{ BACKPROPAGATION_ASSERT static Matrix __tmp__; return __tmp__; }
+	#define BACKPROPAGATION false
+	#define BACKPROPAGATION_ASSERT { MESSAGE("backpropagation does not supported"); exit(-1); };
+	#define CODE_BACKPROPAGATION(...) 
+	#define RETURN_BACKPROPAGATION(value) \
+		{ BACKPROPAGATION_ASSERT static Matrix __tmp__; return __tmp__; }
 #endif
 
 //core
@@ -79,4 +79,10 @@
 #include "Utilities/String.h"
 #include "Utilities/Vector.h"
 
-
+#if !defined(SCALAR_EPS)
+	#if defined(USE_SCALAR_EPS_BY_TYPE)
+		#define SCALAR_EPS (Denn::Constants<Scalar>::epsilon())
+	#else
+		#define SCALAR_EPS (Scalar(1e-6))
+	#endif
+#endif

@@ -51,6 +51,8 @@ namespace Denn
 			(*m_mutation) (parents, i_target, i_output);
 			//call crossover
 			(*m_crossover)(parents, i_target, i_output);
+			//no 0 wights
+			i_output.m_network.no_0_weights();
 		}
 
 		virtual	void selection(DoubleBufferPopulation& population) override
