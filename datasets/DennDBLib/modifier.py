@@ -199,7 +199,8 @@ def split(dataset, target, batch_size=None, n_batch=None):
     if not batch_size and n_batch:
         batch_size = int(len(set_) / n_batch)
     elif not n_batch and batch_size:
-        n_batch = int(len(set_) / batch_size)
+        n_batch = int(len(set_) / batch_size) 
+        n_batch += 1 if (len(set_) % batch_size) > 0 else 0
 
     while any([len(resource) > batch_size for resource in set_]):
         for idx, resource in enumerate(set_):
