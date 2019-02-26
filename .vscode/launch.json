@@ -19,7 +19,7 @@
             "request": "launch",
             "program": "${workspaceFolder}\\build\\Debug\\DENN.exe",
             "symbolSearchPath": "${workspaceFolder}\\build\\Debug",
-            "args": ["template/BP_NN_MNIST.config"],
+            "args": ["template/BP_NN_MNIST.config"],            
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -50,6 +50,14 @@
             "type": "python",
             "request": "launch",
             "program": "${workspaceFolder}/datasets/build_wdbc.py",
+            "cwd": "${workspaceFolder}/datasets",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Build ESR 1,2",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/datasets/build_esr_1_2.py",
             "cwd": "${workspaceFolder}/datasets",
             "console": "integratedTerminal"
         }

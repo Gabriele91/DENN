@@ -834,11 +834,44 @@ def wdbc(out_filename, source_folder, dest_folder=getcwd(),
         'normalized': normalized,
         'onehot': one_hot
     }
-
+    val_action = "extract_to" if not validation_as_copy else 'random_copy_to'
     actions = [
         ('modifier', 'simple_shuffle', (), {'target': "train"}),
-        ('modifier', 'extract_to', ('train', 'validation', validation_size), {}),
         ('modifier', 'extract_to', ('train', 'test', test_size), {}),
+        ('modifier', val_action, ('train', 'validation', validation_size), {}),
+        ('modifier', 'split', ('train',), { 'batch_size': batch_size, 'n_batch': n_batch}),
+        ('modifier', 'convert_type', (out_type,), {})
+    ]
+
+    if balanced_classes:
+        for idx, (type_, action, args, kwargs) in enumerate(actions):
+            if action == "extract_to":
+                actions[idx] = (type_, 'extract_to_with_class_ratio', args, kwargs)
+
+    generator = Generator('WDBCDataset', dataset_params,
+                          actions, out_type=out_type)
+    generator.execute_actions()
+    generator.save(out_filename, dest_folder)
+    if save_stats:
+        generator.save_stats(out_filename, dest_folder)
+
+    return generator
+
+def esr_1_2(out_filename, source_folder, dest_folder=getcwd(),
+         one_hot=True, normalized=True, out_type="float", balanced_classes=False,
+         n_batch=None, batch_size=None, validation_size=30, validation_as_copy=False, test_size=160, save_stats=False):
+    """Create a gas sensor array drift dataset for DENN."""
+
+    dataset_params = {
+        'esr_source_folder': source_folder,
+        'normalized': normalized,
+        'onehot': one_hot
+    }
+    val_action = "extract_to" if not validation_as_copy else 'random_copy_to'
+    actions = [
+        ('modifier', 'simple_shuffle', (), {'target': "train"}),
+        ('modifier', 'extract_to', ('train', 'test', test_size), {}),
+        ('modifier',  val_action, ('train', 'validation', validation_size), {}),
         ('modifier', 'split', ('train',), {
          'batch_size': batch_size, 'n_batch': n_batch}),
         ('modifier', 'convert_type', (out_type,), {})
@@ -849,14 +882,8 @@ def wdbc(out_filename, source_folder, dest_folder=getcwd(),
             if action == "extract_to":
                 actions[idx] = (type_, 'extract_to_with_class_ratio', args, kwargs)
 
-    if validation_as_copy:
-        for idx, (type_, action, args, kwargs) in enumerate(actions):
-            if action == "extract_to":
-                actions[idx] = (
-                    type_, 'random_copy_to', args, kwargs)
 
-    generator = Generator('WDBCDataset', dataset_params,
-                          actions, out_type=out_type)
+    generator = Generator('ESR_1_2_Dataset', dataset_params, actions, out_type=out_type)
     generator.execute_actions()
     generator.save(out_filename, dest_folder)
     if save_stats:

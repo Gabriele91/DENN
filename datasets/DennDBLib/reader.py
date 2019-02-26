@@ -443,6 +443,38 @@ class WDBCDataset(Dataset):
         
         self.insert(Resource(data, labels))
 
+class ESR_1_2_Dataset(Dataset):
+    
+    def __init__(self, esr_source_folder=None, normalized=True, onehot=True):
+        super(ESR_1_2_Dataset, self).__init__(normalized=normalized, onehot=onehot, kind='cls')
+        data = []
+        labels = []
+
+        with open(path.join(esr_source_folder, "data.csv"), "rb") as csvfile:
+            file_wrapper = io.TextIOWrapper(csvfile, newline='')
+            reader = csv.DictReader(file_wrapper, delimiter=',')
+            rows = list(reader)
+            min_max = check_min_max(rows)
+            for row in rows:
+                if str(row['y']) != '1' and  str(row['y']) != '2':
+                    continue
+                new_data = []
+                for attr in reader.fieldnames[1:-1]:
+                    tmp = float(row[attr])
+                    if normalized:
+                        tmp = (tmp - min_max[attr][0]) / (min_max[attr][1] - min_max[attr][0])
+                    new_data.append(tmp)
+                data.append(np.array(new_data))
+                if onehot:
+                    labels.append(np.array([1., 0.]) if str(row['y']) != '1' else np.array([0., 1.]))
+                else:
+                    labels.append(0. if str(row['y']) != '1' else 1.)
+
+        data = np.array(data)
+        labels = np.array(labels)
+        self.insert(Resource(data, labels))
+
+
 def check_min_max(rows):
     """Check min and max in a csv table."""
     min_max = {}
@@ -625,5 +657,6 @@ READER_LIST = {
     'MAGICGammaTelescopeDataset': MAGICGammaTelescopeDataset,
     'QSARDataset': QSARDataset,
     'WDBCDataset': WDBCDataset,
+    'ESR_1_2_Dataset' : ESR_1_2_Dataset,
     'NBitParity': NBitParity
 }
