@@ -14,6 +14,25 @@ from .var import NP2STRUCT
 
 __all__ = ["Dataset", "Resource", "Container", "READER_LIST"]
 
+def check_min_max(rows):
+    """Check min and max in a csv table."""
+    min_max = {}
+    for row in rows:
+        for key, value in row.items():
+            try:
+                tmp = float(value)
+                if key not in min_max:
+                    min_max[key] = [0, 0]
+                if tmp > min_max[key][1]:
+                    min_max[key][1] = tmp
+                elif tmp < min_max[key][0]:
+                    min_max[key][0] = tmp
+            except ValueError:
+                pass
+    return min_max
+
+
+
 
 class Resource(object):
 
@@ -474,23 +493,61 @@ class ESR_1_2_Dataset(Dataset):
         labels = np.array(labels)
         self.insert(Resource(data, labels))
 
-
-def check_min_max(rows):
-    """Check min and max in a csv table."""
-    min_max = {}
-    for row in rows:
-        for key, value in row.items():
-            try:
-                tmp = float(value)
-                if key not in min_max:
-                    min_max[key] = [0, 0]
-                if tmp > min_max[key][1]:
-                    min_max[key][1] = tmp
-                elif tmp < min_max[key][0]:
-                    min_max[key][0] = tmp
-            except ValueError:
-                pass
-    return min_max
+class HAROnlyTraining_Dataset(Dataset):
+    
+    def __init__(self, har_source_folder=None, normalized=True, onehot=True):
+        super(HAROnlyTraining_Dataset, self).__init__(normalized=normalized, onehot=onehot, kind='cls')
+        data = []
+        labels = []
+        import zipfile
+        with zipfile.ZipFile(path.join(har_source_folder, "UCI HAR Dataset.zip"), 'r') as har_zip:
+            linesX = []
+            linesY = []
+            #read
+            with har_zip.open("UCI HAR Dataset/train/X_train.txt") as fileX:
+                linesX = fileX.readlines()
+            with har_zip.open("UCI HAR Dataset/train/y_train.txt") as fileY:
+                linesY = fileY.readlines()
+            #test
+            if len(linesX) != len(linesY):
+                raise("{} != {}".format(len(linesX), len(linesY)))
+        #from list of string to array
+        for line in linesX:
+            import re
+            lineclean = re.sub(" +", " ", line.decode('ascii').strip())
+            values = lineclean.split(" ")
+            data.append([float(value) for value in values])
+        #append labels
+        for line in linesY:
+            lineclean = line.decode('ascii').strip()
+            if onehot:
+                if lineclean == '1':
+                    labels.append([1,0,0,0,0,0])
+                elif lineclean == '2':
+                    labels.append([0,1,0,0,0,0])
+                elif lineclean == '3':
+                    labels.append([0,0,1,0,0,0])
+                elif lineclean == '4':
+                    labels.append([0,0,0,1,0,0])
+                elif lineclean == '5':
+                    labels.append([0,0,0,0,1,0])
+                elif lineclean == '6':
+                    labels.append([0,0,0,0,0,1])
+                else:
+                    raise("unkown class: "+str(line))
+            else:
+                labels.append(float(lineclean)-1.0)
+        #as np
+        data = np.array(data)
+        labels = np.array(labels)
+        #norm by numpy
+        if normalized:
+            data_min = data.min(axis=0)
+            data_max = data.max(axis=0)
+            data = (data - data_min) / (data_max - data_min)
+        #return
+        self.insert(Resource(data, labels))
+            
 
 class GasSensorArrayDriftDataset(Dataset):
 
@@ -658,5 +715,6 @@ READER_LIST = {
     'QSARDataset': QSARDataset,
     'WDBCDataset': WDBCDataset,
     'ESR_1_2_Dataset' : ESR_1_2_Dataset,
+    'HAROnlyTraining_Dataset' : HAROnlyTraining_Dataset,
     'NBitParity': NBitParity
 }
