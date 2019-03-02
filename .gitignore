@@ -22,7 +22,8 @@ build**/**
 results/
 results*/
 results*.zip
-
+*.stdout
+*.stderr
 
 # Created by https://www.gitignore.io/api/macos,linux,cmake,python,windows,visualstudio,visualstudiocode
 # Edit at https://www.gitignore.io/?templates=macos,linux,cmake,python,windows,visualstudio,visualstudiocode
