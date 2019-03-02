@@ -1,0 +1,3 @@
+template/JADE_NN_WDBC.config, WDBC
+template/JADE_NN_ESR_1_2.config, ESR_1_2
+template/JADE_NN_HAR_OT.config, HAR_OT
