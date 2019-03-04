@@ -76,13 +76,10 @@ namespace Denn
 		ReadOnly<Scalar>	             m_restart_delta { "restart_delta", Scalar(0.001) };
 		ReadOnly<size_t>	             m_threads_omp   { "threads_omp", size_t(2) };
 		ReadOnly<size_t>	             m_threads_pop   { "threads_pop", size_t(2) };
-		ReadOnly<size_t>	             m_history_size  { "history_size", size_t(1) };
 		//type of DE
 		ReadOnly<std::string>                m_mutation_type { "mutation","rand/1" };
-		ReadOnly<std::vector<std::string> >  m_mutations_list_type { "mutations_list", std::vector<std::string>{ "degl", "curr_p_best" } };
 		ReadOnly<std::string>                m_crossover_type{ "crossover","bin" };
 		ReadOnly<std::string>                m_evolution_type    { "evolution_method","JDE" };
-		ReadOnly<std::string>                m_sub_evolution_type{ "sub_evolution_method","JDE" };
 		//backpropagation + SGD
 		ReadOnly<Scalar>					 m_learning_rate{ "learning_rate", Scalar(0.001) };
 		ReadOnly<Scalar>					 m_decay	    { "decay", Scalar(0.00005) };

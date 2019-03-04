@@ -77,23 +77,6 @@ namespace Denn
             , { "string", EvolutionMethodFactory::list_of_evolution_methods() }
         },
         ParameterInfo {
-              m_sub_evolution_type
-			, { m_evolution_type, { Variant("PHISTORY"), Variant("P2HISTORY")  } }
-            , "Type of sub evolution method (PHISTORY/P2HISTORY)"
-            , { "--sub-evolution",    "-sem"  }
-            , [this](Arguments& args) -> bool
-              {
-                  std::string str_m_type = args.get_string() ;
-                  //all lower case
-                  std::transform(str_m_type.begin(),str_m_type.end(), str_m_type.begin(), ::toupper);
-                  //save
-				  m_sub_evolution_type = str_m_type;
-                  //ok
-                  return EvolutionMethodFactory::exists(*m_sub_evolution_type);
-              }
-            , { "string", EvolutionMethodFactory::list_of_evolution_methods() }
-        },
-        ParameterInfo {
               m_mutation_type
 		    , { m_evolution_type }
             , "Type of DE mutation"
@@ -111,33 +94,6 @@ namespace Denn
             , { "string", MutationFactory::list_of_mutations() }
         },
         ParameterInfo {
-              m_mutations_list_type
-		    , { m_evolution_type, { Variant("MAB-SHADE"), Variant("SAMDE") } }
-            , "List of mutations"
-            , { "-ml"  }
-            , [this](Arguments& args) -> bool
-              {
-                  //success flag
-                  bool success = true;
-				  //free list
-				  m_mutations_list_type.get().clear();
-                  //for all values
-                  while(!args.end_vals() && success)
-                  {
-                     std::string str_m_type = args.get_string();
-                     //all lower case
-                     std::transform(str_m_type.begin(),str_m_type.end(), str_m_type.begin(), ::tolower);
-                     //add
-                     m_mutations_list_type.get().push_back(str_m_type);
-                     //ok
-                     success &= MutationFactory::exists(m_mutations_list_type.get().back());
-                  }
-                  //status
-                  return success;
-              }
-            , { "list(string)", MutationFactory::list_of_mutations() }
-        },
-        ParameterInfo {
               m_crossover_type
 			, { m_evolution_type }
             , "Type of DE crossover"
@@ -153,13 +109,6 @@ namespace Denn
                   return CrossoverFactory::exists(*m_crossover_type);
               }
             , { "string", CrossoverFactory::list_of_crossovers() }
-        },
-
-        ParameterInfo {
-              m_history_size
-			, { m_evolution_type,{ Variant("PHISTORY"), Variant("P2HISTORY") } }
-			, "Size of population history (PHISTORY)"
-		    , { "-hs"  }
         },
 
         ParameterInfo { 
@@ -184,8 +133,8 @@ namespace Denn
 				
 		ParameterInfo{
 			 m_archive_size
-			, { m_evolution_type,{ Variant("JADE"), Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE") } }
-			, "Archive size (JADE/SHADE/L-SHADE/MAB-SHADE)",{ "-as" }
+			, { m_evolution_type,{ Variant("JADE"), Variant("SHADE"), Variant("L-SHADE") } }
+			, "Archive size (JADE/SHADE/L-SHADE)",{ "-as" }
 		},				
 		ParameterInfo{
 			  m_f_cr_adapt
@@ -196,8 +145,8 @@ namespace Denn
 
 		ParameterInfo{
 			  m_shade_h
-			, { m_evolution_type,{ Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE") } }
-		    , "Size of archive of mu_f and mu_cr (SHADE/L-SHADE/MAB-SHADE)",{ "-shah" }
+			, { m_evolution_type,{ Variant("SHADE"), Variant("L-SHADE") } }
+		    , "Size of archive of mu_f and mu_cr (SHADE/L-SHADE)",{ "-shah" }
 		}, 
 
 		ParameterInfo{
