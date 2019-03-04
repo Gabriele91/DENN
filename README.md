@@ -14,4 +14,5 @@ using the Differential Evolution as the optimizer.
 * Python:
     * numpy
     * tqdm
+    * pandas
 
