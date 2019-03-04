@@ -17,7 +17,7 @@ PATH_TMPDIR=os.path.join(ROOT,"_tmp_runs_")
 PATH_INSTANCES=os.path.join(ROOT,"instances.txt")
 NRUNS=10
 
-def execute_denn(denn, tmpdir, template, name, idrun, get_only_output=False):
+def execute_denn(denn, tmpdir, template, name, args, idrun, get_only_output=False):
     name_output = TEMPLATE_OUTPUT.format(name,idrun)
     full_output = os.path.join(tmpdir,PATH_RESDIR,name_output)
     path_stdout = os.path.join(tmpdir,CALL_OUTPUT_STD)
@@ -25,7 +25,7 @@ def execute_denn(denn, tmpdir, template, name, idrun, get_only_output=False):
     if not get_only_output:
         with open(path_stdout,"a+") as ofile:
             with open(path_stderr,"a+") as errfile:
-                subprocess.call([denn, template, "full_output={}".format(full_output)], 
+                subprocess.call([denn, template, "full_output={}".format(full_output), args], 
                                 stdout=ofile, 
                                 stderr=errfile)
     return full_output
@@ -34,10 +34,10 @@ def make_output_dir(tmpdir):
     os.makedirs(tmpdir, exist_ok=True)
     os.makedirs(os.path.join(tmpdir,PATH_RESDIR), exist_ok=True)
 
-def exe_instance(denn, tmpdir, runs, template, name, get_only_output=False):
+def exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=False):
     outputs = []
     for idrun in range(runs):
-        outputs.append(execute_denn(denn, tmpdir, template, name, idrun, get_only_output=get_only_output))
+        outputs.append(execute_denn(denn, tmpdir, template, name, args, idrun, get_only_output=get_only_output))
     return outputs
 
 def get_result_from_json(output):
@@ -104,15 +104,16 @@ def parse_instances_file(path):
     instances = []
     with open(path) as ifile:
         for line in ifile:
-            path, name = None, None
+            path, name, args = None, None, None
             if len(line.strip()):
-                path, name = line.split(",")
+                path, name, args = line.split(",")
             if path == None or name == None:
                 continue
             path = path.strip()
             name = name.strip()
+            args = args.strip() if type(args) is str else ""
             if os.path.exists(path) and len(name) > 0:
-                instances.append((path,name))
+                instances.append((path,name, args))
     return instances
 
 def main(denn,
@@ -139,8 +140,8 @@ def main(denn,
     times = {}
     times_statistics = {}
     #execute
-    for template, name in instances:
-        outputs[name] = exe_instance(denn, tmpdir, runs, template, name, get_only_output=only_statistics)
+    for template, name, args in instances:
+        outputs[name] = exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=only_statistics)
         #test results
         results[name] = outputs_to_results(outputs[name])
         statistics[name] = mean_var_std(results[name])
