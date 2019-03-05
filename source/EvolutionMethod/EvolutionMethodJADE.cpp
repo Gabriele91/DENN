@@ -81,7 +81,7 @@ namespace Denn
 				if (loss_function_compare(son->m_eval,father->m_eval))
 				{
 					if (m_archive_max_size) m_archive.push_back(father->copy());
-					//else if (main_random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
+					//else if (random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
 					sum_f += son->m_f;
 					sum_f2 += son->m_f * son->m_f;
 					sum_cr += son->m_cr;
@@ -98,7 +98,7 @@ namespace Denn
 			//reduce A
 			while (m_archive_max_size < m_archive.size())
 			{
-				m_archive[main_random().index_rand(m_archive.size())] = m_archive.last();
+				m_archive[random().index_rand(m_archive.size())] = m_archive.last();
 				m_archive.pop_back();
 			}
 		}

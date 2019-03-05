@@ -33,18 +33,15 @@ namespace Denn
 
 		const size_t current_np() const;
 		const DoubleBufferPopulation& population() const;
-
-		Random& population_random(size_t i)  const;
+        
+		//random engine
 		Random& random(size_t i)  const;
+		
 		//help, how is the best
 		bool loss_function_compare(Scalar left, Scalar right) const;
 		bool validation_function_compare(Scalar left, Scalar right) const;
 		bool test_function_compare(Scalar left, Scalar right) const;
 
-		#ifndef RANDOM_SAFE_CROSSOVER
-		Random& main_random()  const;
-		Random& random()  const;
-		#endif
 	};
 
 	//class factory of Crossover methods

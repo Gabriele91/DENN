@@ -18,7 +18,6 @@ namespace Denn
 	const size_t Crossover::current_np()                  const   { return m_algorithm.current_np(); }
 	const DoubleBufferPopulation& Crossover::population() const   { return m_algorithm.population(); }
 
-	Random& Crossover::population_random(size_t i)       const { return m_algorithm.population_random(i);}
 	Random& Crossover::random(size_t i)			         const { return m_algorithm.random(i); }
 	
 	//help, how is the best
@@ -26,10 +25,6 @@ namespace Denn
 	bool Crossover::validation_function_compare(Scalar left, Scalar right) const { return  m_algorithm.validation_function_compare(left,right);  }
 	bool Crossover::test_function_compare(Scalar left, Scalar right) const       { return  m_algorithm.test_function_compare(left,right);  }
 
-	#ifndef RANDOM_SAFE_CROSSOVER
-	Random& Crossover::main_random()					 const { return m_algorithm.main_random(); }
-	Random& Crossover::random()					         const { return m_algorithm.random(); }
-	#endif
 	//map
 	static std::map< std::string, CrossoverFactory::CreateObject >& c_map()
 	{

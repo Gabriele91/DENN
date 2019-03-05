@@ -22,6 +22,131 @@ namespace Denn
 	{
 	}
 
+	//info
+	const Parameters& DennAlgorithm::parameters() const
+	{
+		return m_params;
+	}
+
+	const size_t  DennAlgorithm::current_np() const
+	{
+		return m_population.size();
+	}
+
+	const DennAlgorithm::DBPopulation& DennAlgorithm::population() const
+	{
+		return m_population;
+	}
+
+	const EvolutionMethod& DennAlgorithm::evolution_method() const
+	{
+		return *m_e_method;
+	}
+
+	const Individual::SPtr DennAlgorithm::get_default_individual() const
+	{
+		return m_default;
+	}
+
+	const  DennAlgorithm::ClampFunction& DennAlgorithm::clamp_function() const
+	{
+		return m_clamp_function;
+	}
+
+	const  DennAlgorithm::BestContext& DennAlgorithm::best_context() const
+	{
+		return m_best_ctx;
+	}
+
+	const  DennAlgorithm::RestartContext& DennAlgorithm::restart_context() const
+	{
+		return m_restart_ctx;
+	}
+
+
+	Random& DennAlgorithm::random(size_t i) const
+	{
+		return m_population_random[i];
+	}
+
+	Random&  DennAlgorithm::random() const
+	{
+		return m_main_random;
+	}
+
+	const DataSetScalar& DennAlgorithm::current_batch() const
+	{
+		return m_dataset_batch.last_batch();
+	}
+
+	const DataSetLoader* DennAlgorithm::get_datase_loader() const 
+	{
+		return m_dataset_loader;
+	}
+
+	Evaluation::SPtr DennAlgorithm::loss_function() const 
+	{
+		return m_loss_function;
+	}
+	
+	Evaluation::SPtr DennAlgorithm::validation_function() const 
+	{
+		return m_validation_function;
+	}
+
+	Evaluation::SPtr DennAlgorithm::test_function() const 
+	{
+		return m_test_function;
+	}
+	
+	bool DennAlgorithm::loss_function_compare(Scalar left, Scalar right) const
+	{
+		return  m_loss_function->minimize() 
+		  ?  left < right
+			:  right < left
+			;
+	}
+
+	bool DennAlgorithm::validation_function_compare(Scalar left, Scalar right) const
+	{
+		return  m_validation_function->minimize() 
+		  ?  left < right
+			:  right < left
+			;
+	}
+
+	bool DennAlgorithm::test_function_compare(Scalar left, Scalar right) const
+	{
+		return  m_test_function->minimize() 
+		  ?  left < right
+			:  right < left
+			;
+	}
+
+	Scalar DennAlgorithm::loss_function_worst() const
+	{
+		return  m_loss_function->minimize() 
+		  ?   std::numeric_limits<Scalar>::max() 
+			:  -std::numeric_limits<Scalar>::max()
+			;
+	}
+
+	Scalar DennAlgorithm::validation_function_worst() const
+	{
+		return  m_validation_function->minimize() 
+		  ?   std::numeric_limits<Scalar>::max() 
+			:  -std::numeric_limits<Scalar>::max()
+			;
+	}
+
+	Scalar DennAlgorithm::test_function_worst() const
+	{
+		return  m_test_function->minimize() 
+		  ?   std::numeric_limits<Scalar>::max() 
+			:  -std::numeric_limits<Scalar>::max()
+			;
+	}
+
 	//init
 	bool DennAlgorithm::init()
 	{
@@ -51,7 +176,7 @@ namespace Denn
 		//init random engines
 		for(size_t i=0; i != np ;++i)
 		{
-			m_population_random.emplace_back(main_random().uirand());
+			m_population_random.emplace_back(random().uirand());
 		}
 		//init pop
 		m_population.init
@@ -316,7 +441,7 @@ namespace Denn
 			m_population.restart
 			(
 				  m_best_ctx.m_best					     //best
-				, main_random().index_rand(current_np()) //where put
+				, random().index_rand(current_np()) //where put
 				, m_default							     //default individual
 				, current_batch()						 //current batch
 				, gen_random_func()				         //random generator
@@ -447,7 +572,7 @@ namespace Denn
 			Scalar max = m_params.m_uniform_max;
 			return [this,min,max](Scalar x) -> Scalar
 			{
-				return Scalar(main_random().uniform(min, max));
+				return Scalar(random().uniform(min, max));
 			};
 		}
 		else if(*m_params.m_distribution == "normal")
@@ -456,7 +581,7 @@ namespace Denn
 			Scalar sigma = m_params.m_normal_sigma;
 			return [this,mu,sigma](Scalar x) -> Scalar
 			{
-				return Scalar(main_random().normal(mu, sigma));
+				return Scalar(random().normal(mu, sigma));
 			};
 		}
 		else 
@@ -473,7 +598,7 @@ namespace Denn
 			Scalar max = m_params.m_uniform_max;
 			return [this,min,max](Scalar x, size_t i) -> Scalar
 			{
-				return Scalar(population_random(i).uniform(min, max));
+				return Scalar(random(i).uniform(min, max));
 			};
 		}
 		else if(*m_params.m_distribution == "normal")
@@ -482,7 +607,7 @@ namespace Denn
 			Scalar sigma = m_params.m_normal_sigma;
 			return [this,mu,sigma](Scalar x, size_t i) -> Scalar
 			{
-				return Scalar(population_random(i).normal(mu, sigma));
+				return Scalar(random(i).normal(mu, sigma));
 			};
 		}
 		else 

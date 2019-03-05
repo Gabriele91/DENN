@@ -29,10 +29,8 @@ namespace Denn
 	const size_t EvolutionMethod::current_np()                  const   { return m_algorithm.current_np(); }
 	const DoubleBufferPopulation& EvolutionMethod::population() const   { return m_algorithm.population(); }
 
-	Random& EvolutionMethod::population_random(size_t i)       const { return m_algorithm.population_random(i);}
-	Random& EvolutionMethod::random(size_t i)			       const { return m_algorithm.random(i); }
-
-	Random& EvolutionMethod::main_random()					   const { return m_algorithm.main_random(); }
+	Random& EvolutionMethod::random()		  const { return m_algorithm.random(); }
+	Random& EvolutionMethod::random(size_t i) const { return m_algorithm.random(i); }
 
 	//help, how is the best
 	bool EvolutionMethod::loss_function_compare(Scalar left, Scalar right) const       { return  m_algorithm.loss_function_compare(left,right);  }

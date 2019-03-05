@@ -79,138 +79,47 @@ public:
 	Scalar execute_test(Individual& individual) const;
 
 	//info
-	const Parameters& parameters() const
-	{
-		return m_params;
-	}
+	const Parameters& parameters() const;
 
-	const size_t current_np() const
-	{
-		return m_population.size();
-	}
+	const size_t current_np() const;
 
-	const DBPopulation& population() const
-	{
-		return m_population;
-	}
+	const DBPopulation& population() const;
 
-	const EvolutionMethod& evolution_method() const
-	{
-		return *m_e_method;
-	}
+	const EvolutionMethod& evolution_method() const;
 
-	const Individual::SPtr get_default_individual() const
-	{
-		return m_default;
-	}
+	const Individual::SPtr get_default_individual() const;
 
-	const ClampFunction& clamp_function() const
-	{
-		return m_clamp_function;
-	}
+	const ClampFunction& clamp_function() const;
 
-	const BestContext& best_context() const
-	{
-		return m_best_ctx;
-	}
+	const BestContext& best_context() const;
 
-	const RestartContext& restart_context() const
-	{
-		return m_restart_ctx;
-	}
+	const RestartContext& restart_context() const;
 
-	Random& population_random(size_t i) const
-	{
-		return m_population_random[i];
-	}
+	Random& random(size_t i) const;
 
-	Random& main_random() const
-	{
-		return m_main_random;
-	}
+	Random& random() const;
 
-	Random& random(size_t i) const
-	{
-		return m_population_random[i];
-	}
+	const DataSetScalar& current_batch() const;
 
-	Random& random() const
-	{
-		return m_main_random;
-	}
+	const DataSetLoader* get_datase_loader() const;
 
-	const DataSetScalar& current_batch() const
-	{
-		return m_dataset_batch.last_batch();
-	}
-
-	const DataSetLoader* get_datase_loader() const 
-	{
-		return m_dataset_loader;
-	}
-
-	Evaluation::SPtr loss_function() const 
-	{
-		return m_loss_function;
-	}
+	Evaluation::SPtr loss_function() const;
 	
-	Evaluation::SPtr validation_function() const 
-	{
-		return m_validation_function;
-	}
+	Evaluation::SPtr validation_function() const;
 
-	Evaluation::SPtr test_function() const 
-	{
-		return m_test_function;
-	}
+	Evaluation::SPtr test_function() const;
 	
-	bool loss_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_loss_function->minimize() 
-		    ?   left < right
-			:  right < left
-			;
-	}
+	bool loss_function_compare(Scalar left, Scalar right) const;
 
-	bool validation_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_validation_function->minimize() 
-		    ?   left < right
-			:  right < left
-			;
-	}
+	bool validation_function_compare(Scalar left, Scalar right) const;
 
-	bool test_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_test_function->minimize() 
-		    ?  left < right
-			:  right < left
-			;
-	}
+	bool test_function_compare(Scalar left, Scalar right) const;
 
-	Scalar loss_function_worst() const
-	{
-		return  m_loss_function->minimize() 
-		    ?   std::numeric_limits<Scalar>::max() 
-			:  -std::numeric_limits<Scalar>::max()
-			;
-	}
+	Scalar loss_function_worst() const;
 
-	Scalar validation_function_worst() const
-	{
-		return  m_validation_function->minimize() 
-		    ?   std::numeric_limits<Scalar>::max() 
-			:  -std::numeric_limits<Scalar>::max()
-			;
-	}
+	Scalar validation_function_worst() const;
 
-	Scalar test_function_worst() const
-	{
-		return  m_test_function->minimize() 
-		    ?   std::numeric_limits<Scalar>::max() 
-			:  -std::numeric_limits<Scalar>::max()
-			;
-	}
+	Scalar test_function_worst() const;
 
 protected:
 	//init
