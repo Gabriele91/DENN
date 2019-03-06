@@ -74,6 +74,8 @@ namespace Denn
 			}
 			//no 0 wights
 			output.m_network.no_0_weights();
+			//eval
+			output.m_eval = (*m_algorithm.loss_function())((NeuralNetwork&)output, m_algorithm.current_batch());
 		}
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override
@@ -230,6 +232,8 @@ namespace Denn
 			}
 			//no 0 wights
 			output.m_network.no_0_weights();
+			//eval
+			output.m_eval = (*m_algorithm.loss_function())((NeuralNetwork&)output, m_algorithm.current_batch());
 		}
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override

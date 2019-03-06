@@ -456,8 +456,6 @@ namespace Denn
 		auto& new_son = sons[i];
 		//Compute new individual
 		m_e_method->create_a_individual(m_population, i, *new_son);
-		//eval
-		new_son->m_eval = (*m_loss_function)((NeuralNetwork&)*new_son, current_batch());
 	}
 	
 	/////////////////////////////////////////////////////////////////
