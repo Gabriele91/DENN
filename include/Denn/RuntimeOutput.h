@@ -58,11 +58,6 @@ namespace Denn
 			//none
 		}		
 		
-		virtual void restart()
-		{
-			//none
-		}		
-
 		virtual void end_a_pass()
 		{
 			//none

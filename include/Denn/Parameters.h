@@ -71,9 +71,6 @@ namespace Denn
 		//DE common info
 		ReadOnly<Scalar>	             m_clamp_max     { "clamp_max",  Scalar( 1.0) };
 		ReadOnly<Scalar>	             m_clamp_min     { "clamp_min",  Scalar(-1.0) };
-		ReadOnly<bool>	                 m_restart_enable{ "restart_enable", bool(false), false };
-		ReadOnly<long>	                 m_restart_count { "restart_count", size_t(-1)    };
-		ReadOnly<Scalar>	             m_restart_delta { "restart_delta", Scalar(0.001) };
 		ReadOnly<size_t>	             m_threads_omp   { "threads_omp", size_t(2) };
 		ReadOnly<size_t>	             m_threads_pop   { "threads_pop", size_t(2) };
 		//type of DE

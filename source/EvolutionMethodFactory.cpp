@@ -18,7 +18,6 @@ namespace Denn
     void EvolutionMethod::start_a_subgen_pass(DoubleBufferPopulation& population) {};
     void EvolutionMethod::end_a_subgen_pass(DoubleBufferPopulation& population) {};
     void EvolutionMethod::end_a_gen_pass(DoubleBufferPopulation& population) {};
-    bool EvolutionMethod::can_reset()            { return true; }
     bool EvolutionMethod::best_from_validation() { return *parameters().m_use_validation; }
     const VariantRef EvolutionMethod::get_context_data() const { return VariantRef(); }
     
@@ -37,9 +36,6 @@ namespace Denn
 	bool EvolutionMethod::validation_function_compare(Scalar left, Scalar right) const { return  m_algorithm.validation_function_compare(left,right);  }
 	bool EvolutionMethod::test_function_compare(Scalar left, Scalar right) const       { return  m_algorithm.test_function_compare(left,right);  }
 
-	#ifndef RANDOM_SAFE_EVOLUTION_METHOD
-	Random& EvolutionMethod::random()					       const { return m_algorithm.random(); }
-	#endif
 	//map
 	static std::map< std::string, EvolutionMethodFactory::CreateObject >& em_map()
 	{

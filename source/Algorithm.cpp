@@ -58,12 +58,6 @@ namespace Denn
 		return m_best_ctx;
 	}
 
-	const  DennAlgorithm::RestartContext& DennAlgorithm::restart_context() const
-	{
-		return m_restart_ctx;
-	}
-
-
 	Random& DennAlgorithm::random(size_t i) const
 	{
 		return m_population_random[i];
@@ -206,8 +200,6 @@ namespace Denn
 		//global info
 		const size_t n_global_pass = ((size_t)m_params.m_generations / (size_t)m_params.m_sub_gens);
 		const size_t n_sub_pass = m_params.m_sub_gens;
-		//restart init
-		m_restart_ctx = RestartContext();
 		//best
 		Scalar worst_eval = m_e_method->best_from_validation() 
 						  ? validation_function_worst() 
@@ -363,8 +355,6 @@ namespace Denn
 		m_e_method->end_a_gen_pass(m_population);
 		//update context
 		execute_update_best();
-		//restart
-		if(m_e_method->can_reset()) execute_update_restart(pass);
 		//output
 		if(m_output) m_output->end_a_pass();
 	}
@@ -390,7 +380,6 @@ namespace Denn
 		//validation best
 		if (validation_function_compare(curr_eval, m_best_ctx.m_eval))
 		{
-			//must copy because "restart" 
 			//not copy element then 
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
@@ -411,7 +400,6 @@ namespace Denn
 		//loss best
 		if (loss_function_compare(curr->m_eval, m_best_ctx.m_eval))
 		{
-			//must copy because "restart" 
 			//not copy element then 
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
@@ -419,45 +407,6 @@ namespace Denn
 			m_best_ctx.m_eval = curr->m_eval;
 		}
 	}
-	void DennAlgorithm::execute_update_restart(size_t pass)
-	{
-		//if not enabled then not reset
-		if(!*m_params.m_restart_enable) return ;
-		//inc count
-		if (std::abs(m_best_ctx.m_eval - m_restart_ctx.m_last_eval) <= (Scalar)m_params.m_restart_delta)
-		{
-			++m_restart_ctx.m_test_count;
-		}
-		else
-		{
-			m_restart_ctx.m_test_count = 0;
-			m_restart_ctx.m_last_eval = m_best_ctx.m_eval;
-		}
-		//first
-		if (!pass) m_restart_ctx.m_last_eval = m_best_ctx.m_eval;
-		//test
-		if (m_restart_ctx.m_test_count >= (Scalar)m_params.m_restart_count)
-		{
-			m_population.restart
-			(
-				  m_best_ctx.m_best					     //best
-				, random().index_rand(current_np()) //where put
-				, m_default							     //default individual
-				, current_batch()						 //current batch
-				, gen_random_func()				         //random generator
-				, *m_loss_function				         //fitness function
-				, m_thpool								 //threads
-				, gen_random_func_thread()				 //random generator (by thread)
-			);
-			m_restart_ctx.m_test_count = 0;
-			m_restart_ctx.m_last_eval = m_best_ctx.m_eval;
-			//restart inc
-			++m_restart_ctx.m_count;
-			//output
-			if(m_output) m_output->restart();
-		}
-	}
-	
 	/////////////////////////////////////////////////////////////////
 	//execute a pass
 	void DennAlgorithm::execute_pass()

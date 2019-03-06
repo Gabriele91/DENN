@@ -104,17 +104,5 @@ namespace Denn
 		void the_best_sons_become_parents();
 		void swap(size_t i);
 		void swap_all();
-		//restart
-		void restart
-		(
-			  Individual::SPtr best
-			, const size_t            where_put_best
-			, const Individual::SPtr& i_default
-			, const DataSet&          dataset
-			, const RandomFunction    random_func
-			, Evaluation&		      loss_function
-			, ThreadPool*			  thread_pool = nullptr
-			, RandomFunctionThread    thread_random = nullptr
-		);
 	};
 }

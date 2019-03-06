@@ -230,24 +230,6 @@ namespace Denn
             m_clamp_max, "Maximum size of weight", { "-cmax"  }
         },
         ParameterInfo{ 
-            m_restart_count, "Number of change of batches before restart (if accuracy not increase)", { "-rc"  }, 
-            [this](Arguments& args) -> bool  
-            { 
-                m_restart_count = args.get_int() ; 
-                if(*m_restart_count < 0) m_restart_enable = false; 
-                return true; 
-            } 
-        },
-        ParameterInfo{ 
-            m_restart_delta, "Delta factor to determine if accuracy is increased", { "-rd"  }, 
-            [this](Arguments& args) -> bool 
-            {
-                m_restart_delta = args.get_double() ; 
-                if(*m_restart_delta<0) m_restart_enable = false;
-                 return true; 
-            } 
-        },
-        ParameterInfo{ 
 			m_learning_rate, "Learning rate of backpropagation for each pass", { "-lrate", "-lrbp"  },
             [this](Arguments& args) -> bool 
             {

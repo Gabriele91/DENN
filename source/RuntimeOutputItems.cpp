@@ -174,7 +174,6 @@ namespace Denn
             output() << "=== START ===" << std::endl;
             m_start_time = Denn::Time::get_time();
             m_n_pass = 0;
-            m_n_restart = 0;
             //clean line
             clean_line();
             //output
@@ -198,11 +197,6 @@ namespace Denn
             //output
             write_output(true); 
             output() << std::endl;
-        }
-
-        virtual void restart() override
-        {
-            ++m_n_restart;
         }
 
         // virtual void start_a_sub_pass() override 
@@ -233,7 +227,6 @@ namespace Denn
         double m_sub_pass_time;
         long   m_n_pass;
         long   m_n_sub_pass;
-        long   m_n_restart;
 
 
         virtual void write_output(bool execute_test = false)
@@ -249,7 +242,6 @@ namespace Denn
                 Scalar test_result = m_algorithm.execute_test(*m_algorithm.best_context().m_best);
                 output() << "[ACC_TEST:" << cut_digits(test_result) << "]";
             }
-            output() << "[N_RESET:" << cut_digits(m_n_restart) << "]";
             output() << "[TIME:" << (Denn::Time::get_time() - m_start_time) << "]";
         }
 

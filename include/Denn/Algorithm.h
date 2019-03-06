@@ -31,23 +31,6 @@ public:
 	//Ref mutation
 	////////////////////////////////////////////////////////////////////////
 	//structs utilities
-	struct RestartContext
-	{
-		Scalar     m_last_eval;
-		size_t	   m_test_count;
-		size_t	   m_count;
-        //
-		RestartContext(
-			  Scalar last_eval  = Scalar(0.0)
-			, size_t	 test_count = 0
-			, size_t	 count      = 0
-		)
-		{
-			m_last_eval  = last_eval;
-			m_test_count = test_count;
-			m_count      = count;
-		}
-	};
 	struct BestContext
 	{
 		Individual::SPtr m_best;
@@ -93,8 +76,6 @@ public:
 
 	const BestContext& best_context() const;
 
-	const RestartContext& restart_context() const;
-
 	Random& random(size_t i) const;
 
 	Random& random() const;
@@ -136,7 +117,6 @@ protected:
 	void execute_update_best();
 	void execute_update_best_on_validation();
 	void execute_update_best_on_loss_function();
-	void execute_update_restart(size_t pass);	
 	/////////////////////////////////////////////////////////////////
 	//execute a pass
 	void execute_pass();
@@ -175,7 +155,6 @@ protected:
 	TestSetStream         m_dataset_batch;
 	//Execution Context
 	BestContext		      m_best_ctx;
-	RestartContext		  m_restart_ctx;
 	//params of DE
 	Parameters 		      m_params;
 	EvolutionMethod::SPtr m_e_method;
