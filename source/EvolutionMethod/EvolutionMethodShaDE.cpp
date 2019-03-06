@@ -45,27 +45,35 @@ namespace Denn
 		virtual void create_a_individual
 		(
 			  DoubleBufferPopulation& dpopulation
-			, size_t i_target
-			, Individual& i_output
+			, size_t id_target
+			, Individual& output
 		)
 		override
 		{
+			//vectors
+			Population& population = dpopulation.parents();
+			Individual& target     = *population[id_target];
 			//take tou
-			size_t tou_i = random(i_target).index_rand(m_mu_f.size());
+			size_t tou_i = random(id_target).index_rand(m_mu_f.size());
 			//Compute F
 			Scalar v;
-			do v = random(i_target).cauchy(m_mu_f[tou_i], 0.1); while (v <= 0);
-			i_output.m_f = Denn::sature(v);
+			do v = random(id_target).cauchy(m_mu_f[tou_i], 0.1); while (v <= 0);
+			output.m_f = Denn::sature(v);
 			//Cr
-			i_output.m_cr = Denn::sature(random(i_target).normal(m_mu_cr[tou_i], 0.1));
+			output.m_cr = Denn::sature(random(id_target).normal(m_mu_cr[tou_i], 0.1));
 			//P
-			i_output.m_p = random(i_target).uniform(m_pmin, 0.2);
-			//call muation
-			(*m_mutation) (dpopulation.parents(), i_target, i_output);
-			//call crossover
-			(*m_crossover)(dpopulation.parents(), i_target, i_output);
+			output.m_p = random(id_target).uniform(m_pmin, 0.2);
+			//call muation + crossover
+			for(size_t l = 0; l < output.size(); ++l)
+			for(size_t m = 0; m < output[l].size(); ++m)
+			{
+				PopulationSlider pop_slider(population, l, m);
+				IndividualSlider ind_slider(target, l, m);
+				(*m_mutation) (pop_slider, id_target, ind_slider);
+				(*m_crossover)(pop_slider, id_target, ind_slider);
+			}
 			//no 0 wights
-			i_output.m_network.no_0_weights();
+			output.m_network.no_0_weights();
 		}
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override
@@ -191,30 +199,37 @@ namespace Denn
 		virtual void create_a_individual
 		(
 			  DoubleBufferPopulation& dpopulation
-			, size_t i_target
-			, Individual& i_output
+			, size_t id_target
+			, Individual& output
 		)
 		override
 		{
+			//vectors
+			Population& population = dpopulation.parents();
+			Individual& target     = *population[id_target];
 			//take tou
-			size_t tou_i = random(i_target).index_rand(m_mu_f.size());
+			size_t tou_i = random(id_target).index_rand(m_mu_f.size());
 			//Compute F
 			Scalar v;
-			do v = random(i_target).cauchy(m_mu_f[tou_i], 0.1); while (v <= 0);
-			i_output.m_f = Denn::sature(v);
+			do v = random(id_target).cauchy(m_mu_f[tou_i], 0.1); while (v <= 0);
+			output.m_f = Denn::sature(v);
 			//Cr
-			i_output.m_cr = 
-			  m_mu_cr[tou_i] == *parameters().m_mu_cr_terminal_value
+			output.m_cr =  m_mu_cr[tou_i] == *parameters().m_mu_cr_terminal_value
 			? Scalar(0.0) 
-			: Denn::sature(random(i_target).normal(m_mu_cr[tou_i], 0.1));
+			: Denn::sature(random(id_target).normal(m_mu_cr[tou_i], 0.1));
 			//P
-			i_output.m_p = random(i_target).uniform(m_pmin, 0.2);
-			//call muation
-			(*m_mutation) (dpopulation.parents(), i_target, i_output);
-			//call crossover
-			(*m_crossover)(dpopulation.parents(), i_target, i_output);
+			output.m_p = random(id_target).uniform(m_pmin, 0.2);
+			//call muation + crossover
+			for(size_t l = 0; l < output.size(); ++l)
+			for(size_t m = 0; m < output[l].size(); ++m)
+			{
+				PopulationSlider pop_slider(population, l, m);
+				IndividualSlider ind_slider(output, l, m);
+				(*m_mutation) (pop_slider, id_target, ind_slider);
+				(*m_crossover)(pop_slider, id_target, ind_slider);
+			}
 			//no 0 wights
-			i_output.m_network.no_0_weights();
+			output.m_network.no_0_weights();
 		}
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override

@@ -19,7 +19,10 @@ namespace Denn
 		//ref to Crossover
 		using SPtr = std::shared_ptr<Crossover>;
 		//operator
-		virtual void operator()(const Population& population, size_t id_target, Individual& mutant)= 0;
+		virtual void operator()(const PopulationSlider& population, 
+								size_t id_target,
+								IndividualSlider& output
+								)= 0;
 		//return ptr
 		SPtr get_ptr() { return this->shared_from_this(); }
 

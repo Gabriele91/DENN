@@ -45,25 +45,34 @@ namespace Denn
 		virtual void create_a_individual
 		(
 			  DoubleBufferPopulation& dpopulation
-			, size_t i_target
-			, Individual& i_output
+			, size_t id_target
+			, Individual& output
 		)
 		override
 		{
+			//vectors
+			Population& population = dpopulation.parents();
+			Individual& target     = *population[id_target];
 			//Compute F
 			//JADE REF:  Cauchy  distribution  with  location  parameter μF and scale parameter 0.1
 			//           Fi=randci(μF,0.1) and  then  truncated  to  be  1  if Fi≥1  or  regenerated  if Fi ≤ 0
 			Scalar v;
-			do v = random(i_target).cauchy(m_mu_f, 0.1); while (v <= 0);
-			i_output.m_f = Denn::sature(v);
-			//Cr
-			i_output.m_cr = Denn::sature(random(i_target).normal(m_mu_cr, 0.1));
-			//call muation
-			(*m_mutation) (dpopulation.parents(), i_target, i_output);
-			//call crossover
-			(*m_crossover)(dpopulation.parents(), i_target, i_output);
+			do v = random(id_target).cauchy(m_mu_f, 0.1); while (v <= 0);
+			//update meta parameters
+			output.m_f  = Denn::sature(v);
+			output.m_cr = Denn::sature(random(id_target).normal(m_mu_cr, 0.1));
+			output.m_p  = target.m_p;
+			//call muation + crossover
+			for(size_t l = 0; l < output.size(); ++l)
+			for(size_t m = 0; m < output[l].size(); ++m)
+			{
+				PopulationSlider pop_slider(population, l, m);
+				IndividualSlider ind_slider(output, l, m);
+				(*m_mutation) (pop_slider, id_target, ind_slider);
+				(*m_crossover)(pop_slider, id_target, ind_slider);
+			}
 			//no 0 wights
-			i_output.m_network.no_0_weights();
+			output.m_network.no_0_weights();
 		}
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override

@@ -29,30 +29,37 @@ namespace Denn
 		virtual void create_a_individual
 		(     
 			  DoubleBufferPopulation& dpopulation
-			, size_t i_target
-			, Individual& i_output
+			, size_t id_target
+			, Individual& output
 		) 
 		override
 		{
 			//vectors
-			const Population& parents    = dpopulation.parents();
-			const Individual& target     = *parents[i_target];
+			Population& population = dpopulation.parents();
+			Individual& target     = *population[id_target];
 			//f JDE
-			if (random(i_target).uniform() < Scalar(parameters().m_jde_f))
-				i_output.m_f = Scalar(random(i_target).uniform(0.0, 2.0));
+			if (random(id_target).uniform() < Scalar(parameters().m_jde_f))
+				output.m_f = Scalar(random(id_target).uniform(0.0, 2.0));
 			else
-				i_output.m_f = target.m_f;
+				output.m_f = target.m_f;
 			//cr JDE
-			if (random(i_target).uniform() < Scalar(parameters().m_jde_cr))
-				i_output.m_cr = Scalar(random(i_target).uniform());
+			if (random(id_target).uniform() < Scalar(parameters().m_jde_cr))
+				output.m_cr = Scalar(random(id_target).uniform());
 			else
-				i_output.m_cr = target.m_cr;
-			//call muation
-			(*m_mutation) (parents, i_target, i_output);
-			//call crossover
-			(*m_crossover)(parents, i_target, i_output);
+				output.m_cr = target.m_cr;
+			//update p
+			output.m_p  = target.m_p;
+			//call muation + crossover
+			for(size_t l = 0; l < output.size(); ++l)
+			for(size_t m = 0; m < output[l].size(); ++m)
+			{
+				PopulationSlider pop_slider(population, l, m);
+				IndividualSlider ind_slider(output, l, m);
+				(*m_mutation) (pop_slider, id_target, ind_slider);
+				(*m_crossover)(pop_slider, id_target, ind_slider);
+			}
 			//no 0 wights
-			i_output.m_network.no_0_weights();
+			output.m_network.no_0_weights();
 		}
 
 		virtual	void selection(DoubleBufferPopulation& population) override

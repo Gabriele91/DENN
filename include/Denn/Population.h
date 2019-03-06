@@ -56,6 +56,146 @@ namespace Denn
 
 	};
     ////////////////////////////////////////////////////////////////////////
+	class IndividualSlider 
+	{
+		Individual& m_individual;
+		const size_t m_layer_index;
+		const size_t m_matrix_index;
+
+	public:	
+
+		IndividualSlider(Individual& individual, size_t layer_index, size_t matrix_index)
+		: m_individual(individual)
+		, m_layer_index(layer_index)
+		, m_matrix_index(matrix_index)
+		{}
+
+		virtual Scalar f() const 
+		{
+			return m_individual.m_f;
+		}
+
+		virtual Scalar cr() const 
+		{
+			return m_individual.m_cr;
+		}
+
+		virtual Scalar p() const
+		{
+			return m_individual.m_p;
+		}
+
+		virtual Scalar eval() const
+		{
+			return m_individual.m_eval;
+		}
+	
+		virtual AlignedMapMatrix operator * ()
+		{
+			return m_individual[m_layer_index][m_matrix_index];
+		}
+
+		virtual ConstAlignedMapMatrix operator * () const
+		{
+			const Individual& individual = m_individual;
+			return individual[m_layer_index][m_matrix_index];
+		}
+
+		IndividualSlider& operator = (AlignedMapMatrix value)
+		{
+			m_individual[m_layer_index][m_matrix_index] = value;
+			return *this;
+		}
+
+
+	};
+
+	class PopulationSlider
+	{
+		Population& m_population;
+		const size_t m_layer_index;
+		const size_t m_matrix_index;
+
+	public:
+
+		PopulationSlider(Population& population, size_t layer_index, size_t matrix_index)
+		: m_population(population)
+		, m_layer_index(layer_index)
+		, m_matrix_index(matrix_index)
+		{}
+
+		size_t size() const
+		{
+			return m_population.size();
+		}
+
+		virtual Scalar f(size_t i) const
+		{
+			return (*m_population[i]).m_f;
+		}
+
+		virtual Scalar cr(size_t i) const 
+		{
+			return (*m_population[i]).m_cr;
+		}
+
+		virtual Scalar p(size_t i) const 
+		{
+			return (*m_population[i]).m_p;
+		}
+
+
+		virtual Scalar eval(size_t i) const 
+		{
+			return (*m_population[i]).m_eval;
+		}
+
+		virtual size_t best_id() const
+		{
+			Scalar scalar;
+			size_t id;
+			m_population.best(id, scalar);	
+			return id;
+		}
+
+		virtual IndividualSlider get_slider(Individual& individual) const
+		{
+			return IndividualSlider(individual, m_layer_index, m_matrix_index);
+		}
+
+		virtual ConstAlignedMapMatrix apply_slider(const Individual& individual) const
+		{
+			return individual[m_layer_index][m_matrix_index];
+		}
+
+
+		virtual IndividualSlider individual(size_t i) const
+		{
+			return IndividualSlider((*m_population[i]), m_layer_index, m_matrix_index);
+		}
+
+		virtual IndividualSlider best()
+		{
+			return IndividualSlider((*m_population.best()), m_layer_index, m_matrix_index);
+		}
+
+		virtual const IndividualSlider best() const
+		{
+			return IndividualSlider((*m_population.best()), m_layer_index, m_matrix_index);
+		}
+
+		virtual AlignedMapMatrix operator[](size_t i)
+		{
+			return (*m_population[i])[m_layer_index][m_matrix_index];
+		}
+
+		virtual ConstAlignedMapMatrix operator[](size_t i) const
+		{
+			const Individual& individual = (*m_population[i]);
+			return individual[m_layer_index][m_matrix_index];
+		}
+	};
+	////////////////////////////////////////////////////////////////////////
 	enum class PopulationType : size_t
 	{
 		PT_PARENTS=0,

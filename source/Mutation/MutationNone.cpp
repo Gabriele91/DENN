@@ -11,10 +11,15 @@ namespace Denn
 
 		NoneMutation(const DennAlgorithm& algorithm) :Mutation(algorithm) {}
 
-		virtual void operator()(const Population& population, size_t id_target, Individual& i_final) override
+		virtual void operator()
+		(
+			const PopulationSlider& population, 		
+			size_t id_target,
+			IndividualSlider& output
+		) override 
 		{
 			//target
-			i_final = *population[id_target];
+			(*output) = population[id_target];
 		}
 	};
 	REGISTERED_MUTATION(NoneMutation, "none")
