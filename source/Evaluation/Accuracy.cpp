@@ -1,5 +1,7 @@
 #include "Denn/Evaluation.h"
 #include "Denn/Parameters.h"
+#include "Denn/NeuralNetwork.h"
+#include "Denn/DataSet/DataSet.h"
 
 namespace Denn
 {

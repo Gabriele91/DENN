@@ -3,9 +3,9 @@
 #include "Denn/Evaluation.h"
 #include "Denn/RuntimeOutput.h"
 #include "Denn/SerializeOutput.h"
-#include "Denn/DataSet.h"
-#include "Denn/DataSetLoader.h"
-#include "Denn/TestSetStream.h"
+#include "Denn/DataSet/DataSet.h"
+#include "Denn/DataSet/DataSetLoader.h"
+#include "Denn/DataSet/TestSetStream.h"
 #include "Denn/Utilities/Build.h"
 #include <fstream>
 

@@ -2,10 +2,10 @@
 #include "Config.h"
 #include "Parameters.h"
 #include "NeuralNetwork.h"
-#include "DataSetLoader.h"
 #include "Evaluation.h"
 #include "SerializeOutput.h"
 #include "RuntimeOutput.h"
+#include "DataSet/DataSetLoader.h"
 
 namespace Denn
 {

@@ -67,9 +67,14 @@
         "xmemory0": "cpp",
         "xstddef": "cpp",
         "xtr1common": "cpp",
-        "xtree": "cpp"
+        "xtree": "cpp",
+        "*.tcc": "cpp",
+        "clocale": "cpp",
+        "cstdarg": "cpp",
+        "cwctype": "cpp",
+        "optional": "cpp",
+        "string_view": "cpp"
     },
-    "C_Cpp.default.configurationProvider": "vector-of-bool.cmake-tools",
-    "python.pythonPath": "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\Python36_64\\python.exe",
+    "python.pythonPath": "F:\\ProgramData\\Python\\Python36\\python.exe",
     "C_Cpp.configurationWarnings": "Disabled"
 }

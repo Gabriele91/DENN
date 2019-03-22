@@ -1,5 +1,4 @@
 #include "Denn/Evaluation.h"
-#include "Denn/Algorithm.h"
 #include <algorithm>
 #include <sstream>
 #include <iterator>

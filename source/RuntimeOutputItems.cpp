@@ -1,5 +1,5 @@
 #include "Denn/RuntimeOutput.h"
-#include "Denn/Algorithm.h"
+#include "Denn/Denn/Solver.h"
 
 namespace Denn
 {
@@ -8,19 +8,20 @@ namespace Denn
     class SilentOutput : public Denn::RuntimeOutput
     {
     public:
-	    SilentOutput(std::ostream& stream,const DennAlgorithm& algorithm):RuntimeOutput(stream, algorithm) {}
+	    SilentOutput(std::ostream& stream,const Solver& solver):RuntimeOutput(stream, solver) {}
     };
     REGISTERED_RUNTIME_OUTPUT(SilentOutput,"silent")
 
     class AllFitnessOutput : public Denn::RuntimeOutput
     {
     public:
-	    AllFitnessOutput(std::ostream& stream,const DennAlgorithm& algorithm):RuntimeOutput(stream, algorithm) {}
+	    AllFitnessOutput(std::ostream& stream,const Solver& solver):RuntimeOutput(stream, solver) {}
         
         virtual void end_a_sub_pass() override 
         { 
-            for(const Individual::SPtr& i : population().parents())
-                output() << i->m_eval << "; ";
+            for(auto subpop : population())
+            for(auto i      : subpop->parents())
+                output() << i->eval() << "; ";
             output() << std::endl;
         }
     };
@@ -31,7 +32,7 @@ namespace Denn
     {
     public:
 
-        FullOutput(std::ostream& stream,const DennAlgorithm& algorithm):RuntimeOutput(stream, algorithm) {}
+        FullOutput(std::ostream& stream,const Solver& solver):RuntimeOutput(stream, solver) {}
         
         virtual void start() override
         { 
@@ -80,7 +81,7 @@ namespace Denn
         virtual void end() override
         { 
             double time_of_execution = Denn::Time::get_time() - m_start_time ;
-            Scalar test_result = m_algorithm.execute_test(*m_algorithm.best_context().m_best);
+            Scalar test_result = solver().test_function_eval(solver().current_best_network());
             output() 
             << "Denn/ end [ test: " 
             << test_result
@@ -101,8 +102,6 @@ namespace Denn
         virtual void write_output()
         {
             write_local_pass();
-            output() << " -> on population: ";
-            write_pass_best("[ id: ",", cross: ");
             output() << ", best: ";
             write_global_best("[ acc: ",", cross: ");
         }
@@ -134,30 +133,8 @@ namespace Denn
 	{
 	    output() 
 	    << open 
-	    << m_algorithm.best_context().m_eval 
-            << separetor 
-            << m_algorithm.best_context().m_best->m_eval 
-            << closer;
-	}
-
-    virtual void write_pass_best
-    (
-		const std::string& open="[ ", 
-		const std::string& separetor=", ", 
-		const std::string& closer=" ]"
-	) 
-	{
-            ///////////////////////////////////////
-            size_t id; 
-            Scalar eval;
-            m_algorithm.population().best(id,eval);
-            ///////////////////////////////////////
-	    output()
-            << open 
-            << id 
-            << separetor 
-            << eval 
-            << closer;
+	    << solver().current_best_eval() 
+        << closer;
 	}
 
     };
@@ -167,7 +144,7 @@ namespace Denn
     {
     public:
 
-	    BenchOutput(std::ostream& stream,const DennAlgorithm& algorithm):RuntimeOutput(stream, algorithm) {}
+	    BenchOutput(std::ostream& stream, const Solver& solver):RuntimeOutput(stream, solver) {}
         
         virtual void start() override
         { 
@@ -215,7 +192,7 @@ namespace Denn
         virtual void end() override
         { 
             double time_of_execution = Denn::Time::get_time() - m_start_time ;
-            Scalar test_result = m_algorithm.execute_test(*m_algorithm.best_context().m_best);
+            Scalar test_result = solver().test_function_eval(solver().current_best_network());
             output() << "+ TEST\t" << test_result       << std::endl;
             output() << "+ TIME\t" << time_of_execution << std::endl;
             output() << "=== END ===" << std::endl;
@@ -233,13 +210,13 @@ namespace Denn
         {
             //////////////////////////////////////////////////////////
             size_t n_sub_pass = *parameters().m_sub_gens;
-            Scalar validation =  m_algorithm.best_context().m_eval;
+            Scalar validation =  solver().current_best_eval();
             ///////////////////////////////////////////////////////////
             output() << "|-[" << (m_n_pass) * n_sub_pass; 
             output() << "]->[ACC_VAL:" << cut_digits(validation) << "]";
             if(execute_test && *parameters().m_compute_test_per_pass)
             {
-                Scalar test_result = m_algorithm.execute_test(*m_algorithm.best_context().m_best);
+                Scalar test_result = solver().test_function_eval(solver().current_best_network());
                 output() << "[ACC_TEST:" << cut_digits(test_result) << "]";
             }
             output() << "[TIME:" << (Denn::Time::get_time() - m_start_time) << "]";

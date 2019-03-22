@@ -1,6 +1,7 @@
 #include "Denn/Core/Variant.h"
-#include "Denn/Individual.h"
-#include "Denn/Population.h"
+#include "Denn/Denn/Individual.h"
+#include "Denn/Denn/Population.h"
+#include "Denn/Denn/SubPopulation.h"
 
 namespace Denn
 {
@@ -133,10 +134,22 @@ namespace Denn
         *((Individual *)(m_ptr)) = i;
     }
 
+    Variant::Variant(const std::vector< std::shared_ptr< Individual > >& i)
+    {
+        set_type(VR_INDIVIDUAL_LIST);
+        *((std::vector< std::shared_ptr< Individual > > *)(m_ptr)) = i;
+    }
+
     Variant::Variant(const Population& pop)
     {
         set_type(VR_POPULATION);
         *((Population *)(m_ptr)) = pop;
+    }
+
+    Variant::Variant(const SubPopulation& pop)
+    {
+        set_type(VR_SUB_POPULATION);
+        *((SubPopulation *)(m_ptr)) = pop;
     }
 
     Variant::Variant(const std::vector< short > & v_s)
@@ -272,7 +285,9 @@ namespace Denn
 		case VariantType::VR_LONG_DOUBLE_MATRIX: (*this) = ref.get<MatrixLD>(); break;
 
 		case VariantType::VR_INDIVIDUAL:         (*this) = ref.get<Individual>(); break;
+		case VariantType::VR_INDIVIDUAL_LIST:    (*this) = ref.get<std::vector< std::shared_ptr< Individual > >>(); break;
 		case VariantType::VR_POPULATION:         (*this) = ref.get<Population>(); break;
+		case VariantType::VR_SUB_POPULATION:     (*this) = ref.get<SubPopulation>(); break;
 
 		case VariantType::VR_STD_VECTOR_SHORT:             (*this) = ref.get< std::vector<short> >(); break;
 		case VariantType::VR_STD_VECTOR_INT:               (*this) = ref.get< std::vector<int> >(); break;
@@ -331,9 +346,11 @@ namespace Denn
         case VR_FLOAT_MATRIX: return get<MatrixF>() == right.get<MatrixF>();
         case VR_DOUBLE_MATRIX: return get<MatrixD>() == right.get<MatrixD>();
         case VR_LONG_DOUBLE_MATRIX: return get<MatrixLD>() == right.get<MatrixLD>();
-        //not support
+        //not support //todo
         case VR_INDIVIDUAL:
+        case VR_INDIVIDUAL_LIST:
         case VR_POPULATION:
+        case VR_SUB_POPULATION:
         case VR_STD_VECTOR_SHORT:
         case VR_STD_VECTOR_INT:
         case VR_STD_VECTOR_LONG:
@@ -391,7 +408,9 @@ namespace Denn
         case VR_DOUBLE_MATRIX:
         case VR_LONG_DOUBLE_MATRIX:
         case VR_INDIVIDUAL:
+        case VR_INDIVIDUAL_LIST:
         case VR_POPULATION:
+        case VR_SUB_POPULATION:
         case VR_C_STRING:
         case VR_STD_STRING:
         case VR_STD_VECTOR_SHORT:
@@ -434,7 +453,9 @@ namespace Denn
         case VR_LONG_DOUBLE_MATRIX:		   get<MatrixLD>() = (const MatrixLD&)in; break;
 
         case VR_INDIVIDUAL:		   get<Individual>() = (const Individual&)in; break;
+        case VR_INDIVIDUAL_LIST:   get< std::vector< std::shared_ptr< Individual > > >() = (const std::vector< std::shared_ptr< Individual > >&)in; break;
         case VR_POPULATION:		   get<Population>() = (const Population&)in; break;
+        case VR_SUB_POPULATION:	   get<SubPopulation>() = (const SubPopulation&)in; break;
 
         case VR_STD_VECTOR_SHORT:
             get< std::vector<short> >() = (const std::vector<short>&)in;
@@ -503,7 +524,9 @@ namespace Denn
         case VR_LONG_DOUBLE_MATRIX:		   delete (MatrixLD*)(m_ptr); break;
 
         case VR_INDIVIDUAL:		   delete (Individual*)(m_ptr); break;
+        case VR_INDIVIDUAL_LIST:   delete (std::vector< std::shared_ptr< Individual > >*)(m_ptr); break;
         case VR_POPULATION:		   delete (Population*)(m_ptr); break;
+        case VR_SUB_POPULATION:	   delete (SubPopulation*)(m_ptr); break;
 
         case VR_STD_VECTOR_SHORT:    delete (std::vector<short>*)m_ptr;    break;
         case VR_STD_VECTOR_INT:    delete (std::vector<int>*)m_ptr;    break;
@@ -535,7 +558,9 @@ namespace Denn
         case VR_LONG_DOUBLE_MATRIX:		   m_ptr = new MatrixLD; break;
 
         case VR_INDIVIDUAL:			        m_ptr = new Individual; break;
-        case VR_POPULATION:		            m_ptr = new Population; break;
+        case VR_INDIVIDUAL_LIST:            m_ptr = new IndividualList; break;
+        case VR_POPULATION:			        m_ptr = new Population; break;
+        case VR_SUB_POPULATION:		        m_ptr = new SubPopulation; break;
 
         case VR_STD_VECTOR_SHORT:           m_ptr = new std::vector<short>;      break;
         case VR_STD_VECTOR_INT:             m_ptr = new std::vector<int>;	     break;
@@ -672,10 +697,22 @@ namespace Denn
 			m_type = VR_INDIVIDUAL;
 		}
 
+		VariantRef::VariantRef(const std::vector< std::shared_ptr< Individual > >& i)
+		{
+			m_ptr = (void*)&i;
+			m_type = VR_INDIVIDUAL_LIST;
+		}
+
 		VariantRef::VariantRef(const Population& pop)
 		{
 			m_ptr = (void*)&pop;
 			m_type = VR_POPULATION;
+		}
+
+		VariantRef::VariantRef(const SubPopulation& pop)
+		{
+			m_ptr = (void*)&pop;
+			m_type = VR_SUB_POPULATION;
 		}
 
 		VariantRef::VariantRef(const std::vector< short > & v_s)

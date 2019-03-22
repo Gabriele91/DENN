@@ -4,17 +4,16 @@
 namespace Denn
 {
 	//
+	class Population;
 	class Parameters;
-	class DennAlgorithm;
-	class EvolutionMethod;
-	class DoubleBufferPopulation;
+	class Solver;
 	//
 	class RuntimeOutput : public std::enable_shared_from_this< RuntimeOutput >
 	{
 	protected:
 		//attributes
-		std::ostream&        m_stream;
-		const DennAlgorithm& m_algorithm;
+		std::ostream& m_stream;
+		const Solver& m_solver;
 
 	public:
 		using SPtr = std::shared_ptr<RuntimeOutput>;
@@ -22,21 +21,20 @@ namespace Denn
 		RuntimeOutput
 		(
 		  std::ostream& stream
-		, const DennAlgorithm& algorithm
+		, const Solver& solver
 		)
 		:m_stream(stream)
-		,m_algorithm(algorithm) 
+		,m_solver(solver) 
 		{
 		}
 
 		SPtr get_ptr(){ return shared_from_this(); }
 		//Output / Parameters
-		virtual std::ostream&     output()     const { return m_stream;      }
+		virtual std::ostream&  output() const { return m_stream; }
 		//easy access		
-		const EvolutionMethod&        evolution_method() const;
-		const Parameters&             parameters()       const;	
-		const DoubleBufferPopulation& population()       const;
-		const size_t                  current_np()       const;
+		const Parameters&             parameters()        const;	
+		const Population&             population()        const;
+		const Solver&             	  solver()            const;
 
 		virtual void start()
 		{
@@ -76,10 +74,10 @@ namespace Denn
 
 	public:
 		//Crossover classes map
-		typedef RuntimeOutput::SPtr(*CreateObject)(std::ostream& stream,const DennAlgorithm& algorithm);
+		typedef RuntimeOutput::SPtr(*CreateObject)(std::ostream& stream,const Solver& solver);
 
 		//public
-		static RuntimeOutput::SPtr create(const std::string& name, std::ostream& stream,const DennAlgorithm& algorithm);
+		static RuntimeOutput::SPtr create(const std::string& name, std::ostream& stream,const Solver& algorithm);
 		static void append(const std::string& name, CreateObject fun, size_t size);
 
 		//list of methods
@@ -96,9 +94,9 @@ namespace Denn
 	class RuntimeOutputItem
 	{
 
-		static RuntimeOutput::SPtr create(std::ostream& stream,const DennAlgorithm& algorithm)
+		static RuntimeOutput::SPtr create(std::ostream& stream,const Solver& solver)
 		{
-			return (std::make_shared< T >(stream,algorithm))->get_ptr();
+			return (std::make_shared< T >(stream,solver))->get_ptr();
 		}
 
 		RuntimeOutputItem(const std::string& name, size_t size)

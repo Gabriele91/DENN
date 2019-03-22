@@ -17,7 +17,7 @@ S_INC  = $(TOP)/include/
 
 
 # C++ files
-SOURCE_FILES = $(wildcard $(S_DIR)/*.cpp) $(wildcard $(S_DIR)/*/*.cpp)
+SOURCE_FILES = $(wildcard $(S_DIR)/*.cpp) $(wildcard $(S_DIR)/*/*.cpp)  $(wildcard $(S_DIR)/*/*/*.cpp)
 SOURCE_DEBUG_OBJS = $(addprefix $(O_DEBUG_DIR)/,$(notdir $(SOURCE_FILES:.cpp=.o)))
 SOURCE_RELEASE_OBJS = $(addprefix $(O_RELEASE_DIR)/,$(notdir $(SOURCE_FILES:.cpp=.o)))
 
@@ -194,6 +194,13 @@ $(O_RELEASE_DIR)/%.o: $(S_DIR)/*/%.cpp
 	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(subst $(O_RELEASE_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
 	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $< -o $@
 
+$(O_DEBUG_DIR)/%.o: $(S_DIR)/*/*/%.cpp
+	$(call colorecho,$(COLOR_GREEN),"[ Make debug object: $(subst $(O_DEBUG_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
+	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(DEBUG_FLAGS) -c $< -o $@
+
+$(O_RELEASE_DIR)/%.o: $(S_DIR)/*/*/%.cpp
+	$(call colorecho,$(COLOR_GREEN),"[ Make release object: $(subst $(O_RELEASE_DIR)/,,$(@:.o=.cpp)) => $(subst $(TOP)/,,$(@))  ]")
+	@$(COMPILER) $(C_FLAGS) $(CC_FLAGS) $(RELEASE_FLAGS) -c $< -o $@
 # Clean
 clean: clean_debug clean_release
 

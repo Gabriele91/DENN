@@ -1,6 +1,6 @@
 #include "Denn/SerializeOutput.h"
 #include "Denn/Parameters.h"
-#include "Denn/Individual.h"
+#include "Denn/NeuralNetwork.h"
 
 namespace Denn
 {
@@ -40,12 +40,10 @@ namespace Denn
 			output() << "\t}," << std::endl;
 		}
 
-		virtual void serialize_best(double time, Denn::Scalar accuracy, Denn::Scalar f, Denn::Scalar cr, const Denn::NeuralNetwork& network) override
+		virtual void serialize_best(double time, Denn::Scalar accuracy, const Denn::NeuralNetwork& network) override
 		{
 			output() << "\t\"time\" : " << Dump::json_number(time) << "," << std::endl;
 			output() << "\t\"accuracy\" : " << Dump::json_number(accuracy) << "," << std::endl;
-			output() << "\t\"f\" : " << Dump::json_number(f) << "," << std::endl;
-			output() << "\t\"cr\" : " << Dump::json_number(cr) << "," << std::endl;
 			//...
 			if (!*parameters().m_serialize_neural_network) return;
 			//serialize net
@@ -93,16 +91,16 @@ namespace Denn
 			//print header
 			for (size_t i = 0; i != params_serializable.size(); ++i)
 				output() << params_serializable[i]->m_associated_variable->name() << "; ";
-			output() << "time; accuracy; f; cr" << (*parameters().m_serialize_neural_network ? "; neutal network" : "");
+			output() << "time; accuracy" << (*parameters().m_serialize_neural_network ? "; neutal network" : "");
 			output() << std::endl;
 			//serialize
 			for (size_t i = 0; i != params_serializable.size(); ++i)
 				output() << variant_to_str(params_serializable[i]->m_associated_variable->variant()) << "; ";
 		}
 
-		virtual void serialize_best(double time, Denn::Scalar accuracy, Denn::Scalar f, Denn::Scalar cr, const Denn::NeuralNetwork& network) override
+		virtual void serialize_best(double time, Denn::Scalar accuracy, const Denn::NeuralNetwork& network) override
 		{
-			output() << time << "; " << accuracy << "; " << f << "; " << cr;
+			output() << time << "; " << accuracy << "; " ;
 			//no full?
 			if (!*parameters().m_serialize_neural_network)
 			{

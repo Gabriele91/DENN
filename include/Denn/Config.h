@@ -5,7 +5,7 @@
 #include <cassert>
 #include <cctype>
 //default CPP include
-#include <limits>
+#include <array>
 #include <map>
 #include <queue>
 #include <vector>
@@ -14,6 +14,7 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <limits>
 #include <iostream>
 //lib include
 #include <Eigen/Eigen>

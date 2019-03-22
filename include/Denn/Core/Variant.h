@@ -1,6 +1,7 @@
 #pragma once
 #include <string>
 #include <vector>
+#include <memory>
 #include "Scalar.h"
 #include "EigenAlias.h"
 
@@ -9,6 +10,7 @@ namespace Denn
 	//denn types
 	class Individual;
 	class Population;
+	class SubPopulation;
 
 	//variant types
 	class Variant;
@@ -42,6 +44,8 @@ namespace Denn
 		VR_LONG_DOUBLE_MATRIX,
 
 		VR_INDIVIDUAL,
+		VR_INDIVIDUAL_LIST,
+		VR_SUB_POPULATION,
 		VR_POPULATION,
 
 		VR_STD_VECTOR_SHORT,
@@ -91,8 +95,10 @@ namespace Denn
 	template <> inline VariantType static_variant_type<MatrixD>() { return VR_DOUBLE_MATRIX; };
 	template <> inline VariantType static_variant_type<MatrixLD>() { return VR_LONG_DOUBLE_MATRIX; };
 
-	template <> inline VariantType static_variant_type<Individual>() { return VR_INDIVIDUAL; };
-	template <> inline VariantType static_variant_type<Population>() { return VR_POPULATION; };
+	template <> inline VariantType static_variant_type<Individual>()     { return VR_INDIVIDUAL; };
+	template <> inline VariantType static_variant_type<std::vector< std::shared_ptr< Individual > >>() { return VR_INDIVIDUAL_LIST; };
+	template <> inline VariantType static_variant_type<SubPopulation>()  { return VR_SUB_POPULATION; };
+	template <> inline VariantType static_variant_type<Population>()     { return VR_POPULATION; };
 
 	template <> inline VariantType static_variant_type< std::vector< short > >() { return VR_STD_VECTOR_SHORT; };
 	template <> inline VariantType static_variant_type< std::vector< int > >() { return VR_STD_VECTOR_INT; };
@@ -165,7 +171,11 @@ namespace Denn
 
 		Variant(const Individual& pop);
 
+		Variant(const std::vector< std::shared_ptr< Individual > >& pop);
+
 		Variant(const Population& pop);
+
+		Variant(const SubPopulation& pop);
 
 		Variant(const std::vector< short > & v_s);
 
@@ -334,7 +344,11 @@ namespace Denn
 
 		VariantRef(const Individual& i);
 
+		VariantRef(const std::vector< std::shared_ptr< Individual > >& i);
+
 		VariantRef(const Population& pop);
+		
+		VariantRef(const SubPopulation& pop);
 
 		VariantRef(const std::vector< short > & v_s);
 

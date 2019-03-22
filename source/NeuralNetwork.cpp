@@ -2,6 +2,21 @@
 
 namespace Denn
 {	
+	///////////////////////////////////////////////////////////////////////////
+	//return ptr
+	NeuralNetwork::SPtr NeuralNetwork::get_ptr()
+	{
+		return this->shared_from_this();
+	}
+	NeuralNetwork::SPtr NeuralNetwork::copy() const
+	{
+		auto copy = std::make_shared<NeuralNetwork>();		
+		for (size_t i = 0; i != size(); ++i)
+		{
+			copy->m_layers.push_back((*this)[i].copy());
+		}
+		return copy;
+	}
 	////////////////////////////////////////////////////////////////
 	//  default constructor 
 	NeuralNetwork::NeuralNetwork()
@@ -139,6 +154,13 @@ namespace Denn
 		}
 	}
 	/////////////////////////////////////////////////////////////////////////
+	size_t NeuralNetwork::size_of_all_layers() const
+	{
+		size_t sum = 0;
+		for(size_t l = 0; l != size(); ++l) sum += (*this)[l].size();
+		return sum;
+	}
+
 	size_t NeuralNetwork::size() const
 	{
 		return m_layers.size();

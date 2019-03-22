@@ -1,12 +1,12 @@
 #include "Denn/Parameters.h"
-#include "Denn/Mutation.h"
-#include "Denn/Crossover.h"
-#include "Denn/EvolutionMethod.h"
 #include "Denn/RuntimeOutput.h"
 #include "Denn/SerializeOutput.h"
 #include "Denn/Instance.h"
 #include "Denn/Version.h"
 #include "Denn/Utilities/Networks.h"
+#include "Denn/Denn/Mutation.h"
+#include "Denn/Denn/Crossover.h"
+#include "Denn/Denn/EvolutionMethod.h"
 #include <sstream>
 #include <iostream>
 

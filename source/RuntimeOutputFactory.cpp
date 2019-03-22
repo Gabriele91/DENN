@@ -1,5 +1,5 @@
 #include "Denn/RuntimeOutput.h"
-#include "Denn/Algorithm.h"
+#include "Denn/Denn/Solver.h"
 #include <algorithm>
 #include <sstream>
 #include <iterator>
@@ -7,10 +7,9 @@
 namespace Denn 
 {
 	//easy access		
-	const EvolutionMethod&        RuntimeOutput::evolution_method() const{ return m_algorithm.evolution_method();  }
-	const Parameters&             RuntimeOutput::parameters()       const{ return m_algorithm.parameters();        }
-	const DoubleBufferPopulation& RuntimeOutput::population()       const{ return m_algorithm.population(); }
-	const size_t                  RuntimeOutput::current_np()       const{ return m_algorithm.current_np(); }
+	const Parameters&           RuntimeOutput::parameters()        const{ return solver().parameters();        }
+	const Population&           RuntimeOutput::population()        const{ return solver().population(); }
+	const Solver&               RuntimeOutput::solver()            const{ return m_solver; }
 	//map
 	static std::map< std::string, RuntimeOutputFactory::CreateObject >& ro_map()
 	{
@@ -18,12 +17,12 @@ namespace Denn
 		return ro_map;
 	}
 	//public
-	RuntimeOutput::SPtr RuntimeOutputFactory::create(const std::string& name, std::ostream& stream, const DennAlgorithm& algorithm)
+	RuntimeOutput::SPtr RuntimeOutputFactory::create(const std::string& name, std::ostream& stream, const Solver& solver)
 	{
 		//find
 		auto it = ro_map().find(name);
 		//return
-		return it == ro_map().end() ? nullptr : it->second(stream,algorithm);
+		return it == ro_map().end() ? nullptr : it->second(stream,solver);
 	}
 	void RuntimeOutputFactory::append(const std::string& name, RuntimeOutputFactory::CreateObject fun, size_t size)
 	{

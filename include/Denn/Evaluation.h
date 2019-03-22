@@ -1,18 +1,16 @@
 #pragma once
 #include "Config.h"
-#include "Individual.h"
-#include "DataSet.h"
 
 namespace Denn
 {
 	//dec class
-	class DennAlgorithm;
+	class Solver;
 	class EvolutionMethod;
 	class Parameters;
 	class Random;
 	class DataSet;
 	class Individual;
-	class DoubleBufferPopulation;
+	class NeuralNetwork;
 
     //Evaluate function
 	class Evaluation : public std::enable_shared_from_this<Evaluation>

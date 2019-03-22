@@ -9,8 +9,8 @@ endif()
 
 include_directories(include/)
 include_directories(third_party/Eigen/include/)
-file(GLOB denn_source source/*.cpp source/**/*.cpp source/**/**/*.cpp)
-file(GLOB denn_include include/*.h include/**/*.h include/**/**/*.h)
+file(GLOB denn_source source/*.cpp source/**/*.cpp source/**/**/*.cpp source/**/**/**/*.cpp)
+file(GLOB denn_include include/*.h include/**/*.h include/**/**/*.h include/**/**/**/*.h)
 SET(SOURCE_FILES ${denn_source} ${denn_include})
 
 if(MSVC)

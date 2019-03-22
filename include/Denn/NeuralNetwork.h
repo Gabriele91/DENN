@@ -4,7 +4,7 @@
 
 namespace Denn
 {
-class NeuralNetwork
+class NeuralNetwork : public std::enable_shared_from_this< NeuralNetwork >
 {
 public:
 	////////////////////////////////////////////////////////////////
@@ -12,6 +12,7 @@ public:
 	using LayerList			 = std::vector < Layer::SPtr >;
 	using LayerIterator		 = typename LayerList::iterator;
 	using LayerConstIterator = typename LayerList::const_iterator;
+	using SPtr			     = std::shared_ptr< NeuralNetwork >;
 	////////////////////////////////////////////////////////////////
 	enum OutputLoss
 	{
@@ -19,6 +20,10 @@ public:
 		MULTICLASS_CROSS_ENTROPY,
 		BINARY_CROSS_ENTROPY
 	};
+	///////////////////////////////////////////////////////////////////////////
+	//return ptr
+	SPtr get_ptr();
+	virtual SPtr copy() const;
 	////////////////////////////////////////////////////////////////
 	//  default constructor 
 	NeuralNetwork();
@@ -67,6 +72,8 @@ public:
 	//no 0 values
 	void no_0_weights();
 	/////////////////////////////////////////////////////////////////////////
+	size_t size_of_all_layers() const;
+
 	size_t size() const;
 
 	Layer& operator [] (size_t i);

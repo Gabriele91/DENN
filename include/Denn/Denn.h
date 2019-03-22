@@ -11,11 +11,11 @@
 #include  "Evaluation.h"
 
 //Dataset includes
-#include  "DataSetLoader.h"
-#include  "DataSet.h"
+#include  "DataSet/DataSetLoader.h"
+#include  "DataSet/DataSet.h"
 
 //Denn
-#include  "Algorithm.h"
+#include  "Denn/Solver.h"
 
 //Denn output
 #include "SerializeOutput.h"

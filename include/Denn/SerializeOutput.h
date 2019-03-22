@@ -28,7 +28,7 @@ namespace Denn
 
 		virtual void serialize_parameters(const Denn::Parameters& args) {}
 
-		virtual void serialize_best(double time, Denn::Scalar accuracy, Denn::Scalar f, Denn::Scalar cr, const Denn::NeuralNetwork& network)
+		virtual void serialize_best(double time, Denn::Scalar accuracy, const NeuralNetwork& network)
 		{
 		}
 

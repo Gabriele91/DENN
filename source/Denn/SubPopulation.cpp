@@ -1,0 +1,233 @@
+#include "Denn/Denn/SubPopulation.h"
+namespace Denn
+{
+	///////////////////////////////////////////////////////////////////////////
+	SubPopulation::Iterator::Iterator(const Iterator& it)
+	: m_sub_population(it.m_sub_population)
+	, m_index(it.m_index) 
+	{}
+	SubPopulation::Iterator::Iterator(SubPopulation& sub_population, size_t index)
+	: m_sub_population((SubPopulation*)&m_sub_population)
+	, m_index(index) 
+	{}
+	SubPopulation::Iterator::Iterator(const SubPopulation& sub_population, size_t index)
+	: m_sub_population((SubPopulation*)&m_sub_population)
+	, m_index(index) 
+	{}
+
+	SubPopulation::Iterator& SubPopulation::Iterator::operator++()    
+	{ 
+		++m_index; 
+		return *this; 
+	}
+	SubPopulation::Iterator  SubPopulation::Iterator::operator++(int) 
+	{ 
+		Iterator it(*this); 
+		operator++(); 
+		return it; 
+	}
+
+	bool SubPopulation::Iterator::operator==(const SubPopulation::Iterator& rhs) const 
+	{ 
+		return m_index == rhs.m_index && m_sub_population == rhs.m_sub_population;
+	}
+	bool SubPopulation::Iterator::operator!=(const SubPopulation::Iterator& rhs) const 
+	{
+		 return m_index != rhs.m_index || m_sub_population != rhs.m_sub_population;
+	}
+
+	SubPopulation::Pair SubPopulation::Iterator::operator*() 
+	{
+		 return (*m_sub_population)[m_index]; 
+	}
+	const SubPopulation::Pair  SubPopulation::Iterator::operator*() const 
+	{
+		 return (*((const SubPopulation*)m_sub_population))[m_index];
+	}
+	////////////////////////////////////////////////////////////////////////
+	//Population
+	SubPopulation::SubPopulation
+	(
+		size_t np,
+		size_t layer_index,
+		size_t matrix_index,
+		ConstAlignedMapMatrix weights
+	)
+	: m_layer_index(layer_index)
+	, m_matrix_index(matrix_index)
+	{ 
+		for(size_t n = 0; n != np; ++n)
+		{
+			m_parents.push_back(std::make_shared<Individual>(this, weights));
+			m_sons.push_back(std::make_shared<Individual>(this, weights));
+		}
+	}
+
+	SubPopulation::SubPopulation
+	(
+		size_t np,
+		size_t layer_index,
+		size_t matrix_index,
+		const Attributes& attrs, 
+		ConstAlignedMapMatrix weights
+	)
+	: m_layer_index(layer_index)
+	, m_matrix_index(matrix_index)
+	{ 
+		for(size_t n = 0; n != np; ++n)
+		{
+			m_parents.push_back(std::make_shared<Individual>(this, attrs, weights));
+			m_sons.push_back(std::make_shared<Individual>(this, attrs, weights));
+		}
+	}
+	//vector methods 		
+	size_t SubPopulation::size() const                         
+	{ 
+		return m_parents.size();
+	}
+	void   SubPopulation::resize(size_t i)                     
+	{ 
+		m_parents.resize(i); 
+		m_sons.resize(i);
+	}
+	void   SubPopulation::push_back(const Pair& cpair) 
+	{
+		m_parents.push_back(cpair.parent()); 
+		m_sons.push_back(cpair.son());
+	}
+	void   SubPopulation::pop_back() 
+	{
+		m_parents.pop_back();
+		m_sons.pop_back();
+	}
+	void   SubPopulation::clear()    
+	{ 
+		m_parents.clear();	  
+		m_sons.clear();	  
+	}		
+
+	size_t SubPopulation::layer_id()  const{ return m_layer_index; }
+	size_t SubPopulation::matrix_id() const{ return m_matrix_index; }
+	
+	//vector operator
+	IndividualList& SubPopulation::parents()
+	{
+		return m_parents;
+	}
+	IndividualList& SubPopulation::sons()
+	{
+		return m_sons;
+	}
+
+	const IndividualList& SubPopulation::parents() const
+	{
+		return m_parents;
+	}
+	const IndividualList& SubPopulation::sons() const
+	{
+		return m_sons;
+	}
+
+	//vector operator
+	SubPopulation::Pair SubPopulation::operator[](size_t i) 
+	{ 
+		return Pair(m_parents[i], m_sons[i]); 
+	}
+	const SubPopulation::Pair SubPopulation::operator[](size_t i) const 
+	{ 
+		return Pair(m_parents[i], m_sons[i]);
+	}
+
+	//iterator
+	SubPopulation::Iterator SubPopulation::begin() { return Iterator(*this,0); }
+	SubPopulation::Iterator SubPopulation::end()   { return Iterator(*this,size()); }
+	const SubPopulation::Iterator SubPopulation::begin() const { return Iterator(*this,0); }
+	const SubPopulation::Iterator SubPopulation::end()   const { return Iterator(*this,size()); }
+	
+	SubPopulation::Iterator SubPopulation::last(){ return Iterator(*this,size()-1); }
+	const SubPopulation::Iterator SubPopulation::last() const{ return Iterator(*this,size()-1); }
+	//costum
+	size_t SubPopulation::best_parent_id(bool minimize) const
+	{
+		//best
+		size_t best_i;
+		Scalar best_eval;
+		//find best
+		for (size_t i = 0; i != size(); ++i)
+		{
+			//
+			if(!i || ( minimize && m_parents[i]->eval() < best_eval)
+			      || (!minimize && m_parents[i]->eval() > best_eval))
+			{
+				best_i = i;
+				best_eval = m_parents[i]->eval();
+			}
+		}
+		return best_i;
+	}	
+	//costum
+	size_t SubPopulation::best_son_id(bool minimize) const
+	{
+		//best
+		size_t best_i;
+		Scalar best_eval;
+		//find best
+		for (size_t i = 0; i != size(); ++i)
+		{
+			//
+			if(!i || ( minimize && m_sons[i]->eval() < best_eval)
+			      || (!minimize && m_sons[i]->eval() > best_eval))
+			{
+				best_i = i;
+				best_eval = m_sons[i]->eval();
+			}
+		}
+		return best_i;
+	}
+
+	static bool sort_minimize(const Individual::SPtr& li, const Individual::SPtr& ri){ return li->eval() < ri->eval(); }
+	static bool sort_maximize(const Individual::SPtr& li, const Individual::SPtr& ri){ return li->eval() > ri->eval(); }
+	void SubPopulation::sort(bool minimize)
+	{
+		if(minimize)
+			std::sort(m_parents.begin(), m_parents.end(), sort_minimize);
+		else
+			std::sort(m_parents.begin(), m_parents.end(), sort_maximize);
+	}
+
+	//swap
+	void SubPopulation::swap(size_t ind_id)
+	{
+		std::swap(m_parents[ind_id], m_sons[ind_id]);
+	}
+	void SubPopulation::swap_best(bool minimize)
+	{
+		for (size_t i = 0; i != size(); ++i)
+		{
+			if(( minimize && m_sons[i]->eval() < m_parents[i]->eval())
+			|| (!minimize && m_sons[i]->eval() > m_parents[i]->eval()))
+			{
+				swap(i);
+			}
+		}
+	}
+
+	SubPopulation::SPtr SubPopulation::copy() const
+	{
+		//malloc 
+		SubPopulation::SPtr new_pop{new SubPopulation()};
+		//set layer id/
+		new_pop->m_layer_index = layer_id();
+		new_pop->m_matrix_index = matrix_id();
+		//init
+		for(size_t i = 0;i != size(); ++i)
+		{ 
+			new_pop->parents().push_back(parents()[i]->copy());
+		    new_pop->sons().push_back(sons()[i]->copy());
+		}
+		//return
+		return new_pop;
+	}
+
+
+}

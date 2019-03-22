@@ -3,9 +3,9 @@
 #include "Denn/Evaluation.h"
 #include "Denn/RuntimeOutput.h"
 #include "Denn/SerializeOutput.h"
-#include "Denn/DataSet.h"
-#include "Denn/DataSetLoader.h"
-#include "Denn/Algorithm.h"
+#include "Denn/Dataset/DataSet.h"
+#include "Denn/Dataset/DataSetLoader.h"
+#include "Denn/Denn/Solver.h"
 #include "Denn/Utilities/Networks.h"
 #include "Denn/Utilities/Build.h"
 #include <fstream>
@@ -122,23 +122,21 @@ namespace Denn
 			if (!m_success_init) return false;
 			////////////////////////////////////////////////////////////////////////////////////////////////
 			//DENN
-			DennAlgorithm denn(*this, m_parameters);
+			Solver denn(*this, m_parameters);
 			//execute
 			double execute_time = Time::get_time();
-			auto result = denn.execute();
+			auto result = denn.fit();
 			execute_time = Time::get_time() - execute_time;
 			//output
 			m_serialize->serialize_parameters(m_parameters);
 			m_serialize->serialize_best
 			(
 				  execute_time
-				, denn.execute_test(*result)
-				, result->m_f
-				, result->m_cr
-				, result->m_network
+				, denn.test_function_eval(result)
+				, result
 			);
 			//save best
-			m_network = result->m_network;
+			m_network = result;
 			//success
 			return true;
 		}
