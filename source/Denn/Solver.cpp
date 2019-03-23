@@ -153,12 +153,27 @@ namespace Denn
 		m_clamp_function = gen_clamp_func();
 		//clear random engines
 		m_population_random.clear();
+		//vecotr np
+		std::vector<size_t> nps;
+		//cases
+        for(size_t l = 0; l < m_start_network.size(); ++l)
+        for(size_t m = 0; m < m_start_network[l].size(); ++m)
+		{
+			if(*parameters().m_np_perc > Scalar(0))
+			{
+				nps.push_back(size_t(m_start_network[l][m].rows() * *parameters().m_np_perc));
+			}
+			else 
+			{
+				nps.push_back(*parameters().m_np);
+			}
+		}
 		//get np
-		const size_t np = (size_t)parameters().m_np; //init current_np();
+		const size_t max_np = *std::max_element(std::begin(nps), std::end(nps)); //init current_np();
 		//min size
-		if (!np) return false;
+		if (!max_np) return false;
 		//init random engines
-		for(size_t i=0; i != np ;++i)
+		for(size_t i=0; i != max_np ;++i)
 		{
 			m_population_random.emplace_back(random().uirand());
 		}
@@ -170,7 +185,7 @@ namespace Denn
 			*parameters().m_perc_of_best,
 		};
 		//init pop
-		m_population = std::make_shared<Population>(np, attributes, m_start_network);
+		m_population = std::make_shared<Population>(nps, attributes, m_start_network);
         //init 
         PromiseList promises;
 		//random init function

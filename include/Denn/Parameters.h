@@ -38,6 +38,7 @@ namespace Denn
 		ReadOnly<size_t>	             m_generations   { "generations", size_t(1000) };
 		ReadOnly<size_t>	             m_sub_gens      { "sub_gens"  , size_t(100)   };
 		ReadOnly<size_t>	             m_np            { "number_parents",size_t(16) };
+		ReadOnly<Scalar>	             m_np_perc       { "number_parents_percentage",Scalar(-1) };
 		//DE
 		ReadOnly<Scalar>	             m_default_f     { "f_default",Scalar(1.0)   };
 		ReadOnly<Scalar>	             m_default_cr    { "cr_default",Scalar(1.0)   };

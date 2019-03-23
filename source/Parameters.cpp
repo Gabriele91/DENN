@@ -39,6 +39,9 @@ namespace Denn
             m_np, "Number of parents", { "-np"  }
         },
         ParameterInfo {
+            m_np_perc, "percentage of parents respect to parameters", { "-npp"  }
+        },
+        ParameterInfo {
             m_seed, "Random generator seed", { "-sd"  }
         },
         ParameterInfo {
