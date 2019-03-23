@@ -29,8 +29,10 @@ namespace Denn
 		const Solver& solver() const;	
 		const Parameters& parameters() const;
 
-		const SubPopulation& population() const;
 		const size_t current_np() const;
+		const SubPopulation& population() const;
+
+		const size_t best_parent_id() const;
 		const Individual& parent(size_t) const;
         
 		//random engine

@@ -23,7 +23,7 @@ namespace Denn
 			rand_deck.reinit(population().size());
 			rand_deck.reset();
 			//id best
-			size_t id_best = population().best_parent_id();
+			size_t id_best = best_parent_id();
 			//
 			auto& x_best    = parent(id_best).matrix();
 			auto& x_a       = parent(rand_deck.get_random_id(id_best)).matrix();
@@ -52,7 +52,7 @@ namespace Denn
 			rand_deck.reinit(population().size());
 			rand_deck.reset();
 			//id best
-			size_t id_best = population().best_parent_id();
+			size_t id_best = best_parent_id();
 			//
 			auto& x_best = parent(id_best).matrix();
 			auto& x_a    = parent(rand_deck.get_random_id(id_best)).matrix();

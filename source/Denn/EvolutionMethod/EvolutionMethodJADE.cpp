@@ -34,7 +34,7 @@ namespace Denn
 		void start_a_subgen_pass() override
 		{
 			//sort parents			
-			if (m_mutation->required_sort())  population().sort();
+			if (m_mutation->required_sort())  population_sort();
 		}
 
 		virtual void create_a_individual

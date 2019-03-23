@@ -14,12 +14,14 @@ namespace Denn
 	}
 
 	//easy access
-	const EvolutionMethod& Mutation::evolution_method() const	{ return m_emethod;  }
-	const Solver& Mutation::solver()            		 const  { return evolution_method().solver(); }
+	const EvolutionMethod& Mutation::evolution_method() const  { return m_emethod;  }
+	const Solver& Mutation::solver()            		const  { return evolution_method().solver(); }
 	const Parameters& Mutation::parameters()            const  { return solver().parameters(); }
 
+	const size_t Mutation::current_np()          const { return population().size(); }	
 	const SubPopulation& Mutation::population()  const { return evolution_method().population(); }
-	const size_t Mutation::current_np()          const { return population().size(); }
+
+	const size_t Mutation::best_parent_id()      const { return population().best_parent_id(solver().loss_function()->minimize()); }
 	const Individual& Mutation::parent(size_t i) const { return *population().parents()[i]; }
 
 	Random& Mutation::random(size_t i)			         const { return solver().random(i); }

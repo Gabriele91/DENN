@@ -38,9 +38,13 @@ namespace Denn
 		const Solver& solver() const;
 		const Parameters& parameters() const;
 
+		const size_t current_np() const;
 		SubPopulation& population();
 		const SubPopulation& population() const;
-		const size_t current_np() const;
+		void population_sort();
+
+		const size_t best_parent_id() const;
+		const Individual& parent(size_t) const;
 
 		Random& random()  const;
 		Random& random(size_t i)  const;

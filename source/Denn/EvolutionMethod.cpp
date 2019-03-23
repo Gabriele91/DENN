@@ -25,9 +25,14 @@ namespace Denn
 	const Solver& EvolutionMethod::solver()                    const { return m_solver;        }
 	const Parameters& EvolutionMethod::parameters()            const { return solver().parameters();        }
 
-	SubPopulation& EvolutionMethod::population() { return m_sub_population;    }
-	const SubPopulation& EvolutionMethod::population() const   { return m_sub_population;    }
 	const size_t EvolutionMethod::current_np()         const   { return population().size(); }
+	SubPopulation& EvolutionMethod::population()               { return m_sub_population;    }
+	const SubPopulation& EvolutionMethod::population() const   { return m_sub_population;    }		
+	void EvolutionMethod::population_sort()                    { return population().sort(solver().loss_function()->minimize()); }
+
+	
+	const Individual& EvolutionMethod::parent(size_t i) const { return *population().parents()[i]; }
+	const size_t EvolutionMethod::best_parent_id()      const { return population().best_parent_id(solver().loss_function()->minimize()); }
 
 	Random& EvolutionMethod::random()		  const { return solver().random(); }
 	Random& EvolutionMethod::random(size_t i) const { return solver().random(i); }

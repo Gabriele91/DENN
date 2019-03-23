@@ -336,7 +336,7 @@ namespace Denn
         for(size_t m = 0; m < m_start_network[l].size(); ++m)
 		{
 			SubPopulation::SPtr subpop = population()[subpop_id++];
-			Individual::SPtr individual = subpop->parents()[subpop->best_parent_id()];
+			Individual::SPtr individual = subpop->parents()[subpop->best_parent_id(loss_function()->minimize())];
 			(*newnn)[l][m] = individual->matrix();
 		}
 		return newnn;
@@ -362,7 +362,7 @@ namespace Denn
 			{
 				//ref
 				SubPopulation::SPtr subpop = population()[subpop_id++];
-				Individual::SPtr individual = subpop->parents()[subpop->best_parent_id()];
+				Individual::SPtr individual = subpop->parents()[subpop->best_parent_id(loss_function()->minimize())];
 				(*newnn)[l][m] = individual->matrix();
 			}
 		}

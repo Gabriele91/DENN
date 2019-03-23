@@ -16,8 +16,10 @@ namespace Denn
 	const Solver& Crossover::solver()            		 const  { return evolution_method().solver(); }
 	const Parameters& Crossover::parameters()            const  { return solver().parameters(); }
 
+	const size_t Crossover::current_np()          const { return population().size(); }	
 	const SubPopulation& Crossover::population()  const { return evolution_method().population(); }
-	const size_t Crossover::current_np()          const { return population().size(); }
+
+	const size_t Crossover::best_parent_id()      const { return population().best_parent_id(solver().loss_function()->minimize()); }
 	const Individual& Crossover::parent(size_t i) const { return *population().parents()[i]; }
 
 	Random& Crossover::random(size_t i)			         const { return solver().random(i); }

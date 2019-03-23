@@ -46,7 +46,7 @@ namespace Denn
 			rand_deck_ring_segment.reset();
 			//do mutation			
 			auto& w_target = parent(id_target).matrix();
-			auto& w_g_best = parent(population().best_parent_id()).matrix();
+			auto& w_g_best = parent(best_parent_id()).matrix();
 			auto& w_l_best = parent(id_l_best).matrix();
 			auto& x_g_a = parent(rand_deck.get_random_id(id_target)).matrix();
 			auto& x_g_b = parent(rand_deck.get_random_id(id_target)).matrix();
