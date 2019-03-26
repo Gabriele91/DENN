@@ -91,6 +91,8 @@ protected:
 	RandomFunctionThread gen_random_func_thread() const;
 	//gen clamp function
 	ClampFunction gen_clamp_func() const;
+    //parameters
+	Parameters m_paramters;
 	//Random engine
 	Random&	m_main_random;
 	mutable RandomList m_population_random;
@@ -106,9 +108,6 @@ protected:
 	Evaluation::SPtr m_loss_function;
 	Evaluation::SPtr m_validation_function;
 	Evaluation::SPtr m_test_function;
-	//dataset
-	DataSetLoader*		  m_dataset_loader;
-	TestSetStream         m_dataset_batch;
 	//neural netowrk
 	struct 
 	{
@@ -117,10 +116,11 @@ protected:
 	}
 	best;
 	const NeuralNetwork&  m_start_network;
+	//dataset
+	DataSetLoader*		  m_dataset_loader;
+	TestSetStream         m_dataset_batch;
     //shell info
 	RuntimeOutput::SPtr   m_output;
-    //parameters
-	Parameters 		      m_paramters;
 
 };
 

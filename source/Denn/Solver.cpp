@@ -4,17 +4,21 @@
 namespace Denn
 {
     Solver::Solver(Instance&	instance, const Parameters&   params)
-	: m_main_random(instance.random_engine())
+	: m_paramters(params)
+	, m_main_random(instance.random_engine())
     , m_thpool(instance.thread_pool())
+	//eval funcs
 	, m_loss_function(instance.loss_function())
 	, m_validation_function(instance.validation_function())
 	, m_test_function(instance.test_function())
-	, m_output(RuntimeOutputFactory::create(*params.m_runtime_output_type, 
-											 instance.output_stream(), *this))
+	//networks
 	, m_start_network(instance.neural_network())
+	//dataset
 	, m_dataset_loader(&instance.dataset_loader())
 	, m_dataset_batch(&instance.dataset_loader())
-	, m_paramters(params)
+	//output
+	, m_output(RuntimeOutputFactory::create(*params.m_runtime_output_type, 
+											 instance.output_stream(), *this))
 	{
 	}
 
@@ -141,7 +145,7 @@ namespace Denn
     bool Solver::init()
     {		
         //success flag
-		bool success = m_dataset_loader != nullptr;
+		if(m_dataset_loader == nullptr) return false;
 		//init test set
 		if(*parameters().m_batch_offset <= 0)
 			m_dataset_batch.start_read_batch(*parameters().m_batch_size, *parameters().m_batch_size);
@@ -320,9 +324,9 @@ namespace Denn
 					? validation_function_eval(network) 
 					: loss_function_eval(network);
 		//compare
-		if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval) ||
-		    (!*parameters().m_use_validation && loss_function_compare(eval, best.eval)  ) ||
-			first))
+		if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval))||
+		    (!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
+			first)
 		{
 			best.eval = eval;
 			best.network = network;
@@ -360,6 +364,7 @@ namespace Denn
 			}
 			else
 			{
+				std::lock_guard<std::mutex>  lock(m_mutex);
 				//ref
 				SubPopulation::SPtr subpop = population()[subpop_id++];
 				Individual::SPtr individual = subpop->parents()[subpop->best_parent_id(loss_function()->minimize())];
