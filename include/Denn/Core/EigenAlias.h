@@ -50,25 +50,25 @@ namespace Denn
 
 	/* Map Version */
 	template < typename T >
-	using MapRowVectorT  = typename Eigen::Map< RowVectorT<T> >;
-	using MapRowVectorLD = typename Eigen::Map< RowVectorLD >;
-	using MapRowVectorD  = typename Eigen::Map< RowVectorD >;
-	using MapRowVectorF  = typename Eigen::Map< RowVectorF >;
-	using MapRowVector   = typename Eigen::Map< RowVector >;
+	using MapRowVectorT  = typename RowVectorT<T>::MapType;
+	using MapRowVectorLD = typename RowVectorLD::MapType;
+	using MapRowVectorD  = typename RowVectorD::MapType;
+	using MapRowVectorF  = typename RowVectorF::MapType;
+	using MapRowVector   = typename RowVector::MapType;
 
 	template < typename T >
-	using MapColVectorT  = typename Eigen::Map< ColVectorT<T> >;
-	using MapColVectorLD = typename Eigen::Map< ColVectorLD >;
-	using MapColVectorD  = typename Eigen::Map< ColVectorD >;
-	using MapColVectorF  = typename Eigen::Map< ColVectorF >;
-	using MapColVector   = typename Eigen::Map< ColVector >;
+	using MapColVectorT  = typename ColVectorT<T>::MapType;
+	using MapColVectorLD = typename ColVectorLD::MapType;
+	using MapColVectorD  = typename ColVectorD::MapType;
+	using MapColVectorF  = typename ColVectorF::MapType;
+	using MapColVector   = typename ColVector::MapType;
 
 	template < typename T >
-	using MapMatrixT	 = typename Eigen::Map< MatrixT<T> >;
-	using MapMatrixLD	 = typename Eigen::Map< MatrixLD >;
-	using MapMatrixD	 = typename Eigen::Map< MatrixD >;
-	using MapMatrixF	 = typename Eigen::Map< MatrixF >;
-	using MapMatrix 	 = typename Eigen::Map< Matrix > ;
+	using MapMatrixT	 = typename MatrixT<T>::MapType;
+	using MapMatrixLD	 = typename MatrixLD::MapType;
+	using MapMatrixD	 = typename MatrixD::MapType;
+	using MapMatrixF	 = typename MatrixF::MapType;
+	using MapMatrix 	 = typename Matrix::MapType;
 
 	template < typename T >
 	using MapMatrixListT  = std::vector < MapMatrixT< T > >;
@@ -76,6 +76,35 @@ namespace Denn
 	using MapMatrixListD  = std::vector < MapMatrixD >;
 	using MapMatrixListLD = std::vector < MapMatrixLD >;
 	using MapMatrixList   = std::vector < MapMatrix >;
+	
+	//const
+	template < typename T >
+	using ConstMapRowVectorT  = typename RowVectorT<T>::ConstMapType;
+	using ConstMapRowVectorLD = typename RowVectorLD::ConstMapType;
+	using ConstMapRowVectorD  = typename RowVectorD::ConstMapType;
+	using ConstMapRowVectorF  = typename RowVectorF::ConstMapType;
+	using ConstMapRowVector   = typename RowVector::ConstMapType;
+
+	template < typename T >
+	using ConstMapColVectorT  = typename ColVectorT<T>::ConstMapType;
+	using ConstMapColVectorLD = typename ColVectorLD::ConstMapType;
+	using ConstMapColVectorD  = typename ColVectorD::ConstMapType;
+	using ConstMapColVectorF  = typename ColVectorF::ConstMapType;
+	using ConstMapColVector   = typename ColVector::ConstMapType;
+
+	template < typename T >
+	using ConstMapMatrixT	 = typename MatrixT<T>::ConstMapType;
+	using ConstMapMatrixLD	 = typename MatrixLD::ConstMapType;
+	using ConstMapMatrixD	 = typename MatrixD::ConstMapType;
+	using ConstMapMatrixF	 = typename MatrixF::ConstMapType;
+	using ConstMapMatrix 	 = typename Matrix::ConstMapType;
+
+	template < typename T >
+	using ConstMapMatrixListT  = const std::vector < ConstMapMatrixT< T > >;
+	using ConstMapMatrixListF  = const std::vector < ConstMapMatrixF >;
+	using ConstMapMatrixListD  = const std::vector < ConstMapMatrixD >;
+	using ConstMapMatrixListLD = const std::vector < ConstMapMatrixLD >;
+	using ConstMapMatrixList   = const std::vector < ConstMapMatrix >;
 	   
 	//rows to map
 	template < typename T >
@@ -88,6 +117,16 @@ namespace Denn
 	inline MapRowVectorF as_map(RowVectorF& value)
 	{ return MapRowVectorF(value.data(), value.size()); }
 
+	template < typename T >
+	inline ConstMapRowVectorT< T > as_map(const RowVectorT< T >& value)
+	{ return ConstMapRowVectorT< T >(value.data(), value.size()); }
+	inline ConstMapRowVectorLD as_map(const RowVectorLD& value)
+	{ return ConstMapRowVectorLD(value.data(), value.size()); }
+	inline ConstMapRowVectorD as_map(const RowVectorD& value)
+	{ return ConstMapRowVectorD(value.data(), value.size()); }
+	inline ConstMapRowVectorF as_map(const RowVectorF& value)
+	{ return ConstMapRowVectorF(value.data(), value.size()); }
+
 	//cols to map
 	template < typename T >
 	inline MapColVectorT< T > as_map(ColVectorT< T >& value)
@@ -99,6 +138,16 @@ namespace Denn
 	inline MapColVectorF as_map(ColVectorF& value)
 	{ return MapColVectorF(value.data(), value.size()); }
 
+	template < typename T >
+	inline ConstMapColVectorT< T > as_map(const ColVectorT< T >& value)
+	{ return ConstMapColVectorT< T >(value.data(), value.size()); }
+	inline ConstMapColVectorLD as_map(const ColVectorLD& value)
+	{ return ConstMapColVectorLD(value.data(), value.size()); }
+	inline ConstMapColVectorD as_map(const ColVectorD& value)
+	{ return ConstMapColVectorD(value.data(), value.size()); }
+	inline ConstMapColVectorF as_map(const ColVectorF& value)
+	{ return ConstMapColVectorF(value.data(), value.size()); }
+
 	//matrix to map
 	template < typename T >
 	inline MapMatrixT< T > as_map(MatrixT< T >& value)
@@ -109,6 +158,16 @@ namespace Denn
 	{ return MapMatrixD(value.data(), value.rows(), value.cols()); }
 	inline MapMatrixF as_map(MatrixF& value)
 	{ return MapMatrixF(value.data(), value.rows(), value.cols()); }
+	
+	template < typename T >
+	inline ConstMapMatrixT< T > as_map(const MatrixT< T >& value)
+	{ return ConstMapMatrixT< T >(value.data(), value.rows(), value.cols()); }
+	inline ConstMapMatrixLD as_map(const MatrixLD& value)
+	{ return ConstMapMatrixLD(value.data(), value.rows(), value.cols()); }
+	inline ConstMapMatrixD as_map(const MatrixD& value)
+	{ return ConstMapMatrixD(value.data(), value.rows(), value.cols()); }
+	inline ConstMapMatrixF as_map(const MatrixF& value)
+	{ return ConstMapMatrixF(value.data(), value.rows(), value.cols()); }
 
 	/*Aligned map version */
 	template < typename T >
