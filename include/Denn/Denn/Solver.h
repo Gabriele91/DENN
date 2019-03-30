@@ -10,6 +10,42 @@
 namespace Denn
 {
 
+class BuildNetwork
+{
+public:
+	enum Value
+	{
+		BN_BEST,
+		BN_PBEST,
+		BN_ROULETTE,
+		BN_SIZE
+	};
+
+	static std::vector<std::string> list_of_build()
+	{
+		return { "best", "pbest", "roulette" };
+	}
+
+	static bool exists(const std::string& value)
+	{
+		for(auto& type : list_of_build()) 
+			if(type == value)
+				return true;
+		return false;
+	}
+
+	static Value get(const std::string& value)
+	{
+		int i=0;
+		for(auto& type : list_of_build()) 
+		{
+			if(type == value) return Value(i);
+			++i;
+		}
+		return BN_SIZE;
+	}
+};
+
 class Solver
 {
 public:
@@ -111,6 +147,7 @@ protected:
 	//neural netowrk
 	struct 
 	{
+		BuildNetwork::Value build_type;
 		Scalar              eval;
 		NeuralNetwork::SPtr network;
 	}

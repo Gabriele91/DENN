@@ -7,6 +7,7 @@
 #include "Denn/Denn/Mutation.h"
 #include "Denn/Denn/Crossover.h"
 #include "Denn/Denn/EvolutionMethod.h"
+#include "Denn/Denn/Solver.h"
 #include <sstream>
 #include <iostream>
 
@@ -36,13 +37,27 @@ namespace Denn
             m_sub_gens, "Number of generation [or backpropagation pass] per batch", { "-s" , "-sg" }
         },
         ParameterInfo {
+            m_seed, "Random generator seed", { "-sd"  }
+        },
+        ParameterInfo {
             m_np, "Number of parents", { "-np"  }
         },
         ParameterInfo {
-            m_np_perc, "percentage of parents respect to parameters", { "-npp"  }
+            m_np_perc, "Percentage of parents respect to parameters", { "-npp"  }
         },
         ParameterInfo {
-            m_seed, "Random generator seed", { "-sd"  }
+            m_conet_build, "How to build the main network", { "-cnet" },
+            [this](Arguments& args) -> bool  
+            { 
+                std::string str_m_type = args.get_string();
+                //all lower case
+                std::transform(str_m_type.begin(),str_m_type.end(), str_m_type.begin(), ::tolower);
+                //save
+				m_conet_build = str_m_type;
+                //ok 
+                return BuildNetwork::exists(*m_conet_build);
+            }
+            , { "string", BuildNetwork::list_of_build() }
         },
         ParameterInfo {
             m_batch_size, "Batch size", { "-b" },

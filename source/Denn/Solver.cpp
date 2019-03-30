@@ -181,6 +181,8 @@ namespace Denn
 		{
 			m_population_random.emplace_back(random().uirand());
 		}
+		//conet build mode
+		best.build_type = BuildNetwork::get(*parameters().m_conet_build);
 		//init attributes
 		Attributes attributes
 		{
@@ -340,7 +342,26 @@ namespace Denn
         for(size_t m = 0; m < m_start_network[l].size(); ++m)
 		{
 			SubPopulation::SPtr subpop = population()[subpop_id++];
-			Individual::SPtr individual = subpop->parents()[subpop->best_parent_id(loss_function()->minimize())];
+			Individual::SPtr individual = nullptr;
+			switch (best.build_type)
+			{
+				default:
+				case BuildNetwork::BN_BEST:
+					individual = subpop->parents()[
+						subpop->best_parent_id(loss_function()->minimize())
+					];
+				break;
+				case BuildNetwork::BN_PBEST:
+					individual = subpop->parents()[
+						subpop->pbest_parent_id(random(), loss_function()->minimize())
+					];
+				break;
+				case BuildNetwork::BN_ROULETTE:
+					individual = subpop->parents()[
+						subpop->roulette_wheel_selection_parent_id(random(), loss_function()->minimize())
+					];
+				break;
+			}
 			(*newnn)[l][m] = individual->matrix();
 		}
 		return newnn;
@@ -367,7 +388,26 @@ namespace Denn
 				std::lock_guard<std::mutex>  lock(m_mutex);
 				//ref
 				SubPopulation::SPtr subpop = population()[subpop_id++];
-				Individual::SPtr individual = subpop->parents()[subpop->best_parent_id(loss_function()->minimize())];
+				Individual::SPtr individual = nullptr;
+				switch (best.build_type)
+				{
+					default:
+					case BuildNetwork::BN_BEST:
+						individual = subpop->parents()[
+							subpop->best_parent_id(loss_function()->minimize())
+						];
+					break;
+					case BuildNetwork::BN_PBEST:
+						individual = subpop->parents()[
+							subpop->pbest_parent_id(random(thread_id), loss_function()->minimize())
+						];
+					break;
+					case BuildNetwork::BN_ROULETTE:
+						individual = subpop->parents()[
+							subpop->roulette_wheel_selection_parent_id(random(thread_id), loss_function()->minimize())
+						];
+					break;
+				}
 				(*newnn)[l][m] = individual->matrix();
 			}
 		}

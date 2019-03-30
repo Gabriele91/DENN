@@ -39,6 +39,8 @@ namespace Denn
 		ReadOnly<size_t>	             m_sub_gens      { "sub_gens"  , size_t(100)   };
 		ReadOnly<size_t>	             m_np            { "number_parents",size_t(16) };
 		ReadOnly<Scalar>	             m_np_perc       { "number_parents_percentage",Scalar(-1) };
+		//coevo
+		ReadOnly<std::string>			 m_conet_build   { "conet_build", "best" };
 		//DE
 		ReadOnly<Scalar>	             m_default_f     { "f_default",Scalar(1.0)   };
 		ReadOnly<Scalar>	             m_default_cr    { "cr_default",Scalar(1.0)   };

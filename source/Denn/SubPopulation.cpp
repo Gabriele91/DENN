@@ -185,6 +185,97 @@ namespace Denn
 		return best_i;
 	}
 
+	//roulette wheel selection
+	size_t SubPopulation::roulette_wheel_selection_parent_id(Random& random,bool minimize) const
+	{
+		//case minimize
+		if(minimize)
+		{
+			//max of fitness
+			Scalar max = m_parents[0]->eval();		
+			for (size_t i = 1; i < size(); ++i)
+				max  = std::max(max, m_parents[i]->eval());
+			//sum all fitness
+			Scalar sum = 0;		
+			for (size_t i = 0; i < size(); ++i)
+				sum += max-m_parents[i]->eval();
+			//select
+			Scalar value = random.uniform(sum);	
+			// locate the random value based on the weights
+			for (size_t i = 0; i != size(); ++i)
+			{		
+				value += max-m_parents[i]->eval();		
+				if(value > 0) return i;
+			}
+		}
+		else 
+		{
+			//sum all fitness
+			Scalar sum = 0;		
+			for (size_t i = 0; i != size(); ++i) sum += m_parents[i]->eval();
+			//select
+			Scalar value = random.uniform(sum);	
+			// locate the random value based on the weights
+			for (size_t i = 0; i != size(); ++i)
+			{		
+				value -= m_parents[i]->eval();		
+				if(value < 0) return i;
+			}
+		}
+		return size()-1;
+	}
+	//roulette wheel selection
+	size_t SubPopulation::roulette_wheel_selection_son_id(Random& random,bool minimize) const
+	{
+		//case minimize
+		if(minimize)
+		{
+			//max of fitness
+			Scalar max = m_sons[0]->eval();		
+			for (size_t i = 1; i < size(); ++i)
+				max  = std::max(max, m_sons[i]->eval());
+			//sum all fitness
+			Scalar sum = 0;		
+			for (size_t i = 0; i < size(); ++i)
+				sum += max-m_sons[i]->eval();
+			//select
+			Scalar value = random.uniform(sum);	
+			// locate the random value based on the weights
+			for (size_t i = 0; i != size(); ++i)
+			{		
+				value += max-m_sons[i]->eval();		
+				if(value > 0) return i;
+			}
+		}
+		else 
+		{
+			//sum all fitness
+			Scalar sum = 0;		
+			for (size_t i = 0; i != size(); ++i) sum += m_sons[i]->eval();
+			//select
+			Scalar value = random.uniform(sum);	
+			// locate the random value based on the weights
+			for (size_t i = 0; i != size(); ++i)
+			{		
+				value -= m_sons[i]->eval();		
+				if(value < 0) return i;
+			}
+		}
+		return size()-1;
+	}
+
+	//pbest
+	size_t SubPopulation::pbest_parent_id(Random& random,bool minimize, Scalar prob)
+	{
+		sort(minimize);
+		return size_t(random.uniform(size() * prob));
+	}
+	size_t SubPopulation::pbest_son_id(Random& random,bool minimize, Scalar prob)
+	{
+		sort(minimize);
+		return size_t(random.uniform(size() * prob));
+	}
+
 	static bool sort_minimize(const Individual::SPtr& li, const Individual::SPtr& ri){ return li->eval() < ri->eval(); }
 	static bool sort_maximize(const Individual::SPtr& li, const Individual::SPtr& ri){ return li->eval() > ri->eval(); }
 	void SubPopulation::sort(bool minimize)
@@ -194,7 +285,13 @@ namespace Denn
 		else
 			std::sort(m_parents.begin(), m_parents.end(), sort_maximize);
 	}
-
+	void SubPopulation::sort_sons(bool minimize)
+	{
+		if(minimize)
+			std::sort(m_sons.begin(), m_sons.end(), sort_minimize);
+		else
+			std::sort(m_sons.begin(), m_sons.end(), sort_maximize);
+	}
 	//swap
 	void SubPopulation::swap(size_t ind_id)
 	{

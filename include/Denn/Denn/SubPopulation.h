@@ -4,6 +4,8 @@
 
 namespace Denn
 {
+	//Random engine
+	class Random;
 	//Population
 	class SubPopulation : public std::enable_shared_from_this< SubPopulation >
 	{
@@ -127,8 +129,18 @@ namespace Denn
 		size_t best_parent_id(bool minimize = true) const;
 		size_t best_son_id(bool minimize = true) const;
 
+		//roulette wheel selection
+		size_t roulette_wheel_selection_parent_id(Random& random,bool minimize = true) const;
+		size_t roulette_wheel_selection_son_id(Random& random,bool minimize = true) const;
+
+		//pbest
+		size_t pbest_parent_id(Random& random,bool minimize = true, Scalar prob=0.1);
+		size_t pbest_son_id(Random& random,bool minimize = true, Scalar prob=0.1);
+
+
 		//sort
 		void sort(bool minimize = true);
+		void sort_sons(bool minimize = true);
 
 		//swap
         void swap(size_t ind_id);
