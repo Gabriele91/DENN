@@ -204,8 +204,8 @@ namespace Denn
 			// locate the random value based on the weights
 			for (size_t i = 0; i != size(); ++i)
 			{		
-				value += max-m_parents[i]->eval();		
-				if(value > 0) return i;
+				value -= max-m_parents[i]->eval();		
+				if(value < 0) return i;
 			}
 		}
 		else 
