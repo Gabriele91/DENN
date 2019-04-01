@@ -660,7 +660,10 @@ namespace Denn
 									if (!test(args, 1, "str")) return ExpValue("");
 									if (args[0].is_number())
 									{
-										return std::to_string(args[0].m_number);
+										if(args[0].m_number == float(int(args[0].m_number)))
+											return std::to_string(int(args[0].m_number));
+										else 
+											return std::to_string(args[0].m_number);
 									}
 									//return string
 									return args[0];
