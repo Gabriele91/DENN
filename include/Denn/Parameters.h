@@ -86,7 +86,7 @@ namespace Denn
 		ReadOnly<Scalar>					 m_momentum	    { "momentum", Scalar(0.9) };
 		ReadOnly<bool>					     m_nesterov     { "nesterov", bool(true) };
 		//NN	
-		ReadOnly< std::string >				 m_network { "network" , "fully_connected(,)", true };
+		ReadOnly< std::string >				 m_network { "network" , "fully_connected[]", true };
 		//params info
 		std::vector< ParameterInfo >     m_params_info;
 	

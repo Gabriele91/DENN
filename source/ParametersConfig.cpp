@@ -635,6 +635,8 @@ namespace Denn
 				, { "true", 1 }
 				, { "e",  Constants::e()  }
 				, { "pi", Constants::pi() }
+				, { "epsilon", Constants::epsilon() }
+				, { "golden_ratio", Constants::golden_ratio() }
 			};
 			//test
 			auto const_it = consts.find(name);
@@ -643,7 +645,10 @@ namespace Denn
 			auto test = [this](const FunctionArgs& args, size_t n, const std::string& name) -> bool
 			{
 				if (args.size() == n) return true;
-				m_errors.push_back(std::to_string(line()) + ": function \'" + name + "\' get " + std::to_string(n) + " argument[s]");
+				m_errors.push_back(std::to_string(line()) +
+								   ": function \'" + name +
+								   "\' get " + std::to_string(args.size()) +
+								   " instead of " + std::to_string(n) + " argument[s]");
 				return false;
 			};
 			MapFunctions funs
@@ -657,13 +662,31 @@ namespace Denn
 				, { "ceil" , [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "ceil"))   return std::ceil(number(args[0],"ceil")); else return {0}; } }
 				, { "str",   [&](FunctionArgs&& args) -> ExpValue 
 							 {
-									if (!test(args, 1, "str")) return ExpValue("");
-									if (args[0].is_number())
+									if(!args.size()) return ExpValue("");
+									if(args[0].is_number())
 									{
-										if(args[0].m_number == float(int(args[0].m_number)))
+										if(args.size()==1 && 
+										   args[0].is_number() && 
+										   args[0].m_number == float(int(args[0].m_number)))
+										{
 											return std::to_string(int(args[0].m_number));
+										}
+										else if(args.size()==1)
+										{
+											return std::to_string(number(args[0].m_number, "str"));
+										}
+										else if(args.size()==2)
+										{
+											return to_string_with_precision(number(args[0].m_number, "str"),number(args[1].m_number, "str"));
+										}
 										else 
-											return std::to_string(args[0].m_number);
+										{
+											m_errors.push_back(std::to_string(line()) +
+															   ": function \'str\'"
+															   " get " + std::to_string(args.size()) +
+															   " instead of 1/2 argument[s]");
+											return ExpValue("");
+										}
 									}
 									//return string
 									return args[0];
@@ -733,8 +756,87 @@ namespace Denn
 								 }
 								 return ExpValue("");
 							} 
-				}
-				, { "threads", [&](FunctionArgs&& args) -> ExpValue { return double( std::thread::hardware_concurrency() ); } }
+				  }
+				//os
+				, { "threads", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								return double( std::thread::hardware_concurrency() );
+							}
+				  }
+				//path
+				, { "working_dir", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								return { Denn::Filesystem::working_dir() };
+							}
+				  }
+				, { "home_dir", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								return { Denn::Filesystem::home_dir() };
+							}
+				  }
+				, { "is_file", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "is_file"))
+								 {
+									return { float(Denn::Filesystem::is_file(string(args[0],"is_file"))) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "is_directory", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "is_directory"))
+								 {
+									return { float(Denn::Filesystem::is_directory(string(args[0],"is_directory"))) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "get_filename", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "get_filename"))
+								 {
+									return { Denn::Filesystem::get_filename(string(args[0],"get_filename")) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "get_directory", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "get_directory"))
+								 {
+									return { Denn::Filesystem::get_directory(string(args[0],"get_directory")) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "get_basename", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "get_basename"))
+								 {
+									return { Denn::Filesystem::get_basename(string(args[0],"get_basename")) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "get_extension", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "get_extension"))
+								 {
+									return { Denn::Filesystem::get_extension(string(args[0],"get_extension")) };
+								 }
+								 return ExpValue("");
+							}
+				  }
+				, { "file_as_str", [&](FunctionArgs&& args) -> ExpValue 
+							{
+								 if (test(args, 1, "file_as_str"))
+								 {
+									return { Denn::Filesystem::text_file_read_all(string(args[0],"file_as_str")) };
+								 }
+								 return ExpValue("");
+							}
+				  }
 			};
 			//test
 			auto fun_it = funs.find(name);

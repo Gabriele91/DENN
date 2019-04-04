@@ -1,3 +1,6 @@
+#include <string>
+#include <cstring>
+#include <sstream>
 //String
 namespace Denn
 {
@@ -23,5 +26,14 @@ namespace Denn
 		}
 		//..
 		return true;
+	}
+
+	template< class T >
+	inline std::string to_string_with_precision(const T a_value, const size_t precision = 6)
+	{
+		std::ostringstream out;
+		out.precision(precision);
+		out << std::fixed << a_value;
+		return out.str();
 	}
 }
