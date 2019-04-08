@@ -27,8 +27,17 @@ namespace Denn
         //methods
         virtual bool minimize() const = 0;
         virtual Scalar operator () (const NeuralNetwork&, const DataSet&) = 0;	
+        virtual Scalar operator () (const Matrix& predict, const DataSet&) = 0;	
     };
 
+	class DefaultEvaluation : public Evaluation
+	{		
+    public:
+		//Evaluation info
+        DefaultEvaluation();
+        //methods
+        virtual Scalar operator () (const NeuralNetwork&, const DataSet&) operator_override;	
+    };
 	//class factory of Evaluation methods
 	class EvaluationFactory
 	{

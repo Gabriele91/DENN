@@ -49,6 +49,7 @@ public:
 		m_layers.push_back(std::static_pointer_cast<Layer>(std::make_shared<DerivateLayer>(layer)));
 	}
 	/////////////////////////////////////////////////////////////////////////
+	const Matrix& predict(const Matrix& input) const;
 	const Matrix& feedforward(const Matrix& input) const;
 	void backpropagate
 	(

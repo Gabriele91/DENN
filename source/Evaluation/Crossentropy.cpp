@@ -3,16 +3,15 @@
 
 namespace Denn
 {
-	class CrossEntropy : public Evaluation
+	class CrossEntropy : public DefaultEvaluation
 	{
 	public:
         //methods
         virtual bool minimize() const { return true; }
-        virtual Scalar operator () (const NeuralNetwork& network, const DataSet& dataset)
+        virtual Scalar operator () (const Matrix& pred, const DataSet& dataset)
         {
 			const int n = dataset.features().cols();
 			const Scalar eps = SCALAR_EPS;
-			const Matrix& pred = network.feedforward(dataset.features());
 			const Matrix& target = dataset.labels();
 			Scalar loss = -(target.array().cwiseProduct((pred.array() + eps).log())).sum() / Scalar(n);
 			return loss;

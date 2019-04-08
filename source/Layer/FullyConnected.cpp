@@ -43,6 +43,10 @@ namespace Denn
 	}
 
 	//////////////////////////////////////////////////
+	const Matrix& FullyConnected::predict(const Matrix& bottom)
+	{
+		return feedforward(bottom);
+	}
 	const Matrix& FullyConnected::feedforward(const Matrix& bottom)
 	{
 		const int n_sample = bottom.cols();

@@ -51,6 +51,7 @@ namespace Denn
 		SPtr get_ptr();
 		virtual SPtr copy()   const = 0;
 		///////////////////////////////////////////////////////////////////////////
+		virtual const Matrix& predict(const Matrix& prev_layer_data)								      = 0;
 		virtual const Matrix& feedforward(const Matrix& prev_layer_data)								  = 0;
 		virtual const Matrix& backpropagate(const Matrix& prev_layer_data, const Matrix& next_layer_data) = 0;
 		///////////////////////////////////////////////////////////////////////////
@@ -107,9 +108,11 @@ namespace Denn
 		//////////////////////////////////////////////////
 		virtual const Inputs inputs() const override { return {}; }
 		///////////////////////////////////////////////////////////////////////////
+		virtual const Matrix& predict(const Matrix& prev_layer_data) override;
+		///////////////////////////////////////////////////////////////////////////
 		virtual void update(const Optimizer& optimize) override { /*none*/ }
 		///////////////////////////////////////////////////////////////////////////
-		virtual size_t        size()  const override { return 0; }
+		virtual size_t size()  const override { return 0; }
 		virtual AlignedMapMatrix       operator[](size_t i) override;
 		virtual ConstAlignedMapMatrix  operator[](size_t i) const override;
 	};

@@ -56,6 +56,25 @@ namespace Denn
 		return std::static_pointer_cast<Layer>(std::make_shared<Convolutional>(*this));
 	}
 	//////////////////////////////////////////////////
+	const Matrix& Convolutional::predict(const Matrix& bottom)
+	{
+			// Each column is an observation
+			int n_sample = bottom.cols();
+			m_top.resize(int(out_size()), n_sample);
+			//Buffer
+			thread_local Matrix image;
+			//for each
+			for (int i = 0; i < n_sample; i++) 
+			{
+				// im2col
+				internal::img_to_col(m_dim, bottom.col(i), image);
+				// conv by product
+				AlignedMapMatrix result(m_top.col(i).data(), image.rows(), m_kernels.cols());
+				result.noalias() = image * m_kernels;
+				result.rowwise() += m_bias.transpose();
+			}
+			return m_top;
+	}
 	const Matrix& Convolutional::feedforward(const Matrix& bottom)
 	{
 		// Each column is an observation

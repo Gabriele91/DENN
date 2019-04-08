@@ -31,6 +31,20 @@ namespace Denn
 		return *this;
 	}
 	/////////////////////////////////////////////////////////////////////////
+	const Matrix& NeuralNetwork::predict(const Matrix& input) const
+	{
+		//no layer?
+		denn_assert(m_layers.size());
+		//input layer
+		m_layers[0]->predict(input);
+		//hidden layers
+		for (size_t i = 1; i < size(); ++i)
+		{
+			m_layers[i]->predict(m_layers[i-1]->ff_output());
+		}
+		//return
+		return m_layers[size()-1]->ff_output();
+	}	
 	const Matrix& NeuralNetwork::feedforward(const Matrix& input) const
 	{
 		//no layer?

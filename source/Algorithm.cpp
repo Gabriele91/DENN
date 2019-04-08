@@ -383,7 +383,8 @@ namespace Denn
 		//Compute new individual
 		m_e_method->create_a_individual(m_population, i, *new_son);
 		//eval
-		new_son->m_eval = (*m_loss_function)((NeuralNetwork&)*new_son, current_batch());
+		new_son->m_eval = (*m_loss_function)(new_son->m_network.feedforward(current_batch().features()), 
+																				 current_batch());
 	}
 	
 	/////////////////////////////////////////////////////////////////

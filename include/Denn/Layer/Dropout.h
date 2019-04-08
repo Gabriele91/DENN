@@ -5,25 +5,25 @@
 
 namespace Denn
 {
-	class AvgPooling : public PoolingLayer
+	class Dropout : public PoolingLayer //like a pooling layer
 	{
 	public:
 		///////////////////////////////////////
 		/// Constructor
 		///
+		/// \param dropout       Probability of drop a connection
 		/// \param in_width      Width of the input image in each channel.
 		/// \param in_height     Height of the input image in each channel.
 		/// \param in_channels   Number of input channels.
-		/// \param window_width  Width of the filter.
-		/// \param window_height Height of the filter.
-		/// \param stride        Kernel stride (x, y).
 		///
-		AvgPooling 
+		Dropout 
 		(
-			  int in_width, int in_height, int in_channels
-			, int window_width, int window_height, int stride = 1
+              float dropout
+            , int in_width
+            , int in_height = 1
+            , int in_channels = 1
 		);
-		AvgPooling 
+		Dropout 
 		(
 			  const Shape& in
 			, const std::vector<int>& metadata
@@ -40,14 +40,16 @@ namespace Denn
 		virtual void update(const Optimizer& optimize) override;
 		//////////////////////////////////////////////////
 	protected:    
-		//shape conv
-		internal::ConvDims m_dim;		           // dimensions of convolution
+        // probability
+        double m_probability;		         
+ 		// mask
+        Matrix m_mask;
 	};
 
 	REGISTERED_LAYER(
-		AvgPooling,
-		LAYER_NAMES("avg_pooling", "avgp"),
-		LayerShapeType(SHAPE_2D_3D),    //shape 2D/3D
-		LayerDescription::MinMax{ 2,3 } //min args filter size, max args filter size + stride
+		Dropout,
+		LAYER_NAMES("dropout", "dout"),
+		LayerShapeType(SHAPE_1D_2D_3D),  //shape 1D/2D/3D
+		LayerDescription::MinMax{ 1 }    //dropout probability
 	)
 }
