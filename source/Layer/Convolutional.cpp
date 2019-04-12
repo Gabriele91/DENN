@@ -29,7 +29,7 @@ namespace Denn
 	Convolutional::Convolutional
 	(
 		  const Shape& in
-		, const std::vector<int>& metadata
+		, const Inputs& metadata
 	)
 	: Convolutional
 	(
@@ -44,11 +44,10 @@ namespace Denn
 	//////////////////////////////////////////////////
 	const Inputs Convolutional::inputs() const
 	{
-		return 
-		{ 
+		return make_inputs<int>({ 
 			m_dim.width_kernel, m_dim.height_kernel, m_dim.channel_out,
 			m_dim.stride, m_dim.pad_w, m_dim.pad_h
-		};
+		});
 	}
 	//////////////////////////////////////////////////
 	Layer::SPtr Convolutional::copy() const

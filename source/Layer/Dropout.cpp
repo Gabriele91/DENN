@@ -23,12 +23,12 @@ namespace Denn
     Dropout::Dropout 
     (
       const Shape& in
-    , const std::vector<int>& metadata
+    , const Inputs& metadata
     )
 	: Dropout
 	(
 	//inputs
-	metadata[0] / 100.0f,
+	metadata[0],
 	//shapes
 	in.width(), in.height(), in.channels()
     )
@@ -42,11 +42,11 @@ namespace Denn
 	const Inputs Dropout::inputs() const
 	{
         if(in_size().is1D())
-		    return { in_size().width() };
+		    return make_inputs<int>({ in_size().width() });
         else if(in_size().is2D())
-		    return { in_size().width(),  in_size().height() };
+		    return  make_inputs<int>({ in_size().width(),  in_size().height() });
         else //if(in_size().is3D())
-		    return { in_size().width(),  in_size().height(), in_size().channels() };
+		    return  make_inputs<int>({ in_size().width(),  in_size().height(), in_size().channels() });
 	}	
     //////////////////////////////////////////////////
     const Matrix& Dropout::predict(const Matrix& bottom)

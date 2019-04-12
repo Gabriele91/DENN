@@ -21,7 +21,7 @@ namespace Denn
     MaxPooling::MaxPooling 
     (
       const Shape& in
-    , const std::vector<int>& metadata
+    , const Inputs& metadata
     )
 	: MaxPooling
 	(
@@ -40,10 +40,9 @@ namespace Denn
 	}
 	const Inputs MaxPooling::inputs() const
 	{
-		return 
-		{ 
+		return make_inputs<int>({ 
 			m_dim.width_kernel, m_dim.height_kernel, m_dim.stride
-		};
+		});
 	}	
     ////////////////////////////////////////////////// 
 	const Matrix& MaxPooling::predict(const Matrix& bottom)

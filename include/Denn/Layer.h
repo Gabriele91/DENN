@@ -5,7 +5,23 @@
 
 namespace Denn
 {
-	using Inputs = std::vector< int >;
+	//Layer intput type
+	using InputType = float;
+	using Inputs = std::vector< float >;
+	//make input
+	template < class T >
+	inline Inputs make_inputs(const std::vector< T >& in)
+	{
+		Inputs output;
+		output.reserve(in.size());
+		for(const T& value : in) output.push_back(InputType(value));
+		return output;
+	}
+	template <>
+	inline Inputs make_inputs<InputType>(const std::vector< InputType >& in)
+	{
+		return in;
+	}
 
 	class Layer : public std::enable_shared_from_this< Layer >
 	{

@@ -36,8 +36,8 @@ namespace Denn
 		bool set_out_as_input = false;
 		bool first = true;
 		std::string type;
-		std::vector<int> shape;
-		std::vector<int> inputs;
+		std::vector<float> shape;
+		std::vector<float> inputs;
 		//temp layer input
 		Shape in_shape;
 		Inputs in_inputs;
@@ -93,7 +93,7 @@ namespace Denn
 				{
 					//parse
 					char *outptr = nullptr;
-					shape.push_back(std::strtol(ptr, &outptr, 10));
+					shape.push_back(std::strtod(ptr, &outptr));
 					if (ptr == outptr)
 					{
 						err += std::string(ptr-2, 5) + " is not valid shape";
@@ -126,7 +126,7 @@ namespace Denn
 				{
 					//parse
 					char *outptr = nullptr;
-					inputs.push_back(std::strtol(ptr, &outptr, 10));
+					inputs.push_back(std::strtod(ptr, &outptr));
 					if (ptr == outptr)
 					{
 						err += std::string(ptr - 2, 5) + " is not valid input";

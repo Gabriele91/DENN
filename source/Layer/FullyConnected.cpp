@@ -34,7 +34,7 @@ namespace Denn
 	//////////////////////////////////////////////////
 	const Inputs FullyConnected::inputs() const
 	{
-		return { out_size().width() };
+		return make_inputs<int>({ out_size().width() });
 	}
 	//////////////////////////////////////////////////
 	Layer::SPtr FullyConnected::copy() const

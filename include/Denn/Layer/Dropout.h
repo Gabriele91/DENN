@@ -26,7 +26,7 @@ namespace Denn
 		Dropout 
 		(
 			  const Shape& in
-			, const std::vector<int>& metadata
+			, const Inputs& metadata
 		);
 		//////////////////////////////////////////////////
 		virtual Layer::SPtr copy() const override;
