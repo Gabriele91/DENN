@@ -180,8 +180,9 @@ namespace Denn
 				SGD sgd(m_parameters.m_learning_rate, 
 						m_parameters.m_decay,
 						m_parameters.m_momentum, 
-						m_parameters.m_nesterov
-						);
+						m_parameters.m_nesterov,
+						&random_engine()
+					    );
 				//for each batch
 				for (int epoch = 0; epoch < *m_parameters.m_generations; ++epoch)
 				{

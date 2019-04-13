@@ -55,10 +55,6 @@ namespace Denn
         m_top.resize(int(out_size()), n_sample);
         m_top.setZero(); 
         m_top.array() += std::numeric_limits<float>::lowest();
-        //backpropagation
-        CODE_BACKPROPAGATION(
-            m_max_idxs.resize(n_sample, std::vector<int>(int(out_size()), 0));
-        )
         //max pooling
         for (int i = 0; i < n_sample; i ++) 
         {

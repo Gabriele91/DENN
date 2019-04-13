@@ -15,7 +15,7 @@ namespace Denn
 		//copy all layers
 		for (size_t i = 0; i != nn.size(); ++i)
 		{
-			m_layers.push_back(nn[i].copy()->get_ptr());
+			add_layer(nn[i].copy()->get_ptr());
 		}
 	}
 	NeuralNetwork& NeuralNetwork::operator= (const NeuralNetwork & nn)
@@ -25,10 +25,16 @@ namespace Denn
 		//copy all layers
 		for (size_t i = 0; i != nn.size(); ++i)
 		{
-			m_layers.push_back(nn[i].copy()->get_ptr());
+			add_layer(nn[i].copy()->get_ptr());
 		}
 		//self return
 		return *this;
+	}	
+	/////////////////////////////////////////////////////////////////////////
+	void NeuralNetwork::add_layer(const Layer::SPtr& layer)
+	{
+		m_layers.push_back(layer->copy());
+		m_layers.back()->network() = this;
 	}
 	/////////////////////////////////////////////////////////////////////////
 	const Matrix& NeuralNetwork::predict(const Matrix& input) const
@@ -45,10 +51,12 @@ namespace Denn
 		//return
 		return m_layers[size()-1]->ff_output();
 	}	
-	const Matrix& NeuralNetwork::feedforward(const Matrix& input) const
+	const Matrix& NeuralNetwork::feedforward(const Matrix& input, Random* random) const
 	{
 		//no layer?
 		denn_assert(m_layers.size());
+		//set random engine (dropout)
+		m_random = random;
 		//input layer
 		m_layers[0]->feedforward(input);
 		//hidden layers
@@ -130,7 +138,7 @@ namespace Denn
 							const Optimizer& opt, OutputLoss type)
 	{
 		//->
-		feedforward(input);
+		feedforward(input, opt.random());
 		//<-
 		backpropagate(input, output, type);
 		//update

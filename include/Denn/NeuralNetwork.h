@@ -32,6 +32,16 @@ public:
 	{
 		add_layer(layers...);
 	}
+	/////////////////////////////////////////////////////////////////////////
+	//add a layer
+	void add_layer(const Layer::SPtr& layer);
+	//template for each kind of layer
+	template < typename DerivateLayer >
+	void add_layer(const DerivateLayer& layer)
+	{
+		add_layer(std::static_pointer_cast<Layer>(std::make_shared<DerivateLayer>(layer)));
+	}
+	//template for variant args of layers add into network
 	template < typename ...Layers >
 	void add_layer(const Layer& layer, Layers ...layers)
 	{
@@ -39,18 +49,8 @@ public:
 		add_layer(layers...);
 	}
 	/////////////////////////////////////////////////////////////////////////
-	void add_layer(const Layer::SPtr& layer)
-	{
-		m_layers.push_back(layer->copy());
-	}
-	template < typename DerivateLayer >
-	void add_layer(const DerivateLayer& layer)
-	{
-		m_layers.push_back(std::static_pointer_cast<Layer>(std::make_shared<DerivateLayer>(layer)));
-	}
-	/////////////////////////////////////////////////////////////////////////
 	const Matrix& predict(const Matrix& input) const;
-	const Matrix& feedforward(const Matrix& input) const;
+	const Matrix& feedforward(const Matrix&, Random* random = nullptr) const;
 	void backpropagate
 	(
 		const Matrix& input, 
@@ -82,10 +82,15 @@ public:
 
 	LayerConstIterator end() const;
 	/////////////////////////////////////////////////////////////////////////
+	//Random engine
+	Random*& random()       { return m_random; }
+	Random*  random() const { return m_random; }
+
 protected:
-
+	//layer list
 	LayerList m_layers;
-
+	//ref to random engine
+	mutable Random* m_random{nullptr};
 };
 
 template <>

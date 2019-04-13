@@ -1,5 +1,6 @@
 #include "Denn/Layer/Dropout.h"
 #include "Denn/Core/Random.h"
+#include "Denn/NeuralNetwork.h"
 #define _metadata(_x, _default) (_x < metadata.size() ? metadata[_x] : _default)
 #define _shapepooling(in, kernel, stride) (1 + std::ceil((in - kernel) / stride))
 
@@ -58,11 +59,12 @@ namespace Denn
     {
         //init nois vector
         m_mask.resize(bottom.rows(),bottom.cols());
-        //Random engine
-        thread_local Random random; //todo, pass as argument
+        //Get random engine from network
+        denn_assert(network());
+        denn_assert(network()->random());
         //random
-        m_mask = m_mask.unaryExpr([&,this](const Scalar& x) -> Scalar  { 
-            return random.uniform() < m_probability ? Scalar(0) : Scalar(1); 
+        m_mask = m_mask.unaryExpr([this](const Scalar& x) -> Scalar  { 
+            return network()->random()->uniform() < m_probability ? Scalar(0) : Scalar(1); 
         });
         //apply
         m_top = (bottom.array() * m_mask.array()).matrix();
