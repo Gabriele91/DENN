@@ -21,18 +21,18 @@ namespace Denn
 			ONLYINFO 
 		};
 
-		ReadOnly<std::string>			m_dataset_filename        { "dataset" };
-		ReadOnly<size_t>			    m_batch_size			  { "batch_size", size_t(100) };
-		ReadOnly<size_t>			    m_batch_offset			  { "batch_offset", size_t(0) };
-		ReadOnly<std::string> 			m_output_filename         { "output"  };
-		ReadOnly<std::string>		    m_runtime_output_type     { "runtime_output",            "bench",    true /* false? */ };
-		ReadOnly<std::string>		    m_runtime_output_file     { "runtime_output_file",            "",    true /* false? */ };
-		ReadOnly<bool>				    m_compute_test_per_pass   { "compute_test_per_pass",    bool(true),  true /* false? */ };
-		ReadOnly<bool>				    m_serialize_neural_network{ "serialize_neural_network", bool(true),  false /* true? */ };
-        ReadOnly<bool>                  m_use_validation          { "use_validation",           bool(true),  true /* false? */ };
-        ReadOnly<bool>                  m_reval_pop_on_batch      { "reval_pop_on_batch",       bool(true),  true /* false? */ };
-
-		ReadOnly<unsigned int>	         m_seed			 { "seed", (unsigned int)(std::random_device{}())  };
+		ReadOnly<std::string>			m_dataset_filename           { "dataset" };
+		ReadOnly<size_t>			    m_batch_size			     { "batch_size", size_t(100) };
+		ReadOnly<size_t>			    m_batch_offset			     { "batch_offset", size_t(0) };
+		ReadOnly<std::string> 			m_output_filename            { "output"  };
+		ReadOnly<std::string>		    m_runtime_output_type        { "runtime_output",            "bench",    true /* false? */ };
+		ReadOnly<std::string>		    m_runtime_output_file        { "runtime_output_file",            "",    true /* false? */ };
+		ReadOnly<bool>				    m_compute_test_per_pass      { "compute_test_per_pass",    bool(true),  true /* false? */ };
+		ReadOnly<bool>				    m_serialize_neural_network   { "serialize_neural_network", bool(true),  false /* true? */ };
+        ReadOnly<bool>                  m_use_validation             { "use_validation",           bool(true),  true /* false? */ };
+        ReadOnly<bool>                  m_last_with_validation       { "last_with_validation",     bool(true),  true /* false? */ };
+        ReadOnly<bool>                  m_reval_pop_on_batch         { "reval_pop_on_batch",       bool(true),  true /* false? */ };
+		ReadOnly<unsigned int>	        m_seed                       { "seed", (unsigned int)(std::random_device{}())  };
 
 		ReadOnly<std::string>	         m_instance      { "instance", "default" };
 		ReadOnly<size_t>	             m_generations   { "generations", size_t(1000) };

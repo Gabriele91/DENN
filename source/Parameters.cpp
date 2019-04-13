@@ -60,6 +60,9 @@ namespace Denn
             m_use_validation, "Use the validation test", { "-uv" }
         },
         ParameterInfo {
+            m_last_with_validation, "Use the validation test in order to choose the last best (used when the batch test is used for the choice of the best during evolution)", { "-luv" }
+        },
+        ParameterInfo {
             m_reval_pop_on_batch, "Reevaluate the population on change of a batch", { "-rpob" }
         },
         ParameterInfo {

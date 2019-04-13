@@ -85,8 +85,8 @@ namespace Denn
 		m_restart_ctx = RestartContext();
 		//best
 		Scalar worst_eval = m_e_method->best_from_validation() 
-						  ? validation_function_worst() 
-						  : loss_function_worst();
+						          ? validation_function_worst() 
+						          : loss_function_worst();
 		//default best
 		m_best_ctx = BestContext(nullptr, worst_eval);
 		execute_update_best();
@@ -98,6 +98,12 @@ namespace Denn
 			execute_a_pass(pass, n_sub_pass);
 			//next
 			next_batch();
+		}
+		//best on validation?
+		if((bool)m_params.m_last_with_validation && !m_e_method->best_from_validation())
+		{
+			m_best_ctx.m_eval = validation_function_worst();
+			execute_update_best_on_validation();
 		}
 		//end output
 		if (m_output) m_output->end();
@@ -255,7 +261,7 @@ namespace Denn
 	void DennAlgorithm::execute_update_best()
 	{
 		if(m_e_method->best_from_validation()) execute_update_best_on_validation();
-		else             					   execute_update_best_on_loss_function();
+		else             					   					 execute_update_best_on_loss_function();
 	}	
 	void DennAlgorithm::execute_update_best_on_validation()
 	{
