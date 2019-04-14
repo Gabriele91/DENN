@@ -85,7 +85,12 @@ public:
 	//Random engine
 	Random*& random()       { return m_random; }
 	Random*  random() const { return m_random; }
-
+	/////////////////////////////////////////////////////////////////////////
+	NeuralNetwork&  operator += (NeuralNetwork& right);
+	NeuralNetwork&  operator -= (NeuralNetwork& right);
+	NeuralNetwork&  operator *= (NeuralNetwork& right);
+	NeuralNetwork&  operator /= (NeuralNetwork& right);
+	
 protected:
 	//layer list
 	LayerList m_layers;
@@ -104,7 +109,20 @@ inline NeuralNetwork::Scalar distance_pow2<const NeuralNetwork>(const NeuralNetw
 	for(size_t i = 0; i!=a.size() ; ++i) dpow2 += distance_pow2(a[i],b[i]);
 	//return 
 	return dpow2;
-} 
+}
+
+//math operations
+extern NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right);
+
+//logic operatos
+extern NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right); 
+extern NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right);
 
 
 }

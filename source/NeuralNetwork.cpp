@@ -195,4 +195,147 @@ namespace Denn
 	{
 		return m_layers.end();
 	}
+
+	//self operatos
+	NeuralNetwork& NeuralNetwork::operator += (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] += right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator -= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] -= right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator *= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] *= right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator /= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] *= right[l][m];
+		}
+		return (*this);
+	}
+
+	//operatos
+	NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp += right;
+		return tmp;
+	}
+
+	NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp -= right;
+		return tmp;
+	}
+
+	NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp *= right;
+		return tmp;
+	}
+
+	NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp /= right;
+		return tmp;
+	}
+
+	//logic operatos
+	NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) < r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) > r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) == r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) <= r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) >= r_array(a));
+		}
+		return tmp;
+	}
 }
