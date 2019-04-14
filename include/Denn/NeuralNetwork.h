@@ -124,5 +124,10 @@ extern NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right);
 extern NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right);
 extern NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right);
 
+extern NeuralNetwork operator < (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator > (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator == (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator <= (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator >= (NeuralNetwork& left, Scalar value);
 
 }

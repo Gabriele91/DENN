@@ -338,4 +338,76 @@ namespace Denn
 		}
 		return tmp;
 	}
+
+	//logics vs float
+	
+	NeuralNetwork operator < (NeuralNetwork& left, Scalar value) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) < value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator > (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) > value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator == (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) == value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator <= (NeuralNetwork& left, Scalar value) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) <= value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator >= (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) >= value);
+		}
+		return tmp;
+	}
 }
