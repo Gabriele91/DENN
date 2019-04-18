@@ -91,6 +91,14 @@
             "program": "${workspaceFolder}/datasets/build_har_only_training.py",
             "cwd": "${workspaceFolder}/datasets",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Python: Build XOr",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/datasets/build_xor.py",
+            "cwd": "${workspaceFolder}/datasets",
+            "console": "integratedTerminal"
         }
     ]
 }
