@@ -21,6 +21,7 @@ build**/**
 # Results
 results/
 results*/
+results**/
 results*.zip
 *.stdout
 *.stderr
