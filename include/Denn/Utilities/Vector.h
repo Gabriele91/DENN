@@ -1,3 +1,7 @@
+#pragma once 
+#include <vector>
+#include <numeric>
+#include <algorithm>
 //String
 namespace Denn
 {
@@ -33,5 +37,45 @@ namespace Denn
 			}
 			p[current] = current;
 		}
+	}
+
+	
+	template <typename T>
+	inline std::vector<size_t> sort_indexes(const std::vector<T> &v)
+	{
+		// initialize original index locations
+		std::vector<size_t> idx(v.size());
+		std::iota(idx.begin(), idx.end(), 0);
+
+		// sort indexes based on comparing values in v
+		std::sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+
+		return idx;
+	}
+	
+	template <typename T>
+	inline std::vector<size_t>& sort_indexes(const std::vector<T> &v,  std::vector<size_t>& idx)
+	{
+		// initialize original index locations
+		idx.resize(v.size());
+		std::iota(idx.begin(), idx.end(), 0);
+
+		// sort indexes based on comparing values in v
+		std::sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v[i1] < v[i2];});
+
+		return idx;
+	}
+
+	template <typename T>
+	inline std::vector<size_t>& sort_indexes(Eigen::ArrayWrapper<T> &v,  std::vector<size_t>& idx)
+	{
+		// initialize original index locations
+		idx.resize(v.size());
+		std::iota(idx.begin(), idx.end(), 0);
+
+		// sort indexes based on comparing values in v
+		std::sort(idx.begin(), idx.end(), [&v](size_t i1, size_t i2) {return v(i1) < v(i2);});
+
+		return idx;
 	}
 }

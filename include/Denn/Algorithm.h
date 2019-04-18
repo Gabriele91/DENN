@@ -224,10 +224,11 @@ protected:
 	//Intermedie steps
 	void execute_a_pass(size_t pass, size_t n_sub_pass);
 	void execute_a_sub_pass(size_t pass, size_t sub_pass);
-	void execute_update_best();
+	void execute_update_best(int pass, int sub_pass);
+	void execute_update_mask(int pass, int sub_pass);
 	void execute_update_best_on_validation();
 	void execute_update_best_on_loss_function();
-	void execute_update_restart(size_t pass);	
+	void execute_update_restart(size_t pass);
 	/////////////////////////////////////////////////////////////////
 	//execute a pass
 	void execute_pass();
@@ -260,6 +261,11 @@ protected:
 	Evaluation::SPtr      m_validation_function;
 	Evaluation::SPtr      m_test_function;
 	RuntimeOutput::SPtr   m_output;
+	//mask
+	NeuralNetwork         m_nnlast;
+	NeuralNetwork         m_nnmask;
+	Scalar			      m_nnlast_eval{0};
+	int					  m_nnmask_count{0};
 	//dataset
 	Individual::SPtr      m_default;
 	DataSetLoader*		  m_dataset_loader;

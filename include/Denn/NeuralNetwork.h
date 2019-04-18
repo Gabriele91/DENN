@@ -67,6 +67,24 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 	//no 0 values
 	void no_0_weights();
+	//fill all
+	void fill(Scalar value);
+	//all positive
+	void abs();
+	//all positive
+	void one_minus_weights();
+	//apply mask
+	void apply_mask(NeuralNetwork& mask, 
+					NeuralNetwork& parent);
+	//compute mask
+	void compute_mask(NeuralNetwork& oldparent,
+					  NeuralNetwork& newparent,
+					  std::function<Scalar(Scalar, Scalar)> m_fmask);
+	//apply function
+	void apply(std::function<Scalar(Scalar)> fun);
+	void apply_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
+	//compute avg
+	Scalar compute_avg() const;
 	/////////////////////////////////////////////////////////////////////////
 	size_t size() const;
 

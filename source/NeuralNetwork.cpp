@@ -1,5 +1,6 @@
 #include "Denn/NeuralNetwork.h"
-
+#include "Denn/Utilities/Math.h"
+#include "Denn/Utilities/Vector.h"
 namespace Denn
 {	
 	////////////////////////////////////////////////////////////////
@@ -158,6 +159,92 @@ namespace Denn
 				while(std::abs(weight) <= eps) weight += std::copysign(eps, weight);
 				return weight;
 			});
+		}
+	}
+	void NeuralNetwork::fill(Scalar value)
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([value](Scalar weight) -> Scalar { return value; });
+		}
+	}
+	void NeuralNetwork::abs()
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([](Scalar weight) -> Scalar { return std::abs(weight); });
+		}
+	}
+	void NeuralNetwork::apply_mask(NeuralNetwork& mask, NeuralNetwork& parent)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			auto m_array = mask[l][m].array();
+			auto p_array = parent[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = lerp<Scalar>(p_array(a), t_array(a), m_array(a));
+		}
+	}
+	void NeuralNetwork::compute_mask(NeuralNetwork& oldparent, 
+								     NeuralNetwork& newparent, 
+									 std::function<Scalar(Scalar, Scalar)> fmask)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			auto o_array = oldparent[l][m].array();
+			auto w_array = newparent[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = fmask(o_array(a), w_array(a));
+		}
+	}	
+	void NeuralNetwork::apply(std::function<Scalar(Scalar)> fun)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			(*this)[l][m] = (*this)[l][m].unaryExpr(fun);
+		}
+	}
+	void NeuralNetwork::apply_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
+	{
+		std::vector<size_t> indexs;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			sort_indexes(t_array,indexs);
+
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(indexs[a]) = fun(t_array(indexs[a]), a, t_array.size());
+		}
+
+	}
+	Scalar NeuralNetwork::compute_avg() const
+	{
+		Scalar sum = 0;
+		size_t count = 0;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			sum += t_array.sum();
+			count += t_array.size();
+		}
+		return sum/Scalar(count);
+	}
+	//all positive
+	void NeuralNetwork::one_minus_weights()
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([](Scalar weight) -> Scalar { return Scalar(1) - weight; });
 		}
 	}
 	/////////////////////////////////////////////////////////////////////////

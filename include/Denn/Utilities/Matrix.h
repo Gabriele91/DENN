@@ -127,4 +127,5 @@ namespace Denn
 		}
 		m.transposeInPlace();
 	}
+	
 }

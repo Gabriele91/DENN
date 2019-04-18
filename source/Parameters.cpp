@@ -63,7 +63,19 @@ namespace Denn
             m_last_with_validation, "Use the validation test in order to choose the last best (used when the batch test is used for the choice of the best during evolution)", { "-luv" }
         },
         ParameterInfo {
-            m_reval_pop_on_batch, "Reevaluate the population on change of a batch", { "-rpob" }
+            m_reval_pop_on_batch, "Re-evaluate the population on change of a batch", { "-rpob" }
+        },
+        ParameterInfo {
+            m_use_mask, "Enable the using of mask during the evolution", { "-um" }
+        },
+        ParameterInfo {
+            m_mask_factor, "Percentage factor use to make the mask", { "-mf" }
+        },
+        ParameterInfo {
+            m_save_intermediate, "Enable the saving of intermediete result during the evolution", { "-si" }
+        },
+        ParameterInfo {
+            m_intermediate_output, "Path of output of intermediete result (<path>/<name results>.<format>)", { "-io" }
         },
         ParameterInfo {
             m_evolution_type, "Type of evolution method", { "--evolution",    "-em"  },

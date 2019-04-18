@@ -32,8 +32,15 @@ namespace Denn
         ReadOnly<bool>                  m_use_validation             { "use_validation",           bool(true),  true /* false? */ };
         ReadOnly<bool>                  m_last_with_validation       { "last_with_validation",     bool(true),  true /* false? */ };
         ReadOnly<bool>                  m_reval_pop_on_batch         { "reval_pop_on_batch",       bool(true),  true /* false? */ };
+        ReadOnly<bool>                  m_use_mask                   { "use_mask",                 bool(true),  true /* false? */ };
+        ReadOnly<float>                 m_mask_factor                { "mask_factor",             float(0.25),  true /* false? */ };
 		ReadOnly<unsigned int>	        m_seed                       { "seed", (unsigned int)(std::random_device{}())  };
 
+		//intermedie results
+		ReadOnly<bool>        m_save_intermediate   				 { "save_intermediate", bool(false), true /* false? */ };
+		ReadOnly<std::string> m_intermediate_output 				 { "intermediate_output", "", true /* false? */ };
+
+		//main info
 		ReadOnly<std::string>	         m_instance      { "instance", "default" };
 		ReadOnly<size_t>	             m_generations   { "generations", size_t(1000) };
 		ReadOnly<size_t>	             m_sub_gens      { "sub_gens"  , size_t(100)   };

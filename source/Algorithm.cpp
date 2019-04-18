@@ -1,4 +1,6 @@
+#include <fstream>
 #include "Denn/Algorithm.h"
+#include "Denn/Core/Filesystem.h"
 
 namespace Denn
 {
@@ -89,7 +91,16 @@ namespace Denn
 						          : loss_function_worst();
 		//default best
 		m_best_ctx = BestContext(nullptr, worst_eval);
-		execute_update_best();
+		execute_update_best(0,0);
+		//mask
+		if(*m_params.m_use_mask)
+		{
+            m_nnlast = m_best_ctx.m_best->m_network;
+			m_nnlast_eval = m_best_ctx.m_eval;
+			m_nnmask = m_default->m_network;
+			m_nnmask_count = 0;
+			execute_update_mask(0,0);
+		}
 		//start output
 		if (m_output) m_output->start();
 		//main loop
@@ -243,7 +254,9 @@ namespace Denn
 		//end pass
 		m_e_method->end_a_gen_pass(m_population);
 		//update context
-		execute_update_best();
+		execute_update_best(pass, n_sub_pass);
+		//update mask
+		execute_update_mask(pass, n_sub_pass);
 		//restart
 		if(m_e_method->can_reset()) execute_update_restart(pass);
 		//output
@@ -258,10 +271,35 @@ namespace Denn
 		//output
 		if(m_output) m_output->end_a_sub_pass();
 	}
-	void DennAlgorithm::execute_update_best()
+	void DennAlgorithm::execute_update_best(int pass, int n_sub_pass)
 	{
 		if(m_e_method->best_from_validation()) execute_update_best_on_validation();
-		else             					   					 execute_update_best_on_loss_function();
+		else             					   execute_update_best_on_loss_function();
+		//if save intermediate results
+		if(m_params.m_save_intermediate && m_best_ctx.m_best && m_best_ctx.m_best->m_network.size())
+		{
+			//cout
+			static size_t best_counter=0;
+			++best_counter;
+			//string name
+			auto path = Filesystem::get_directory(m_params.m_intermediate_output);
+			auto name = Filesystem::get_basename(m_params.m_intermediate_output);
+			auto ext = Filesystem::get_extension(m_params.m_intermediate_output);
+			//fainal name
+			auto outputpath = path + "/" + 
+							  name + "_best_" +
+							  std::to_string(best_counter) + "_" +
+							  std::to_string((pass+1)*n_sub_pass) + ext;
+			//output
+			std::ofstream m_file(outputpath);
+			SerializeOutputFactory::create(ext, m_file, m_params)->serialize_best(
+				0, //no time
+				m_best_ctx.m_best->m_eval,
+				m_best_ctx.m_best->m_f,
+				m_best_ctx.m_best->m_cr,
+				m_best_ctx.m_best->m_network
+			);
+		}
 	}	
 	void DennAlgorithm::execute_update_best_on_validation()
 	{
@@ -271,8 +309,14 @@ namespace Denn
 		//validation best
 		if (validation_function_compare(curr_eval, m_best_ctx.m_eval))
 		{
-			//must copy because "restart" 
-			//not copy element then 
+            //copy last
+            if((*m_params.m_use_mask) 
+			&& m_best_ctx.m_best 
+			&& m_best_ctx.m_best->m_network.size())
+            {
+                //copy
+                m_nnlast = m_best_ctx.m_best->m_network;
+            }
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
 			//save eval (on validation) of best
@@ -292,12 +336,81 @@ namespace Denn
 		//loss best
 		if (loss_function_compare(curr->m_eval, m_best_ctx.m_eval))
 		{
-			//must copy because "restart" 
-			//not copy element then 
+            //copy last
+            if((*m_params.m_use_mask) 
+			&& m_best_ctx.m_best 
+			&& m_best_ctx.m_best->m_network.size())
+            {
+                //copy
+                m_nnlast = m_best_ctx.m_best->m_network;
+            }
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
 			//save eval (on test set) of best
 			m_best_ctx.m_eval = curr->m_eval;
+		}
+	}
+	void DennAlgorithm::execute_update_mask(int pass, int n_sub_pass)
+	{
+		//update mask
+		if(*m_params.m_use_mask)
+		{
+			//first pass (==init)
+			if(pass == 0)
+			{
+				m_nnmask.fill(1);
+				return;
+			}
+			//cout if and only if it's the same best
+    		m_nnmask_count = (m_nnmask_count+1) * m_best_ctx.m_eval==m_nnlast_eval; 
+			//save eval
+			m_nnlast_eval = m_best_ctx.m_eval;
+            //rest mask if more than 10 equal best 
+			if( m_nnmask_count <= 10 )
+			{
+				m_nnmask.compute_mask(m_nnlast, m_best_ctx.m_best->m_network,
+				[](Scalar oldw, Scalar neww) -> Scalar
+				{
+					return std::pow(std::abs(neww-oldw)+1.0,2.0)-Scalar(1.0);
+					//return std::abs(neww-oldw);
+				});
+				m_nnmask.apply_sort([this](Scalar value, size_t i, size_t msize) -> Scalar
+				{
+					if(Scalar(i)/Scalar(msize) >= *m_params.m_mask_factor)
+						return Scalar(true);
+					else
+						return Scalar(random().uniform() < *m_params.m_mask_factor);
+				});
+			}
+			else
+			{
+				m_nnmask.fill(1);
+			}
+			//if save intermediate results
+			if(m_params.m_save_intermediate && m_nnmask.size())
+			{
+				//cout
+				static size_t mask_counter=0;
+				++mask_counter;
+				//string name
+				auto path = Filesystem::get_directory(m_params.m_intermediate_output);
+				auto name = Filesystem::get_basename(m_params.m_intermediate_output);
+				auto ext = Filesystem::get_extension(m_params.m_intermediate_output);
+				//fainal name
+				auto outputpath = path + "/" + 
+								  name + "_mask_" +
+								  std::to_string(mask_counter) + "_" +
+								  std::to_string((pass+1)*n_sub_pass) + ext;			
+				//output
+				std::ofstream m_file(outputpath);
+				SerializeOutputFactory::create(ext, m_file, m_params)->serialize_best(
+					0, //no time
+					0, //no eval
+					0, //no f 
+					0, //no cr
+					m_nnmask
+				);
+			}
 		}
 	}
 	void DennAlgorithm::execute_update_restart(size_t pass)
@@ -383,13 +496,21 @@ namespace Denn
 	void DennAlgorithm::execute_generation_task(size_t i)
 	{
 		//ref to sons
+		auto& parents = m_population.parents();
 		auto& sons = m_population.sons();
 		//get temp individual
-		auto& new_son = sons[i];
+		auto& parent = parents[i];
+		auto& son = sons[i];
 		//Compute new individual
-		m_e_method->create_a_individual(m_population, i, *new_son);
+		m_e_method->create_a_individual(m_population, i, *son);
+		//test
+		if(*m_params.m_use_mask)
+		{
+			//net
+			son->m_network.apply_mask(m_nnmask, parent->m_network);
+		}
 		//eval
-		new_son->m_eval = (*m_loss_function)(new_son->m_network.feedforward(current_batch().features(), &random(i)),  current_batch());
+		son->m_eval = (*m_loss_function)(son->m_network.feedforward(current_batch().features(), &random(i)),  current_batch());
 	}
 	
 	/////////////////////////////////////////////////////////////////
