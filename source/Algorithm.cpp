@@ -366,7 +366,8 @@ namespace Denn
 			//save eval
 			m_nnlast_eval = m_best_ctx.m_eval;
             //rest mask if more than 10 equal best 
-			if( m_nnmask_count <= 10 )
+			if( *m_params.m_mask_reset_count < 0 ||
+				m_nnmask_count <= *m_params.m_mask_reset_count )
 			{
 				m_nnmask.compute_mask(m_nnlast, m_best_ctx.m_best->m_network,
 				[](Scalar oldw, Scalar neww) -> Scalar
@@ -379,7 +380,7 @@ namespace Denn
 					if(Scalar(i)/Scalar(msize) >= *m_params.m_mask_factor)
 						return Scalar(true);
 					else
-						return Scalar(random().uniform() < *m_params.m_mask_factor);
+						return 0;//Scalar(random().uniform() < *m_params.m_mask_factor);
 				});
 			}
 			else

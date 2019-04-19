@@ -34,6 +34,8 @@ namespace Denn
         ReadOnly<bool>                  m_reval_pop_on_batch         { "reval_pop_on_batch",       bool(true),  true /* false? */ };
         ReadOnly<bool>                  m_use_mask                   { "use_mask",                 bool(true),  true /* false? */ };
         ReadOnly<float>                 m_mask_factor                { "mask_factor",             float(0.25),  true /* false? */ };
+        ReadOnly<int>                   m_mask_reset_count           { "mask_reset_count",            int(-1),  true /* false? */ };
+
 		ReadOnly<unsigned int>	        m_seed                       { "seed", (unsigned int)(std::random_device{}())  };
 
 		//intermedie results
