@@ -125,16 +125,16 @@ namespace Denn
                 //get
                 auto batch = dbstream.last_batch();
                 //print
-                for(size_t r = 0; r!=batch.features().rows(); ++r)
+                for(size_t c = 0; c!=batch.features().cols(); ++c)
                 {
-                    for(size_t c = 0; c!=batch.features().cols(); ++c)
+                	for(size_t r = 0; r!=batch.features().rows(); ++r)
                     {
                         output_stream() << batch.features()(r,c) << " ";
                     }
                     output_stream() << "| ";
-                    for(size_t c = 0; c!=batch.labels().cols(); ++c)
+                	for(size_t r = 0; r!=batch.labels().rows(); ++r)
                     {
-                        output_stream() << batch.features()(r,c) << " ";
+                        output_stream() << batch.labels()(r,c) << " ";
                     }
                     output_stream() << std::endl;
                 }
@@ -159,16 +159,16 @@ namespace Denn
                 output_stream() << "-----------------" << std::endl;
                 output_stream() << "BATCH ID[" << m_dataset->get_last_batch_info().m_batch_id << "]" << std::endl;
                 //print
-                for(size_t r = 0; r!=batch.features().rows(); ++r)
+                for(size_t c = 0; c!=batch.features().cols(); ++c)
                 {
-                    for(size_t c = 0; c!=batch.features().cols(); ++c)
+                	for(size_t r = 0; r!=batch.features().rows(); ++r)
                     {
                         output_stream() << batch.features()(r,c) << " ";
                     }
                     output_stream() << "| ";
-                    for(size_t c = 0; c!=batch.labels().cols(); ++c)
+                	for(size_t r = 0; r!=batch.labels().rows(); ++r)
                     {
-                        output_stream() << batch.features()(r,c) << " ";
+                        output_stream() << batch.labels()(r,c) << " ";
                     }
                     output_stream() << std::endl;
                 }
