@@ -24,6 +24,10 @@ namespace Denn
 		ReadOnly<std::string>			m_dataset_filename           { "dataset" };
 		ReadOnly<size_t>			    m_batch_size			     { "batch_size", size_t(100) };
 		ReadOnly<size_t>			    m_batch_offset			     { "batch_offset", size_t(0) };
+		
+		ReadOnly<int>			    	m_features			     	 { "features", size_t(0),  false /* true? */ };
+		ReadOnly<int>			    	m_classes			     	 { "classes", size_t(0),  false /* true? */ };
+
 		ReadOnly<std::string> 			m_output_filename            { "output"  };
 		ReadOnly<std::string>		    m_runtime_output_type        { "runtime_output",            "bench",    true /* false? */ };
 		ReadOnly<std::string>		    m_runtime_output_file        { "runtime_output_file",            "",    true /* false? */ };
@@ -98,9 +102,10 @@ namespace Denn
 		ReadOnly<Scalar>					 m_momentum	    { "momentum", Scalar(0.9) };
 		ReadOnly<bool>					     m_nesterov     { "nesterov", bool(true) };
 		//NN	
-		ReadOnly< std::string >				 m_network { "network" , "fully_connected(,)", true };
+		ReadOnly< std::string >				 m_network 		   { "network" , "fully_connected[]", true };
+		ReadOnly< MatrixList >				 m_network_weights { "network_weights " , MatrixList{}, false };
 		//params info
-		std::vector< ParameterInfo >     m_params_info;
+		std::vector< ParameterInfo >        m_params_info;
 	
 		Parameters();
 		Parameters(int nargs, const char **vargs, bool jump_first = true);		
@@ -110,7 +115,7 @@ namespace Denn
 
 		ReturnType from_args(int nargs, const char **vargs);
         ReturnType from_config(const std::string& source, int nargs, const char **vargs);
-		ReturnType from_json(const std::string& source);
+		ReturnType from_json(const std::string& source, int nargs, const char **vargs);
 
 		static bool compare_n_args(const std::vector< std::string >& keys, const char* arg);
 		static std::string return_n_space(size_t n);

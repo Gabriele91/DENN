@@ -1,9 +1,34 @@
+#pragma once
 #include <string>
 #include <cstring>
+#include <algorithm>
 #include <sstream>
 //String
 namespace Denn
 {
+
+	
+	inline std::string str_rtrim(const std::string &s)
+	{
+		auto wsfront=s.begin();
+		auto wsback=std::find_if_not(s.rbegin(),s.rend(),[](int c){return std::isspace(c);}).base();
+		return (wsback<=wsfront ? std::string() : std::string(wsfront,wsback));
+	}
+	
+	inline std::string str_ltrim(const std::string &s)
+	{
+		auto wsfront=std::find_if_not(s.begin(),s.end(),[](int c){return std::isspace(c);});
+		auto wsback=s.end();
+		return (wsback<=wsfront ? std::string() : std::string(wsfront,wsback));
+	}
+
+	inline std::string str_trim(const std::string &s)
+	{
+		auto wsfront=std::find_if_not(s.begin(),s.end(),[](int c){return std::isspace(c);});
+		auto wsback=std::find_if_not(s.rbegin(),s.rend(),[](int c){return std::isspace(c);}).base();
+		return (wsback<=wsfront ? std::string() : std::string(wsfront,wsback));
+	}
+
 	inline std::string str_replace(std::string str, const std::string& old_str, const std::string& new_str)
 	{
 		std::string::size_type pos = 0u;

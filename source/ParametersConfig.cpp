@@ -1624,7 +1624,7 @@ namespace Denn
         conf_skip_space_and_comments(line, ptr);
         //Var table
         VariableTable context;
-        //parse variables from comand line
+        //parse variables from shell line
 		if (!ParametersParseHelp::conf_parse_cline_args(context, nargs, vargs))
 			return FAIL;
         //parsing

@@ -57,6 +57,12 @@ namespace Denn
             m_batch_offset, "Batch offset, how many records will be replaced in the next batch [<= batch size]", { "-bo" }
         },
         ParameterInfo {
+            m_features, "Set the number of Features given in input when you want to test a neural network", { "-nf" }
+        },
+        ParameterInfo {
+            m_classes, "Set the number of classes to get from neural network output when you want to test it", { "-nc" }
+        },
+        ParameterInfo {
             m_use_validation, "Use the validation test", { "-uv" }
         },
         ParameterInfo {
@@ -445,7 +451,7 @@ namespace Denn
         }
         else if (Denn::Filesystem::get_extension(vargs[jump_first]) == ".json")
         {
-            return from_json(Denn::Filesystem::text_file_read_all(vargs[jump_first]));
+            return from_json(Denn::Filesystem::text_file_read_all(vargs[jump_first]), nargs - 1 - jump_first, &vargs[jump_first+1]);
         }
 		else
 		{

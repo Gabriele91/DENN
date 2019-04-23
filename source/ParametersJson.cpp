@@ -1,5 +1,6 @@
 #include "Denn/Parameters.h"
-
+#include "Denn/Utilities/String.h"
+#include "Denn/Utilities/Networks.h"
 namespace Denn
 {
         //default int
@@ -18,8 +19,145 @@ namespace Denn
         for (size_t i = 0; i != jarray.size(); ++i) out[i] = jarray[i].string();
         return out;
     }
+    
+    static inline bool conf_is_space(char c)
+    {
+        return c == ' ' || (c >= '\t' && c <= '\r');
+    }    
 
-    Parameters::ReturnType Parameters::from_json(const std::string& source)
+    static bool conf_skip_line_space(const char*& source)
+    {
+        bool a_space_is_skipped = false;
+        while (conf_is_space(*source) && *source != '\n')
+        {
+            //to true
+            a_space_is_skipped = true;
+            //jump
+            ++source;
+            //exit
+            if (!*source) break;
+        }
+        return a_space_is_skipped;
+    }
+
+    //name
+	static std::string conf_name(const char*& source)
+	{
+		//init
+		std::string out;
+		//first
+		if (std::isalpha(*source) || *source == '_' || *source == '-' )
+		{
+			out += (*source);
+			++source;
+		}
+		//parse name
+		while ( std::isalnum(*source) || *source == '_' || *source == '-' || *source == '.')
+		{
+			out += (*source);
+			++source;
+		}
+		//end
+		return out;
+	}
+
+    static inline bool args_is_digit_or_point(char c)
+    {
+        return c == '.'  || (c >= '0' && c <= '9');
+    }
+
+    static JsonValue json_arg_magic_cast(const std::string& value)
+    {
+        auto vtrim = str_trim(value);
+        if(vtrim.size())
+        {
+                 if(vtrim == "true")  return {true};
+            else if(vtrim == "false") return {false};
+            else if(args_is_digit_or_point(vtrim[0])) return {std::stod(vtrim.data())};
+        }
+        return {value};
+    }
+
+    static bool conf_parse_cline_args
+    (
+          JsonObject& arguments
+        , int nargs
+        , const char **vargs
+    )
+    {
+        	enum State
+			{
+			  START
+			, NAME
+			, EQUAL
+			, VALUE
+			};
+			//Parse state
+			State state{ START };
+			//values
+			std::string name;
+			std::string value;
+			//parsing
+			for (int i = 0; i < nargs; ++i)
+			{
+				//ptr
+				const char* ptr = vargs[i];
+				//parse
+				while (*ptr)
+				{
+					switch (state)
+					{
+					case START:
+						//begin
+						conf_skip_line_space(ptr);
+						name.clear();
+						value.clear();
+						state = NAME;
+					break;
+					case NAME:
+						name = conf_name(ptr);
+						if (!name.size())
+						{
+							std::cerr << "Name argument is not valid" << std::endl;
+							return false;
+						}
+						state = EQUAL;
+					break;
+					case EQUAL:
+						if (*ptr != '=')
+						{
+							std::cerr << "\'=\' is not found" << std::endl;
+							return false;
+						}
+						++ptr;
+						state = VALUE;
+					break;
+					case VALUE:
+						while(*ptr) value += (*ptr++);
+						if (!value.size())
+						{
+							std::cerr << "Value argument is not valid" << std::endl;
+							return false;
+						}
+						state = START;
+						//add value
+                        arguments.at(name) = json_arg_magic_cast(value) ;
+					break;
+					default:
+						return false;
+					break;
+					}
+				}
+
+			}
+    }
+
+    Parameters::ReturnType Parameters::from_json
+    (
+          const std::string& source
+        , int nargs
+        , const char **vargs
+    )
     {
         //init json parse 
         Json json_input(source);
@@ -53,6 +191,8 @@ namespace Denn
         }
         //ref to args
         auto& jargs = jargs_value.object();
+        //overwrite 
+        conf_parse_cline_args(jargs, nargs, vargs);
         //start
         for (auto& arg : jargs)
         {
@@ -183,6 +323,39 @@ namespace Denn
                     }
                 }
             }
+        }
+        //find network weights
+        jargs_it = jobject.find("network");
+        //test
+        if (jargs_it != jobject.end() && jargs_it->second.is_array())
+        {
+            //parsing
+            auto& jnn = jargs_it->second.array();
+            //size test
+            if(!jnn.size())
+            {
+                return SUCCESS; //void weights
+            }
+            //Array Matrix
+            MatrixList network_weights;
+            //for each layers
+            for(auto& jlayer : jnn)
+            for(auto& jmatrix : jlayer.array())
+            {
+                if(jmatrix.size())
+                {
+                    Matrix wdata(jmatrix.size(), jmatrix[0].size());
+                    for(int row = 0; row!=wdata.rows() ; ++row)
+                    for(int col = 0; col!=wdata.cols() ; ++col)
+                    {
+                        wdata(row,col) = jmatrix[row].array()[col].number();
+                    }
+                    network_weights.push_back(wdata);
+                }
+                else  network_weights.push_back(Matrix());
+            }
+            m_network_weights.set(network_weights);
+
         }
         return SUCCESS;
     }
