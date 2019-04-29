@@ -211,7 +211,7 @@ namespace Denn
 			(*this)[l][m] = (*this)[l][m].unaryExpr(fun);
 		}
 	}
-	void NeuralNetwork::apply_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
+	void NeuralNetwork::apply_layer_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
 	{
 		std::vector<size_t> indexs;
 		for(size_t l=0;l < size(); ++l)
@@ -223,7 +223,33 @@ namespace Denn
 			for(size_t a=0; a < t_array.size(); ++a)
 				t_array(indexs[a]) = fun(t_array(indexs[a]), a, t_array.size());
 		}
-
+	}
+	
+	void NeuralNetwork::apply_flat_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
+	{
+		size_t array_fullsize = 0;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+			array_fullsize += (*this)[l][m].array().size();
+		//mapping
+		struct L_M_A { int l, m, a; };
+		std::vector<L_M_A> indexs; indexs.reserve(array_fullsize);
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		for(size_t a=0;a < (*this)[l][m].array().size(); ++a)
+		{
+			indexs.push_back({int(l),int(m),int(a)});
+		}
+		// sort indexes based on comparing values in v
+		std::sort(indexs.begin(), indexs.end(), [&](const L_M_A& l, const L_M_A& r) {
+			return (*this)[l.l][l.m].array()(l.a) < (*this)[r.l][r.m].array()(r.a);
+		});
+		//applay
+		for(size_t i=0;i < array_fullsize; ++i)
+		{
+			auto& ids = indexs[i];
+			(*this)[ids.l][ids.m].array()(ids.a) = fun((*this)[ids.l][ids.m].array()(ids.a), i, array_fullsize);
+		}
 	}
 	Scalar NeuralNetwork::compute_avg() const
 	{

@@ -82,7 +82,8 @@ public:
 					  std::function<Scalar(Scalar, Scalar)> m_fmask);
 	//apply function
 	void apply(std::function<Scalar(Scalar)> fun);
-	void apply_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
+	void apply_layer_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
+	void apply_flat_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
 	//compute avg
 	Scalar compute_avg() const;
 	/////////////////////////////////////////////////////////////////////////

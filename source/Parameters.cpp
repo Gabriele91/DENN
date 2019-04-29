@@ -78,6 +78,9 @@ namespace Denn
             m_mask_factor, "Percentage factor use to make the mask", { "-mf" }
         },
         ParameterInfo {
+            m_mask_change_the_bests, "Decide which are the connections kind to be improved", { "-mb" }
+        },
+        ParameterInfo {
             m_mask_reset_count, "Count of iteration where best NN is equal to ones, in that case, the mask will be reset (<0 means disable reset)", { "-mrc" }
         },
         ParameterInfo {

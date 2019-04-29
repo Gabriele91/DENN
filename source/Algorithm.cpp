@@ -99,6 +99,7 @@ namespace Denn
 			m_nnlast_eval = m_best_ctx.m_eval;
 			m_nnmask = m_default->m_network;
 			m_nnmask_count = 0;
+			m_nnmask_bchanged = true;
 			execute_update_mask(0,0);
 		}
 		//start output
@@ -316,6 +317,7 @@ namespace Denn
             {
                 //copy
                 m_nnlast = m_best_ctx.m_best->m_network;
+				m_nnmask_bchanged = true;
             }
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
@@ -343,6 +345,7 @@ namespace Denn
             {
                 //copy
                 m_nnlast = m_best_ctx.m_best->m_network;
+				m_nnmask_bchanged = true;
             }
 			//it can change the values of the best individual
 			m_best_ctx.m_best = curr->copy();
@@ -362,7 +365,9 @@ namespace Denn
 				return;
 			}
 			//cout if and only if it's the same best
-    		m_nnmask_count = (m_nnmask_count+1) * m_best_ctx.m_eval==m_nnlast_eval; 
+    		m_nnmask_count = (m_nnmask_count+1) * !m_nnmask_bchanged; 
+			//became false
+			m_nnmask_bchanged = false;
 			//save eval
 			m_nnlast_eval = m_best_ctx.m_eval;
             //rest mask if more than 10 equal best 
@@ -375,13 +380,22 @@ namespace Denn
 					return std::pow(std::abs(neww-oldw)+1.0,2.0)-Scalar(1.0);
 					//return std::abs(neww-oldw);
 				});
-				m_nnmask.apply_sort([this](Scalar value, size_t i, size_t msize) -> Scalar
-				{
-					if(Scalar(i)/Scalar(msize) >= *m_params.m_mask_factor)
-						return Scalar(true);
-					else
-						return 0;//Scalar(random().uniform() < *m_params.m_mask_factor);
-				});
+				if(*m_params.m_mask_change_the_bests)
+					m_nnmask.apply_flat_sort([this](Scalar value, size_t i, size_t msize) -> Scalar
+					{
+						if(Scalar(i)/Scalar(msize) >= *m_params.m_mask_factor)
+							return Scalar(true);
+						else
+							return 0;//Scalar(random().uniform() < *m_params.m_mask_factor);
+					});
+				else
+					m_nnmask.apply_flat_sort([this](Scalar value, size_t i, size_t msize) -> Scalar
+					{
+						if(Scalar(i)/Scalar(msize) <= *m_params.m_mask_factor)
+							return Scalar(true);
+						else
+							return 0;//Scalar(random().uniform() < *m_params.m_mask_factor);
+					});
 			}
 			else
 			{

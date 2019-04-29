@@ -266,6 +266,7 @@ protected:
 	NeuralNetwork         m_nnmask;
 	Scalar			      m_nnlast_eval{0};
 	int					  m_nnmask_count{0};
+	bool				  m_nnmask_bchanged{false};
 	//dataset
 	Individual::SPtr      m_default;
 	DataSetLoader*		  m_dataset_loader;
