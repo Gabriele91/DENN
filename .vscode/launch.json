@@ -37,6 +37,22 @@
             "externalConsole": true
         },
         {
+            "name": "(Windows) Launch NN Test",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\build\\DENN.exe",
+            "symbolSearchPath": "${workspaceFolder}\\build",
+            "args": ["test_/xor12test.json"],            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+             },
+            "externalConsole": true
+        },
+        {
             "name": "(Windows) Launch Backpropagation",
             "type": "cppvsdbg",
             "request": "launch",
