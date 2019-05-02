@@ -469,17 +469,52 @@ namespace Denn
 		//end
 		return out;
 	}
-    ////////////////////////////////////////////////////////////////////////////////////////
+    //////////////////////////////////////////////////////////////////////////////////////////value
+	struct ExpValue
+	{
+		//values
+		std::string m_str;
+		double m_number;
+		//init
+		ExpValue() : m_number(0) {};
+		ExpValue(double value) : m_number(value) {};
+		ExpValue(const std::string& value) : m_str(value), m_number(0) {};
+		//info
+		bool is_string() const { return m_str.size() != 0; }
+		bool is_number() const { return m_str.size() == 0; }
+		//void
+		bool is_false() { return is_number() && !m_number; }
+		bool is_true() { return is_string() || m_number; }
+		//cast
+		//str
+		std::string str() const 
+		{
+			return is_string()
+				? m_str 
+				: m_number == double(long(m_number))
+				? std::to_string(long(m_number))
+				: std::to_string(m_number);
+		}
+		//number
+		double number() const
+		{
+			const char* str_ptr = m_str.data();
+			return is_number()
+				? m_number
+				: conf_string_to_double(str_ptr);
+		}
+	};
+
     class VariableTable
     {
     public:
         
-        void add_vairable(const std::string& variable,const std::string& default_value) const
+        void add_vairable(const std::string& variable,const ExpValue& default_value) const
         {
             m_map[variable] = default_value;
         }
         
-        bool change_value(const std::string& variable,const std::string& new_value)
+        bool change_value(const std::string& variable,const ExpValue& new_value)
         {
             if(m_map.find(variable) == m_map.end()) return false;       
             m_map[variable] = new_value;
@@ -491,10 +526,10 @@ namespace Denn
             return m_map.find(variable) != m_map.end();
         }
 
-        std::string get(const std::string& variable) const 
+        ExpValue get(const std::string& variable) const 
         {
             auto value_it = m_map.find(variable);
-            if(value_it == m_map.end()) return "";
+            if(value_it == m_map.end()) return ExpValue(0);
             return value_it->second;
         }
 
@@ -505,47 +540,13 @@ namespace Denn
 
     private:
 
-        mutable std::unordered_map< std::string, std::string > m_map;
+        mutable std::unordered_map< std::string, ExpValue > m_map;
     };
 
 	class ConfExpParser
 	{
 	public:
-		//value
-		struct ExpValue
-		{
-			//values
-			std::string m_str;
-			double m_number;
-			//init
-			ExpValue() : m_number(0) {};
-			ExpValue(double value) : m_number(value) {};
-			ExpValue(const std::string& value) : m_str(value), m_number(0) {};
-			//info
-			bool is_string() const { return m_str.size() != 0; }
-			bool is_number() const { return m_str.size() == 0; }
-			//void
-			bool is_false() { return is_number() && !m_number; }
-			bool is_true() { return is_string() || m_number; }
-			//cast
-			//str
-			std::string str() const 
-			{
-				return is_string()
-					? m_str 
-					: m_number == double(long(m_number))
-					? std::to_string(long(m_number))
-					: std::to_string(m_number);
-			}
-			//number
-			double number() const
-			{
-				const char* str_ptr = m_str.data();
-				return is_number()
-					? m_number
-					: conf_string_to_double(str_ptr);
-			}
-		};
+		
 		//alias
 		using ListString = std::vector < std::string >;
 		using FunctionArgs = std::vector< ExpValue >;
@@ -908,7 +909,7 @@ namespace Denn
 					return 0.0;
 				}
 				//get value
-				return smart_cast(m_table.get(varname));
+				return m_table.get(varname);
 			}
 			else if (conf_is_varname(peek()))
 			{
@@ -1025,21 +1026,68 @@ namespace Denn
 			ExpValue result = mathexp();
 			//eat space
 			skip();
+			//status
+			bool exp_is_true = result.is_true();
+			bool only_eat = false;
 			//right
 			while (peek() == '&' || peek() == '|')
 			{
 				if (get() == '&')
-				{ 
-					if (result.is_true() && (result = mathexp()).is_true()) break;
+				{
+					if(!exp_is_true)
+					{ 
+						only_eat = true;
+						result = ExpValue(0);
+					}
 				}
 				else
 				{
-					if (result.is_true() || (result = mathexp()).is_true()) break;
+					if(exp_is_true)	only_eat = true;
 				}
+				//...
+				if(only_eat)
+					mathexp(); //ignore res
+				else
+					exp_is_true = (result = mathexp()).is_true();
 				//eat space
 				skip();
 			}
 			return result;
+		}
+
+		ExpValue conditionalexp()
+		{
+			// a ? b : c
+			//a
+			ExpValue a = logicexp();
+			//eat space
+			skip();
+			//right
+			while (peek() == '?')
+			{
+				//eat ?
+				get();
+				//eat space
+				skip_full();
+				//b
+				ExpValue b = logicexp();
+				//eat space
+				skip_full();
+				//:
+				if (get() != ':')
+				{
+					return a.is_true() ? b : ExpValue(0);
+				}
+				//eat space
+				skip_full();
+				//c
+				ExpValue c = logicexp();
+				//eat space
+				skip();
+				//return b or c
+				return a.is_true() ? b : c; 
+			}
+			return a;
 		}
 
 		ExpValue expression()
@@ -1047,7 +1095,7 @@ namespace Denn
 			//eat space
 			skip();
 			//return
-			return logicexp();
+			return conditionalexp();
 		}
 
 	private:
@@ -1075,6 +1123,11 @@ namespace Denn
 		bool skip()
 		{
 			return conf_skip_line_space_and_comments(line(), ptr());
+		}
+
+		bool skip_full()
+		{
+			return conf_skip_space_and_comments(line(), ptr());
 		}
 
 		//values
@@ -1247,7 +1300,7 @@ namespace Denn
 						name = conf_name(ptr);
 						if (!name.size())
 						{
-							std::cerr << "Name argument is not valid" << std::endl;
+							std::cerr << "Name argument is not valid (" << name << ")" << std::endl;
 							return false;
 						}
 						state = EQUAL;
@@ -1255,22 +1308,36 @@ namespace Denn
 					case EQUAL:
 						if (*ptr != '=')
 						{
-							std::cerr << "\'=\' is not found" << std::endl;
+							std::cerr << "\'=\' is not found (" << name << ")" << std::endl;
 							return false;
 						}
 						++ptr;
 						state = VALUE;
 					break;
 					case VALUE:
+					{
 						while(*ptr) value += (*ptr++);
 						if (!value.size())
 						{
-							std::cerr << "Value argument is not valid" << std::endl;
+							std::cerr << "Value argument is not valid (" << name << ")" << std::endl;
 							return false;
 						}
 						state = START;
+						//fake line
+						size_t line = 0;
+						//exp eval
+						ConfExpParser exp(context, line, value.c_str());
+						if (exp.errors().size())
+						{
+							std::cerr << "Value argument is not valid (" << name << "): " << std::endl;
+							for(const auto& error : exp.errors()) std::cerr << error << std::endl;
+							return false;
+						}
+						//debug
+						std::cout  << name << " = " << value << " (" <<  exp.result().str() << ")" << std::endl;
 						//add value
-						context.add_vairable(name, value);
+						context.add_vairable(name, exp.result());
+					}
 					break;
 					default:
 						return false;
