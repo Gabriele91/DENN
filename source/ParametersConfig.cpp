@@ -632,12 +632,12 @@ namespace Denn
 			//consts
 			MapConstants consts
 			{
-				  { "false", 0 }
-				, { "true", 1 }
-				, { "e",  Constants::e()  }
-				, { "pi", Constants::pi() }
-				, { "epsilon", Constants::epsilon() }
-				, { "golden_ratio", Constants::golden_ratio() }
+				  { "false", ExpValue(0) }
+				, { "true", ExpValue(1) }
+				, { "e",  ExpValue(Constants::e())  }
+				, { "pi", ExpValue(Constants::pi()) }
+				, { "epsilon", ExpValue(Constants::epsilon()) }
+				, { "golden_ratio", ExpValue(Constants::golden_ratio()) }
 			};
 			//test
 			auto const_it = consts.find(name);
@@ -1670,7 +1670,7 @@ namespace Denn
             //set
             if(!context.exists(variable_name))
             {
-                context.add_vairable(variable_name, exp.result().str());
+                context.add_vairable(variable_name, exp.result());
             }
 			//ok
             return true;
