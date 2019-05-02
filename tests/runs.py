@@ -43,13 +43,19 @@ def exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=False
 def get_result_from_json(output):
     import json
     with open(output) as fjson:
-        outjson = json.load(fjson)
+        jtext = fjson.read()
+        jtext = jtext.replace("-nan", "-0");
+        jtext = jtext.replace("nan", "0");
+        outjson = json.loads(jtext)
     return float(outjson["accuracy"])
 
 def get_time_from_json(output):
     import json
     with open(output) as fjson:
-        outjson = json.load(fjson)
+        jtext = fjson.read()
+        jtext = jtext.replace("-nan,", "-0,");
+        jtext = jtext.replace("nan,", "0,");
+        outjson = json.loads(jtext)
     return float(outjson["time"])
 
 def outputs_to_results(outputs):
