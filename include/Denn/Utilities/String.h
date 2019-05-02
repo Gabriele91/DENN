@@ -62,7 +62,7 @@ namespace Denn
 		return out.str();
 	}
 
-	std::vector<std::string> str_split(const std::string& s, char delimiter)
+	inline std::vector<std::string> str_split(const std::string& s, char delimiter)
 	{
 		std::vector<std::string> tokens;
 		std::string token;
