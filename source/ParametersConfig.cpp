@@ -1329,7 +1329,7 @@ namespace Denn
 						ConfExpParser exp(context, line, value.c_str());
 						if (exp.errors().size())
 						{
-							std::cerr << "Value argument is not valid (" << name << "): " << std::endl;
+							std::cerr << "Value argument is not valid (" << name << " : " << value << "): " << std::endl;
 							for(const auto& error : exp.errors()) std::cerr << error << std::endl;
 							return false;
 						}
