@@ -1325,18 +1325,16 @@ namespace Denn
 						state = START;
 						//fake line
 						size_t line = 0;
+						//output value
+						ExpValue resvalue(value);
 						//exp eval
 						ConfExpParser exp(context, line, value.c_str());
-						if (exp.errors().size())
-						{
-							std::cerr << "Value argument is not valid (" << name << " : " << value << "): " << std::endl;
-							for(const auto& error : exp.errors()) std::cerr << error << std::endl;
-							return false;
-						}
+						if (!exp.errors().size())
+							resvalue = exp.result();
 						//debug
-						std::cout  << name << " = " << value << " (" <<  exp.result().str() << ")" << std::endl;
+						std::cout  << name << " = " << value << " (exp: " <<  resvalue.str() << ")" << std::endl;
 						//add value
-						context.add_vairable(name, exp.result());
+						context.add_vairable(name, resvalue);
 					}
 					break;
 					default:
