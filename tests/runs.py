@@ -37,10 +37,7 @@ def make_output_dir(tmpdir):
 def exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=False):
     outputs = []
     for idrun in range(runs):
-        args_with_id = args.replace("$(RUN)",str(idrun))
-                           .replace("  ", " ")
-                           .strip()
-                           .split(" ")
+        args_with_id = (((args.replace("$(RUN)",str(idrun))).replace("  ", " ")).strip()).split(" ")
         outputs.append(execute_denn(denn,
                                     tmpdir, 
                                     template, 
