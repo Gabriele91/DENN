@@ -128,7 +128,7 @@ def parse_instances_file(path):
             elif len(values) == 2:
                 path, name, args = values[0], values[1], None
             else:
-                path, name, args = values[0], values[1], ",".join(values[2,:])
+                path, name, args = values[0], values[1], ",".join(values[2:])
             #save all
             path = path.strip()
             name = name.strip()
