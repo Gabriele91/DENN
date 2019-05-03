@@ -1,3 +1,34 @@
-template/JADE_NN_WDBC.config, WDBC
-template/JADE_NN_ESR_1_2.config, ESR_1_2
-template/JADE_NN_HAR_OT.config, HAR_OT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# LECCDE TESTS
+# template/JADE_NN_WDBC.config, WDBC
+# template/JADE_NN_ESR_1_2.config, ESR_1_2
+# template/JADE_NN_HAR_OT.config, HAR_OT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# XOR TESTS
+template/JADE_NN_XOR.config, XOR9ND2, gens=30000 clamp=7 rand=7 np=5000 xor_size=9 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR9ND2_$(RUN) 
+template/JADE_NN_XOR.config, XOR9ND3, gens=30000 clamp=7 rand=7 np=5000 xor_size=9 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR9ND3_$(RUN) 
+template/JADE_NN_XOR.config, XOR9ND4, gens=30000 clamp=7 rand=7 np=5000 xor_size=9 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR9ND4_$(RUN)
+
+template/JADE_NN_XOR.config, XOR10ND2, gens=30000 clamp=7 rand=7 np=5000 xor_size=10 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR10ND2_$(RUN) 
+template/JADE_NN_XOR.config, XOR10ND3, gens=30000 clamp=7 rand=7 np=5000 xor_size=10 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR10ND3_$(RUN) 
+template/JADE_NN_XOR.config, XOR10ND4, gens=30000 clamp=7 rand=7 np=5000 xor_size=10 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR10ND4_$(RUN) 
+
+template/JADE_NN_XOR.config, XOR11ND2, gens=30000 clamp=7 rand=7 np=5000 xor_size=11 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR11ND2_$(RUN) 
+template/JADE_NN_XOR.config, XOR11ND3, gens=30000 clamp=7 rand=7 np=5000 xor_size=11 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR11ND3_$(RUN) 
+template/JADE_NN_XOR.config, XOR11ND4, gens=30000 clamp=7 rand=7 np=5000 xor_size=11 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR11ND4_$(RUN) 
+
+template/JADE_NN_XOR.config, XOR12ND2, gens=30000 clamp=7 rand=7 np=5000 xor_size=12 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR12ND2_$(RUN)
+template/JADE_NN_XOR.config, XOR12ND3, gens=30000 clamp=7 rand=7 np=5000 xor_size=12 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR12ND3_$(RUN)
+template/JADE_NN_XOR.config, XOR12ND4, gens=30000 clamp=7 rand=7 np=5000 xor_size=12 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR12ND4_$(RUN)
+
+template/JADE_NN_XOR.config, XOR13ND2, gens=30000 clamp=7 rand=7 np=5000 xor_size=13 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR13ND2_$(RUN)
+template/JADE_NN_XOR.config, XOR13ND3, gens=30000 clamp=7 rand=7 np=5000 xor_size=13 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR13ND3_$(RUN)
+template/JADE_NN_XOR.config, XOR13ND4, gens=30000 clamp=7 rand=7 np=5000 xor_size=13 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR13ND4_$(RUN)
+
+template/JADE_NN_XOR.config, XOR14ND2, gens=40000 clamp=8 rand=8 np=5000 xor_size=14 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR14ND2_$(RUN)
+template/JADE_NN_XOR.config, XOR14ND3, gens=40000 clamp=8 rand=8 np=5000 xor_size=14 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR14ND3_$(RUN)
+template/JADE_NN_XOR.config, XOR14ND4, gens=40000 clamp=8 rand=8 np=5000 xor_size=14 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR14ND4_$(RUN)
+
+template/JADE_NN_XOR.config, XOR15ND2, gens=40000 clamp=8 rand=8 np=5000 xor_size=15 sub_gens=20 batch=200 nnodes=2 intermediate=true intermediate_name=I_XOR15ND2_$(RUN)
+template/JADE_NN_XOR.config, XOR15ND3, gens=40000 clamp=8 rand=8 np=5000 xor_size=15 sub_gens=20 batch=200 nnodes=3 intermediate=true intermediate_name=I_XOR15ND3_$(RUN)
+template/JADE_NN_XOR.config, XOR15ND4, gens=40000 clamp=8 rand=8 np=5000 xor_size=15 sub_gens=20 batch=200 nnodes=4 intermediate=true intermediate_name=I_XOR15ND4_$(RUN)
