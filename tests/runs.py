@@ -37,7 +37,14 @@ def make_output_dir(tmpdir):
 def exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=False):
     outputs = []
     for idrun in range(runs):
-        outputs.append(execute_denn(denn, tmpdir, template, name, args, idrun, get_only_output=get_only_output))
+        args_with_id = args.replace("$RUN",str(idrun))
+        outputs.append(execute_denn(denn,
+                                    tmpdir, 
+                                    template, 
+                                    name, 
+                                    args_with_id, 
+                                    idrun, 
+                                    get_only_output=get_only_output))
     return outputs
 
 def get_result_from_json(output):
@@ -110,11 +117,16 @@ def parse_instances_file(path):
     instances = []
     with open(path) as ifile:
         for line in ifile:
+            line = line.strip()
+            if len(line) == 0 or line[0] == '#':
+                continue #ignore this line
+            #parse line
             path, name, args = None, None, None
-            if len(line.strip()):
-                path, name, args = line.split(",")
+            path, name, args = line.split(",")
+            #wrong line?
             if path == None or name == None:
                 continue
+            #save all
             path = path.strip()
             name = name.strip()
             args = args.strip() if type(args) is str else ""
