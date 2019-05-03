@@ -25,7 +25,7 @@ def execute_denn(denn, tmpdir, template, name, args, idrun, get_only_output=Fals
     if not get_only_output:
         with open(path_stdout,"a+") as ofile:
             with open(path_stderr,"a+") as errfile:
-                subprocess.call([denn, template, "full_output={}".format(full_output), args], 
+                subprocess.call([denn, template, "full_output={}".format(full_output), *args], 
                                 stdout=ofile, 
                                 stderr=errfile)
     return full_output
@@ -38,6 +38,9 @@ def exe_instance(denn, tmpdir, runs, template, name, args, get_only_output=False
     outputs = []
     for idrun in range(runs):
         args_with_id = args.replace("$(RUN)",str(idrun))
+                           .replace("  ", " ")
+                           .strip()
+                           .split(" ")
         outputs.append(execute_denn(denn,
                                     tmpdir, 
                                     template, 
