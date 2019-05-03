@@ -121,11 +121,14 @@ def parse_instances_file(path):
             if len(line) == 0 or line[0] == '#':
                 continue #ignore this line
             #parse line
-            path, name, args = None, None, None
-            path, name, args = line.split(",")
+            values = line.split(",")
             #wrong line?
-            if path == None or name == None:
+            if len(values) < 2:
                 continue
+            elif len(values) == 2:
+                path, name, args = values[0], values[1], None
+            else:
+                path, name, args = values[0], values[1], ",".join(values[2,:])
             #save all
             path = path.strip()
             name = name.strip()
