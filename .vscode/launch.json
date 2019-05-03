@@ -37,6 +37,22 @@
             "externalConsole": true
         },
         {
+            "name": "(Windows) Launch XOR",
+            "type": "cppvsdbg",
+            "request": "launch",
+            "program": "${workspaceFolder}\\build\\DENN.exe",
+            "symbolSearchPath": "${workspaceFolder}\\build",
+            "args": ["template/JADE_NN_XOR.config"],            
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [],
+            "logging": {
+                "moduleLoad": false,
+                "trace": true
+             },
+            "externalConsole": true
+        },
+        {
             "name": "(Windows) Launch NN Test",
             "type": "cppvsdbg",
             "request": "launch",

@@ -172,7 +172,7 @@ def main(denn,
                        ])
     #zip
     all_zip_files = copy.deepcopy(outputs_all)
-    all_zip_files.extend([template for template,name in instances])
+    all_zip_files.extend([template for template, name, args in instances])
     save_all_in_zipfile(tmpdir, all_zip_files, zip_name)
     #delete
     if delete_files:
