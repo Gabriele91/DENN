@@ -113,35 +113,52 @@ namespace Denn
             //start id
             size_t n_batch = m_dataset->get_main_header_info().m_n_batch;
             size_t c_batch = 0;
+			size_t samples_count = 0;
+			//////////////////////////////////////////////
+			//cout fiels
+			m_dataset->start_read_batch();
+			m_dataset->clear_batch_counter();
+            while(m_dataset->number_of_batch_read() < n_batch)
+			{
+                //get
+                DataSetScalar batch;
+				m_dataset->read_batch(batch);
+				samples_count += m_dataset->get_last_batch_info().m_n_row;
+			}            
+			output_stream() << "-------------------------" << std::endl;
+            output_stream() << "- SAMPLES:" << samples_count << std::endl;
+            output_stream() << "-------------------------" << std::endl;
+			//////////////////////////////////////////////
 			//..
             output_stream() << "-------------------------" << std::endl;
         	output_stream() << "READ BATCH BY TestStream:" << std::endl;
+			size_t read_count = 0;
             //print
-            while(m_dataset->number_of_batch_read() < n_batch)
+            while(read_count < samples_count)
             {
                 //print batch id
                 output_stream() << "-----------------" << std::endl;
                 output_stream() << "BATCH N[" << c_batch << "]" << std::endl;
-                //get
+                //getcd 
                 auto batch = dbstream.last_batch();
                 //print
-                for(size_t r = 0; r!=batch.features().rows(); ++r)
+                for(size_t c = 0; c!=batch.features().cols(); ++c)
                 {
-                    for(size_t c = 0; c!=batch.features().cols(); ++c)
+                	for(size_t r = 0; r!=batch.features().rows(); ++r)
                     {
                         output_stream() << batch.features()(r,c) << " ";
                     }
                     output_stream() << "| ";
-                    for(size_t c = 0; c!=batch.labels().cols(); ++c)
+                	for(size_t r = 0; r!=batch.labels().rows(); ++r)
                     {
-                        output_stream() << batch.features()(r,c) << " ";
+                        output_stream() << batch.labels()(r,c) << " ";
                     }
                     output_stream() << std::endl;
                 }
+				//add
+				read_count += m_dataset->get_last_batch_info().m_n_row;
                 //next
                 dbstream.read_batch();
-                //next
-                ++c_batch;
             }           
 			//out
             output_stream() << "-------------------------" << std::endl;
@@ -154,26 +171,24 @@ namespace Denn
             {
                 //get
                 DataSetScalar batch;
-				m_dataset->read_batch(batch);
+				m_dataset->read_batch(batch,false);
                 //print batch id
                 output_stream() << "-----------------" << std::endl;
                 output_stream() << "BATCH ID[" << m_dataset->get_last_batch_info().m_batch_id << "]" << std::endl;
                 //print
-                for(size_t r = 0; r!=batch.features().rows(); ++r)
+                for(size_t c = 0; c!=batch.features().cols(); ++c)
                 {
-                    for(size_t c = 0; c!=batch.features().cols(); ++c)
+                	for(size_t r = 0; r!=batch.features().rows(); ++r)
                     {
                         output_stream() << batch.features()(r,c) << " ";
                     }
                     output_stream() << "| ";
-                    for(size_t c = 0; c!=batch.labels().cols(); ++c)
+                	for(size_t r = 0; r!=batch.labels().rows(); ++r)
                     {
-                        output_stream() << batch.features()(r,c) << " ";
+                        output_stream() << batch.labels()(r,c) << " ";
                     }
                     output_stream() << std::endl;
                 }
-                //next
-                ++c_batch;
             }
 			//success
 			return true;

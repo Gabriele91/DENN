@@ -79,17 +79,17 @@ public:
 	const DataSetLoader* get_datase_loader() const;
 
     //eval
-	Scalar loss_function_eval(Individual& i, size_t thread_id = 0) const;
-	Scalar validation_function_eval(Individual& i, size_t thread_id = 0) const;
-	Scalar test_function_eval(Individual& i, size_t thread_id = 0) const;
+	Scalar loss_function_eval(Individual& i, size_t thread_id = 0, bool training_phase=true) const;
+	Scalar validation_function_eval(Individual& i, size_t thread_id = 0, bool training_phase=true) const;
+	Scalar test_function_eval(Individual& i, size_t thread_id = 0, bool training_phase=true) const;
 
-	Scalar loss_function_eval(NeuralNetwork& n) const;
-	Scalar validation_function_eval(NeuralNetwork& n) const;
-	Scalar test_function_eval(NeuralNetwork& n) const;
+	Scalar loss_function_eval(NeuralNetwork& n, bool training_phase=true) const;
+	Scalar validation_function_eval(NeuralNetwork& n, bool training_phase=true) const;
+	Scalar test_function_eval(NeuralNetwork& n, bool training_phase=true) const;
 
-	Scalar loss_function_eval(NeuralNetwork::SPtr n) const { return loss_function_eval(*n);  }
-	Scalar validation_function_eval(NeuralNetwork::SPtr n) const { return validation_function_eval(*n);  }
-	Scalar test_function_eval(NeuralNetwork::SPtr n) const { return test_function_eval(*n);  }
+	Scalar loss_function_eval(NeuralNetwork::SPtr n, bool training_phase=true) const { return loss_function_eval(*n, training_phase);  }
+	Scalar validation_function_eval(NeuralNetwork::SPtr n, bool training_phase=true) const { return validation_function_eval(*n, training_phase);  }
+	Scalar test_function_eval(NeuralNetwork::SPtr n, bool training_phase=true) const { return test_function_eval(*n, training_phase);  }
 	
 	const NeuralNetwork::SPtr current_best_network() const { return best.network; }
 	const Scalar current_best_eval() const { return best.eval; }

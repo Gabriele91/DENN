@@ -12,7 +12,7 @@ namespace Denn
 	class Individual;
 	class NeuralNetwork;
 
-    //Evaluate function
+	//Evaluate function
 	class Evaluation : public std::enable_shared_from_this<Evaluation>
 	{		
     public:
@@ -24,9 +24,19 @@ namespace Denn
         Evaluation();
         //methods
         virtual bool minimize() const = 0;
-        virtual Scalar operator () (const NeuralNetwork&, const DataSet&) = 0;	
+        virtual Scalar operator () (const NeuralNetwork&, const DataSet&, bool training_phase=false) = 0;	
+        virtual Scalar operator () (const Matrix& predict, const DataSet&) = 0;	
     };
 
+	class DefaultEvaluation : public Evaluation
+	{		
+    public:
+		//Evaluation info
+        DefaultEvaluation();
+        //methods
+        virtual Scalar operator () (const NeuralNetwork&, const DataSet&, bool training_phase=false) operator_override;	
+    };
+	
 	//class factory of Evaluation methods
 	class EvaluationFactory
 	{

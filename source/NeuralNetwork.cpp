@@ -30,7 +30,7 @@ namespace Denn
 		//copy all layers
 		for (size_t i = 0; i != nn.size(); ++i)
 		{
-			m_layers.push_back(nn[i].copy()->get_ptr());
+			add_layer(nn[i].copy()->get_ptr());
 		}
 	}
 	NeuralNetwork& NeuralNetwork::operator= (const NeuralNetwork & nn)
@@ -40,16 +40,38 @@ namespace Denn
 		//copy all layers
 		for (size_t i = 0; i != nn.size(); ++i)
 		{
-			m_layers.push_back(nn[i].copy()->get_ptr());
+			add_layer(nn[i].copy()->get_ptr());
 		}
 		//self return
 		return *this;
+	}	
+	/////////////////////////////////////////////////////////////////////////
+	void NeuralNetwork::add_layer(const Layer::SPtr& layer)
+	{
+		m_layers.push_back(layer->copy());
+		m_layers.back()->network() = this;
 	}
 	/////////////////////////////////////////////////////////////////////////
-	const Matrix& NeuralNetwork::feedforward(const Matrix& input) const
+	const Matrix& NeuralNetwork::predict(const Matrix& input) const
 	{
 		//no layer?
 		denn_assert(m_layers.size());
+		//input layer
+		m_layers[0]->predict(input);
+		//hidden layers
+		for (size_t i = 1; i < size(); ++i)
+		{
+			m_layers[i]->predict(m_layers[i-1]->ff_output());
+		}
+		//return
+		return m_layers[size()-1]->ff_output();
+	}	
+	const Matrix& NeuralNetwork::feedforward(const Matrix& input, Random* random) const
+	{
+		//no layer?
+		denn_assert(m_layers.size());
+		//set random engine (dropout)
+		m_random = random;
 		//input layer
 		m_layers[0]->feedforward(input);
 		//hidden layers
@@ -131,7 +153,7 @@ namespace Denn
 							const Optimizer& opt, OutputLoss type)
 	{
 		//->
-		feedforward(input);
+		feedforward(input, opt.random());
 		//<-
 		backpropagate(input, output, type);
 		//update
@@ -151,6 +173,118 @@ namespace Denn
 				while(std::abs(weight) <= eps) weight += std::copysign(eps, weight);
 				return weight;
 			});
+		}
+	}
+	void NeuralNetwork::fill(Scalar value)
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([value](Scalar weight) -> Scalar { return value; });
+		}
+	}
+	void NeuralNetwork::abs()
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([](Scalar weight) -> Scalar { return std::abs(weight); });
+		}
+	}
+	void NeuralNetwork::apply_mask(NeuralNetwork& mask, NeuralNetwork& parent)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			auto m_array = mask[l][m].array();
+			auto p_array = parent[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = lerp<Scalar>(p_array(a), t_array(a), m_array(a));
+		}
+	}
+	void NeuralNetwork::compute_mask(NeuralNetwork& oldparent, 
+								     NeuralNetwork& newparent, 
+									 std::function<Scalar(Scalar, Scalar)> fmask)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			auto o_array = oldparent[l][m].array();
+			auto w_array = newparent[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = fmask(o_array(a), w_array(a));
+		}
+	}	
+	void NeuralNetwork::apply(std::function<Scalar(Scalar)> fun)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			(*this)[l][m] = (*this)[l][m].unaryExpr(fun);
+		}
+	}
+	void NeuralNetwork::apply_layer_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
+	{
+		std::vector<size_t> indexs;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			sort_indexes(t_array,indexs);
+
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(indexs[a]) = fun(t_array(indexs[a]), a, t_array.size());
+		}
+	}
+	
+	void NeuralNetwork::apply_flat_sort(std::function<Scalar(Scalar,size_t,size_t)> fun)
+	{
+		size_t array_fullsize = 0;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+			array_fullsize += (*this)[l][m].array().size();
+		//mapping
+		struct L_M_A { int l, m, a; };
+		std::vector<L_M_A> indexs; indexs.reserve(array_fullsize);
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		for(size_t a=0;a < (*this)[l][m].array().size(); ++a)
+		{
+			indexs.push_back({int(l),int(m),int(a)});
+		}
+		// sort indexes based on comparing values in v
+		std::sort(indexs.begin(), indexs.end(), [&](const L_M_A& l, const L_M_A& r) {
+			return (*this)[l.l][l.m].array()(l.a) < (*this)[r.l][r.m].array()(r.a);
+		});
+		//applay
+		for(size_t i=0;i < array_fullsize; ++i)
+		{
+			auto& ids = indexs[i];
+			(*this)[ids.l][ids.m].array()(ids.a) = fun((*this)[ids.l][ids.m].array()(ids.a), i, array_fullsize);
+		}
+	}
+	Scalar NeuralNetwork::compute_avg() const
+	{
+		Scalar sum = 0;
+		size_t count = 0;
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < (*this)[l].size(); ++m)
+		{
+			auto t_array = (*this)[l][m].array();
+			sum += t_array.sum();
+			count += t_array.size();
+		}
+		return sum/Scalar(count);
+	}
+	//all positive
+	void NeuralNetwork::one_minus_weights()
+	{
+		for (auto& layer  : *this)
+		for (auto  matrix : *layer)
+		{
+			matrix.noalias() = matrix.unaryExpr([](Scalar weight) -> Scalar { return Scalar(1) - weight; });
 		}
 	}
 	/////////////////////////////////////////////////////////////////////////
@@ -194,5 +328,220 @@ namespace Denn
 	NeuralNetwork::LayerConstIterator NeuralNetwork::end() const
 	{
 		return m_layers.end();
+	}
+
+	//self operatos
+	NeuralNetwork& NeuralNetwork::operator += (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] += right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator -= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] -= right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator *= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] *= right[l][m];
+		}
+		return (*this);
+	}
+	NeuralNetwork& NeuralNetwork::operator /= (NeuralNetwork& right)
+	{
+		for(size_t l=0;l < size(); ++l)
+		for(size_t m=0;m < m_layers[l]->size(); ++m)
+		{
+			(*this)[l][m] *= right[l][m];
+		}
+		return (*this);
+	}
+
+	//operatos
+	NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp += right;
+		return tmp;
+	}
+
+	NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp -= right;
+		return tmp;
+	}
+
+	NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp *= right;
+		return tmp;
+	}
+
+	NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		tmp /= right;
+		return tmp;
+	}
+
+	//logic operatos
+	NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) < r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) > r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) == r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) <= r_array(a));
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			auto r_array = right[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) >= r_array(a));
+		}
+		return tmp;
+	}
+
+	//logics vs float
+	
+	NeuralNetwork operator < (NeuralNetwork& left, Scalar value) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) < value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator > (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) = Scalar(l_array(a) > value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator == (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) == value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator <= (NeuralNetwork& left, Scalar value) 
+	{
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) <= value);
+		}
+		return tmp;
+	}
+
+	NeuralNetwork operator >= (NeuralNetwork& left, Scalar value) 
+	{ 
+		NeuralNetwork tmp(left);  
+		for(size_t l=0;l < tmp.size(); ++l)
+		for(size_t m=0;m < tmp[l].size(); ++m)
+		{
+			auto t_array = tmp[l][m].array();
+			auto l_array = left[l][m].array();
+			for(size_t a=0; a < t_array.size(); ++a)
+				t_array(a) =  Scalar(l_array(a) >= value);
+		}
+		return tmp;
 	}
 }

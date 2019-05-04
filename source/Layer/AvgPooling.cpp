@@ -21,7 +21,7 @@ namespace Denn
     AvgPooling::AvgPooling 
     (
       const Shape& in
-    , const std::vector<int>& metadata
+    , const Inputs& metadata
     )
 	: AvgPooling
 	(
@@ -40,12 +40,15 @@ namespace Denn
 	}
 	const Inputs AvgPooling::inputs() const
 	{
-		return 
-		{ 
+		return make_inputs<int>({ 
 			m_dim.width_kernel, m_dim.height_kernel, m_dim.stride
-		};
+		});
 	}	
-    //////////////////////////////////////////////////
+    //////////////////////////////////////////////////    
+	const Matrix& AvgPooling::predict(const Matrix& bottom)
+	{
+		return feedforward(bottom);
+	}
     const Matrix& AvgPooling::feedforward(const Matrix& bottom)
     {
         int n_sample = bottom.cols();

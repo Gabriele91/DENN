@@ -24,13 +24,18 @@ namespace Denn
 		ReadOnly<std::string>			m_dataset_filename        { "dataset" };
 		ReadOnly<size_t>			    m_batch_size			  { "batch_size", size_t(100) };
 		ReadOnly<size_t>			    m_batch_offset			  { "batch_offset", size_t(0) };
+		
+		ReadOnly<int>			    	m_features			     	 { "features", size_t(0),  false /* true? */ };
+		ReadOnly<int>			    	m_classes			     	 { "classes", size_t(0),  false /* true? */ };
+		
 		ReadOnly<std::string> 			m_output_filename         { "output"  };
 		ReadOnly<std::string>		    m_runtime_output_type     { "runtime_output",            "bench",    true /* false? */ };
 		ReadOnly<std::string>		    m_runtime_output_file     { "runtime_output_file",            "",    true /* false? */ };
 		ReadOnly<bool>				    m_compute_test_per_pass   { "compute_test_per_pass",    bool(true),  true /* false? */ };
 		ReadOnly<bool>				    m_serialize_neural_network{ "serialize_neural_network", bool(true),  false /* true? */ };
         ReadOnly<bool>                  m_use_validation          { "use_validation",           bool(true),  true /* false? */ };
-        ReadOnly<bool>                  m_reval_pop_on_batch      { "reval_pop_on_batch",       bool(true),  true /* false? */ };
+        ReadOnly<bool>                  m_last_with_validation    { "last_with_validation",     bool(true),  true /* false? */ };
+	    ReadOnly<bool>                  m_reval_pop_on_batch      { "reval_pop_on_batch",       bool(true),  true /* false? */ };
 
 		ReadOnly<unsigned int>	         m_seed			 { "seed", (unsigned int)(std::random_device{}())  };
 
@@ -39,6 +44,7 @@ namespace Denn
 		ReadOnly<size_t>	             m_sub_gens      { "sub_gens"  , size_t(100)   };
 		ReadOnly<size_t>	             m_np            { "number_parents",size_t(16) };
 		ReadOnly<Scalar>	             m_np_perc       { "number_parents_percentage",Scalar(-1) };
+		
 		//coevo
 		ReadOnly<std::string>			 m_conet_build   { "conet_build", "best" };
 		//DE
@@ -87,6 +93,8 @@ namespace Denn
 		ReadOnly<bool>					     m_nesterov     { "nesterov", bool(true) };
 		//NN	
 		ReadOnly< std::string >				 m_network { "network" , "fully_connected[]", true };
+		ReadOnly< MatrixList >				 m_network_weights { "network_weights " , MatrixList{}, false };
+
 		//params info
 		std::vector< ParameterInfo >     m_params_info;
 	
@@ -98,7 +106,7 @@ namespace Denn
 
 		ReturnType from_args(int nargs, const char **vargs);
         ReturnType from_config(const std::string& source, int nargs, const char **vargs);
-		ReturnType from_json(const std::string& source);
+		ReturnType from_json(const std::string& source, int nargs, const char **vargs);
 
 		static bool compare_n_args(const std::vector< std::string >& keys, const char* arg);
 		static std::string return_n_space(size_t n);

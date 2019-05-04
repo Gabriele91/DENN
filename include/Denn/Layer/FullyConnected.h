@@ -30,6 +30,7 @@ namespace Denn
 		//////////////////////////////////////////////////
 		virtual const Inputs inputs() const override;
 		//////////////////////////////////////////////////
+		virtual const Matrix& predict(const Matrix& input) override;
 		virtual const Matrix& feedforward(const Matrix& input) override;
 		virtual const Matrix& backpropagate(const Matrix& bottom, const Matrix& grad) override;
 		//////////////////////////////////////////////////

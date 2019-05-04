@@ -5,14 +5,13 @@
 
 namespace Denn
 {
-	class Accuracy : public Evaluation
+class Accuracy : public DefaultEvaluation
 	{
 	public:
         //methods
         virtual bool minimize() const { return false; }
-        virtual Scalar operator () (const NeuralNetwork& network, const DataSet& dataset)
+        virtual Scalar operator () (const Matrix& x, const DataSet& dataset)
         {
-			const Matrix& x = network.feedforward(dataset.features());
             const Matrix& y = dataset.labels();
             //output
             Scalar output = Scalar(0.0);
@@ -32,14 +31,13 @@ namespace Denn
     };
     REGISTERED_EVALUATION(Accuracy,"accuracy")
     
-	class InverseAccuracy : public Evaluation
+	class InverseAccuracy : public DefaultEvaluation
 	{
 	public:
         //methods
         virtual bool minimize() const { return true; }
-        virtual Scalar operator () (const NeuralNetwork& network, const DataSet& dataset)
+        virtual Scalar operator () (const Matrix& x, const DataSet& dataset)
         {			
-            const Matrix& x = network.feedforward(dataset.features());
             const Matrix& y = dataset.labels();
             //output
             Scalar output = Scalar(0.0);

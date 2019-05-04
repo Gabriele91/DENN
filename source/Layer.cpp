@@ -25,6 +25,11 @@ namespace Denn
 	const Layer::Iterator Layer::begin() const { return Iterator(*this, 0); }
 	const Layer::Iterator Layer::end()   const { return Iterator(*this, size()); }
 	///////////////////////////////////////////////////////////////////////////
+	//activation
+    const Matrix& ActivationLayer::predict(const Matrix& prev_layer_data) 
+	{ 
+		 return feedforward(prev_layer_data); 
+	}
     AlignedMapMatrix       ActivationLayer::operator[](size_t i) 
 	{ 
 		denn_assert(0); return AlignedMapMatrix(nullptr, 0, 0); 
@@ -34,6 +39,8 @@ namespace Denn
 		ConstAlignedMapMatrix tmp((const Scalar*)nullptr, 0, 0);
 		denn_assert(0); return tmp;
 	}
+	///////////////////////////////////////////////////////////////////////////
+	//PoolingLayer
     AlignedMapMatrix       PoolingLayer::operator[](size_t i) 
 	{ 
 		denn_assert(0); return AlignedMapMatrix(nullptr, 0, 0); 

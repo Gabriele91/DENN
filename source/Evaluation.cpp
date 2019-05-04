@@ -1,12 +1,33 @@
 #include "Denn/Evaluation.h"
+#include "Denn/NeuralNetwork.h"
+#include "Denn/DataSet/DataSet.h"
 #include <algorithm>
 #include <sstream>
 #include <iterator>
 
 namespace Denn
-{
+{	
 	//Evaluation
 	Evaluation::Evaluation(){}
+	//default
+	DefaultEvaluation::DefaultEvaluation(){}
+	Scalar DefaultEvaluation::operator() (const NeuralNetwork& nn, const DataSet& db, bool training_phase)
+	{
+		if (training_phase)
+		{
+			//prediction
+			const Matrix& pred = nn.feedforward(db.features());
+			//self call
+			return get_ptr()->operator()(pred, db);
+		}
+		else
+		{
+			//prediction
+			const Matrix& pred = nn.predict(db.features());
+			//self call
+			return get_ptr()->operator()(pred, db);
+		}
+	}	
 	//map 
 	static std::map< std::string, Evaluation::SPtr >& ev_map()
 	{

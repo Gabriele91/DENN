@@ -4,7 +4,7 @@
 
 namespace Denn
 {
-class NeuralNetwork : public std::enable_shared_from_this< NeuralNetwork >
+class NeuralNetwork : public std::enable_shared_from_this<NeuralNetwork>
 {
 public:
 	////////////////////////////////////////////////////////////////
@@ -12,7 +12,7 @@ public:
 	using LayerList			 = std::vector < Layer::SPtr >;
 	using LayerIterator		 = typename LayerList::iterator;
 	using LayerConstIterator = typename LayerList::const_iterator;
-	using SPtr			     = std::shared_ptr< NeuralNetwork >;
+	using SPtr 				 = std::shared_ptr<NeuralNetwork>;
 	////////////////////////////////////////////////////////////////
 	enum OutputLoss
 	{
@@ -37,6 +37,16 @@ public:
 	{
 		add_layer(layers...);
 	}
+	/////////////////////////////////////////////////////////////////////////
+	//add a layer
+	void add_layer(const Layer::SPtr& layer);
+	//template for each kind of layer
+	template < typename DerivateLayer >
+	void add_layer(const DerivateLayer& layer)
+	{
+		add_layer(std::static_pointer_cast<Layer>(std::make_shared<DerivateLayer>(layer)));
+	}
+	//template for variant args of layers add into network
 	template < typename ...Layers >
 	void add_layer(const Layer& layer, Layers ...layers)
 	{
@@ -44,17 +54,8 @@ public:
 		add_layer(layers...);
 	}
 	/////////////////////////////////////////////////////////////////////////
-	void add_layer(const Layer::SPtr& layer)
-	{
-		m_layers.push_back(layer->copy());
-	}
-	template < typename DerivateLayer >
-	void add_layer(const DerivateLayer& layer)
-	{
-		m_layers.push_back(std::static_pointer_cast<Layer>(std::make_shared<DerivateLayer>(layer)));
-	}
-	/////////////////////////////////////////////////////////////////////////
-	const Matrix& feedforward(const Matrix& input) const;
+	const Matrix& predict(const Matrix& input) const;
+	const Matrix& feedforward(const Matrix&, Random* random = nullptr) const;
 	void backpropagate
 	(
 		const Matrix& input, 
@@ -71,6 +72,25 @@ public:
 	/////////////////////////////////////////////////////////////////////////
 	//no 0 values
 	void no_0_weights();
+	//fill all
+	void fill(Scalar value);
+	//all positive
+	void abs();
+	//all positive
+	void one_minus_weights();
+	//apply mask
+	void apply_mask(NeuralNetwork& mask, 
+					NeuralNetwork& parent);
+	//compute mask
+	void compute_mask(NeuralNetwork& oldparent,
+					  NeuralNetwork& newparent,
+					  std::function<Scalar(Scalar, Scalar)> m_fmask);
+	//apply function
+	void apply(std::function<Scalar(Scalar)> fun);
+	void apply_layer_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
+	void apply_flat_sort(std::function<Scalar(Scalar,size_t,size_t)> fun);
+	//compute avg
+	Scalar compute_avg() const;
 	/////////////////////////////////////////////////////////////////////////
 	size_t size_of_all_layers() const;
 
@@ -88,11 +108,22 @@ public:
 
 	LayerConstIterator end() const;
 	/////////////////////////////////////////////////////////////////////////
+	//Random engine
+	Random*& random()       { return m_random; }
+	Random*  random() const { return m_random; }
+	/////////////////////////////////////////////////////////////////////////
+	NeuralNetwork&  operator += (NeuralNetwork& right);
+	NeuralNetwork&  operator -= (NeuralNetwork& right);
+	NeuralNetwork&  operator *= (NeuralNetwork& right);
+	NeuralNetwork&  operator /= (NeuralNetwork& right);
+	
 protected:
-
+	//layer list
 	LayerList m_layers;
-
+	//ref to random engine
+	mutable Random* m_random{nullptr};
 };
+
 
 template <>
 inline NeuralNetwork::Scalar distance_pow2<const NeuralNetwork>(const NeuralNetwork& a, const NeuralNetwork& b)
@@ -105,7 +136,26 @@ inline NeuralNetwork::Scalar distance_pow2<const NeuralNetwork>(const NeuralNetw
 	for(size_t i = 0; i!=a.size() ; ++i) dpow2 += distance_pow2(a[i],b[i]);
 	//return 
 	return dpow2;
-} 
+}
+
+//math operations
+extern NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right);
+
+//logic operatos
+extern NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right); 
+extern NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right);
+
+extern NeuralNetwork operator < (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator > (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator == (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator <= (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator >= (NeuralNetwork& left, Scalar value);
 
 
 }

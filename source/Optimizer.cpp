@@ -3,13 +3,16 @@
 namespace Denn
 {
 
-	SGD::SGD(
+	SGD::SGD
+	(
 	  Scalar lrate 
 	, Scalar decay 
 	, Scalar momentum 
 	, bool nesterov
+	, Random* random
 	)
-	: m_lrate(lrate)
+	: Optimizer(random)
+	, m_lrate(lrate)
 	, m_decay(decay)
 	, m_momentum(momentum)
 	, m_nesterov(nesterov)

@@ -34,38 +34,38 @@ namespace Denn
 	const DataSetScalar& Solver::current_batch() const{ return m_dataset_batch.last_batch(); }
 	const DataSetLoader* Solver::get_datase_loader() const{ return m_dataset_loader; }
 
-	Scalar Solver::loss_function_eval(Individual& i, size_t thread_id ) const
+	Scalar Solver::loss_function_eval(Individual& i, size_t thread_id, bool training_phase) const
 	{
-		return 	(*loss_function())(*build_neural_network(i, thread_id), current_batch());
+		return 	(*loss_function())(*build_neural_network(i, thread_id), current_batch(), training_phase);
 	}
-	Scalar Solver::validation_function_eval(Individual& ind, size_t thread_id) const
+	Scalar Solver::validation_function_eval(Individual& ind, size_t thread_id, bool training_phase) const
 	{
 		DataSetScalar validation;
 		m_dataset_loader->read_validation(validation);
-		return 	(*validation_function())(*build_neural_network(ind, thread_id), validation);
+		return 	(*validation_function())(*build_neural_network(ind, thread_id), validation, training_phase);
 	}
-	Scalar Solver::test_function_eval(Individual& ind, size_t thread_id) const
+	Scalar Solver::test_function_eval(Individual& ind, size_t thread_id, bool training_phase) const
 	{
 		DataSetScalar test;
 		m_dataset_loader->read_test(test);
-		return 	(*test_function())(*build_neural_network(ind, thread_id), test);
+		return 	(*test_function())(*build_neural_network(ind, thread_id), test, training_phase);
 	}
 
-	Scalar Solver::loss_function_eval(NeuralNetwork& nn) const
+	Scalar Solver::loss_function_eval(NeuralNetwork& nn, bool training_phase) const
 	{
-		return 	(*loss_function())(nn, current_batch());
+		return 	(*loss_function())(nn, current_batch(), training_phase);
 	}
-	Scalar Solver::validation_function_eval(NeuralNetwork& nn) const
+	Scalar Solver::validation_function_eval(NeuralNetwork& nn, bool training_phase) const
 	{
 		DataSetScalar validation;
 		m_dataset_loader->read_validation(validation);
-		return 	(*validation_function())(nn, validation);
+		return 	(*validation_function())(nn, validation, training_phase);
 	}
-	Scalar Solver::test_function_eval(NeuralNetwork& nn) const
+	Scalar Solver::test_function_eval(NeuralNetwork& nn, bool training_phase) const
 	{
 		DataSetScalar test;
 		m_dataset_loader->read_test(test);
-		return 	(*test_function())(nn, test);
+		return 	(*test_function())(nn, test, training_phase);
 	}
 
 	Evaluation::SPtr Solver::loss_function() const{ return m_loss_function; }
@@ -135,6 +135,11 @@ namespace Denn
 			execute_a_pass(pass, n_sub_pass);
 			//next
 			next_batch();
+		}
+		//force to test on validation 
+		if(*parameters().m_last_with_validation && !*parameters().m_use_validation)
+		{
+			best.eval = validation_function_eval(best.network,/*no training_phase*/ false) ;
 		}
 		//end output
 		m_output->end();
@@ -323,8 +328,8 @@ namespace Denn
 		auto network = build_neural();
 		//eval
 		auto eval = *parameters().m_use_validation  
-					? validation_function_eval(network) 
-					: loss_function_eval(network);
+					? validation_function_eval(network,/*no training_phase*/ false) 
+					: loss_function_eval(network,/*no training_phase*/ false) ;
 		//compare
 		if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval))||
 		    (!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
@@ -372,6 +377,7 @@ namespace Denn
 		{
 			std::lock_guard<std::mutex>  lock(m_mutex);
 			newnn = m_start_network.copy();
+			newnn->random() = &random(thread_id);
 		}
         size_t subpop_id = 0;
         for(size_t l = 0; l < m_start_network.size(); ++l)

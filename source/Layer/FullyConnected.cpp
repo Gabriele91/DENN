@@ -34,7 +34,7 @@ namespace Denn
 	//////////////////////////////////////////////////
 	const Inputs FullyConnected::inputs() const
 	{
-		return { out_size().width() };
+		return make_inputs<int>({ out_size().width() });
 	}
 	//////////////////////////////////////////////////
 	Layer::SPtr FullyConnected::copy() const
@@ -43,6 +43,10 @@ namespace Denn
 	}
 
 	//////////////////////////////////////////////////
+	const Matrix& FullyConnected::predict(const Matrix& bottom)
+	{
+		return feedforward(bottom);
+	}
 	const Matrix& FullyConnected::feedforward(const Matrix& bottom)
 	{
 		const int n_sample = bottom.cols();
@@ -54,7 +58,7 @@ namespace Denn
 		return m_top;
 	}
 	const Matrix&  FullyConnected::backpropagate(const Matrix& bottom, const Matrix& grad)
-    {
+  {
 		CODE_BACKPROPAGATION(
 			const int n_sample = bottom.cols();
 			// d(L)/d(w') = d(L)/d(z) * x'
@@ -67,7 +71,7 @@ namespace Denn
 			//return gradient
 		)
 		RETURN_BACKPROPAGATION(m_grad_bottom);
-    }
+  }
 	void FullyConnected::update(const Optimizer& optimize)
 	{
 		CODE_BACKPROPAGATION(

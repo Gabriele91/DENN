@@ -5,8 +5,26 @@
 
 namespace Denn
 {
-	using Inputs = std::vector< int >;
-
+	//dec
+	class NeuralNetwork;
+	//Layer intput type
+	using InputType = float;
+	using Inputs = std::vector< float >;
+	//make input
+	template < class T >
+	inline Inputs make_inputs(const std::vector< T >& in)
+	{
+		Inputs output;
+		output.reserve(in.size());
+		for(const T& value : in) output.push_back(InputType(value));
+		return output;
+	}
+	template <>
+	inline Inputs make_inputs<InputType>(const std::vector< InputType >& in)
+	{
+		return in;
+	}
+	//netwrok layer
 	class Layer : public std::enable_shared_from_this< Layer >
 	{
 	public:
@@ -51,7 +69,8 @@ namespace Denn
 		SPtr get_ptr();
 		virtual SPtr copy()   const = 0;
 		///////////////////////////////////////////////////////////////////////////
-		virtual const Matrix& feedforward(const Matrix& prev_layer_data)								  = 0;
+		virtual const Matrix& predict(const Matrix& prev_layer_data)								      = 0;
+		virtual const Matrix& feedforward(const Matrix& prev_layer_data)		                          = 0;
 		virtual const Matrix& backpropagate(const Matrix& prev_layer_data, const Matrix& next_layer_data) = 0;
 		///////////////////////////////////////////////////////////////////////////
 		virtual void update(const Optimizer& optimize) = 0;
@@ -68,12 +87,16 @@ namespace Denn
 		const Iterator begin() const;
 		const Iterator end()   const;
 		///////////////////////////////////////////////////////////////////////////
+		NeuralNetwork*& network()       { return m_network; }
+		NeuralNetwork*  network() const { return m_network; }
 
 	protected:
 
-		const std::string m_name; // layer name
-		const Shape m_in_size;    // Size of input units
-		const Shape m_out_size;   // Size of output units 
+		const std::string	 m_name; // layer name
+		const Shape			 m_in_size;    // Size of input units
+		const Shape 		 m_out_size;   // Size of output units 
+		//parent
+		NeuralNetwork* m_network{nullptr};
 
 	};
 
@@ -107,9 +130,11 @@ namespace Denn
 		//////////////////////////////////////////////////
 		virtual const Inputs inputs() const override { return {}; }
 		///////////////////////////////////////////////////////////////////////////
+		virtual const Matrix& predict(const Matrix& prev_layer_data) override;
+		///////////////////////////////////////////////////////////////////////////
 		virtual void update(const Optimizer& optimize) override { /*none*/ }
 		///////////////////////////////////////////////////////////////////////////
-		virtual size_t        size()  const override { return 0; }
+		virtual size_t size()  const override { return 0; }
 		virtual AlignedMapMatrix       operator[](size_t i) override;
 		virtual ConstAlignedMapMatrix  operator[](size_t i) const override;
 	};
