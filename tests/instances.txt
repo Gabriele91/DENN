@@ -1,3 +1,78 @@
-template/JADE_NN_WDBC.config, WDBC
-template/JADE_NN_ESR_1_2.config, ESR_1_2
-template/JADE_NN_HAR_OT.config, HAR_OT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# LECCDE TESTS
+# template/JADE_NN_WDBC.config, WDBC
+# template/JADE_NN_ESR_1_2.config, ESR_1_2
+# template/JADE_NN_HAR_OT.config, HAR_OT
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
+# XOR 222 TESTS CURR_P_BEST-INTERM
+template/JADE_NN_XOR.config, XOR_222_6,  gens=6000 clamp=25 rand=25 npp=16 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_7,  gens=6000 clamp=25 rand=25 npp=16 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_8,  gens=6000 clamp=25 rand=25 npp=16 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_9,  gens=6000 clamp=25 rand=25 npp=16 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_10, gens=6000 clamp=25 rand=25 npp=16 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_11, gens=6000 clamp=25 rand=25 npp=16 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_12, gens=6000 clamp=25 rand=25 npp=16 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_13, gens=6000 clamp=25 rand=25 npp=16 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_14, gens=6000 clamp=25 rand=25 npp=16 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_222_15, gens=6000 clamp=25 rand=25 npp=16 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest
+
+# XOR 222 TESTS DEGL-BIN
+template/JADE_NN_XOR.config, DEGL_XOR_222_6,  gens=6000 clamp=25 rand=25 npp=16 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_7,  gens=6000 clamp=25 rand=25 npp=16 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_8,  gens=6000 clamp=25 rand=25 npp=16 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_9,  gens=6000 clamp=25 rand=25 npp=16 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_10, gens=6000 clamp=25 rand=25 npp=16 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_11, gens=6000 clamp=25 rand=25 npp=16 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_12, gens=6000 clamp=25 rand=25 npp=16 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_13, gens=6000 clamp=25 rand=25 npp=16 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_14, gens=6000 clamp=25 rand=25 npp=16 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_222_15, gens=6000 clamp=25 rand=25 npp=16 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=2 conet_build=pbest mutation=degl crossover=bin
+
+
+# XOR 333 TESTS CURR_P_BEST-INTERM
+template/JADE_NN_XOR.config, XOR_333_6,  gens=6000 clamp=25 rand=25 npp=14 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_7,  gens=6000 clamp=25 rand=25 npp=14 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_8,  gens=6000 clamp=25 rand=25 npp=14 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_9,  gens=6000 clamp=25 rand=25 npp=14 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_10, gens=6000 clamp=25 rand=25 npp=14 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_11, gens=6000 clamp=25 rand=25 npp=14 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_12, gens=6000 clamp=25 rand=25 npp=14 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_13, gens=6000 clamp=25 rand=25 npp=14 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_14, gens=6000 clamp=25 rand=25 npp=14 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_333_15, gens=6000 clamp=25 rand=25 npp=14 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest
+
+# XOR 333 TESTS DEGL-BIN
+template/JADE_NN_XOR.config, DEGL_XOR_333_6,  gens=6000 clamp=25 rand=25 npp=14 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_7,  gens=6000 clamp=25 rand=25 npp=14 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_8,  gens=6000 clamp=25 rand=25 npp=14 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_9,  gens=6000 clamp=25 rand=25 npp=14 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_10, gens=6000 clamp=25 rand=25 npp=14 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_11, gens=6000 clamp=25 rand=25 npp=14 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_12, gens=6000 clamp=25 rand=25 npp=14 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_13, gens=6000 clamp=25 rand=25 npp=14 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_14, gens=6000 clamp=25 rand=25 npp=14 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_333_15, gens=6000 clamp=25 rand=25 npp=14 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=3 conet_build=pbest mutation=degl crossover=bin
+
+# XOR 444 TESTS CURR_P_BEST-INTERM
+template/JADE_NN_XOR.config, XOR_444_6,  gens=6000 clamp=25 rand=25 npp=8 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_7,  gens=6000 clamp=25 rand=25 npp=8 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_8,  gens=6000 clamp=25 rand=25 npp=8 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_9,  gens=6000 clamp=25 rand=25 npp=8 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_10, gens=6000 clamp=25 rand=25 npp=8 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_11, gens=6000 clamp=25 rand=25 npp=8 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_12, gens=6000 clamp=25 rand=25 npp=8 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_13, gens=6000 clamp=25 rand=25 npp=8 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_14, gens=6000 clamp=25 rand=25 npp=8 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+template/JADE_NN_XOR.config, XOR_444_15, gens=6000 clamp=25 rand=25 npp=8 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest
+
+# XOR 444 TESTS DEGL-BIN
+template/JADE_NN_XOR.config, DEGL_XOR_444_6,  gens=6000 clamp=25 rand=25 npp=8 xor_size=6 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_7,  gens=6000 clamp=25 rand=25 npp=8 xor_size=7 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_8,  gens=6000 clamp=25 rand=25 npp=8 xor_size=8 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_9,  gens=6000 clamp=25 rand=25 npp=8 xor_size=9 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_10, gens=6000 clamp=25 rand=25 npp=8 xor_size=10 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_11, gens=6000 clamp=25 rand=25 npp=8 xor_size=11 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_12, gens=6000 clamp=25 rand=25 npp=8 xor_size=12 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_13, gens=6000 clamp=25 rand=25 npp=8 xor_size=13 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_14, gens=6000 clamp=25 rand=25 npp=8 xor_size=14 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
+template/JADE_NN_XOR.config, DEGL_XOR_444_15, gens=6000 clamp=25 rand=25 npp=8 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
