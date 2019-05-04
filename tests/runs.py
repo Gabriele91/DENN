@@ -94,6 +94,11 @@ def append_all_outputs(dic):
     return outputs_all
 
 def save_all_in_zipfile(tmpdir, files, zipname):
+    #test zip name
+    _, zip_ext = os.path.splitext(zipname)
+    if zip_ext != '.zip':
+        zipname += '.zip'
+    #zip all
     zipf = zipfile.ZipFile(zipname, 'w', zipfile.ZIP_DEFLATED)
     for filepath in files:
         zipf.write(filepath, arcname=os.path.relpath(filepath, start=tmpdir))
