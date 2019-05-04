@@ -2,13 +2,6 @@
     "version": "0.2.0",
     "configurations": [
         {
-            "name": "Python: Execute Current file",
-            "type": "python",
-            "request": "launch",
-            "program": "${file}",
-            "console": "externalTerminal"
-        },
-        {
             "name": "(lldb) Launch",
             "type": "cppdbg",
             "request": "launch",
@@ -27,22 +20,6 @@
             "program": "${workspaceFolder}\\build\\DENN.exe",
             "symbolSearchPath": "${workspaceFolder}\\build",
             "args": ["template/JADE_NN_MNIST.config"],            
-            "stopAtEntry": false,
-            "cwd": "${workspaceFolder}",
-            "environment": [],
-            "logging": {
-                "moduleLoad": false,
-                "trace": true
-             },
-            "externalConsole": true
-        },
-        {
-            "name": "(Windows) Launch XOR",
-            "type": "cppvsdbg",
-            "request": "launch",
-            "program": "${workspaceFolder}\\build\\DENN.exe",
-            "symbolSearchPath": "${workspaceFolder}\\build",
-            "args": ["template/JADE_NN_XOR.config"],            
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",
             "environment": [],
@@ -83,6 +60,13 @@
                 "trace": true
              },
             "externalConsole": true
+        },
+        {
+            "name": "Python: Execute Current file",
+            "type": "python",
+            "request": "launch",
+            "program": "${file}",
+            "console": "externalTerminal"
         },
         {
             "name": "Python: Build Mnist",
