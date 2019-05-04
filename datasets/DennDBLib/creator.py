@@ -615,9 +615,14 @@ def mnist(out_filename, source_folder, dest_folder=getcwd(), depth=1,
     #     print(len(resource))
 
 def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
-          one_hot=True, normalized=True, out_type="float", balanced_classes=False, n_batch=None, batch_size=None, 
-          validation_all_values = False, test_all_values = False, validation_size=0.1, test_size = 0.1, 
-          save_stats=False):
+          one_hot=True, normalized=True, out_type="float",
+          balanced_classes=False, n_batch=None, batch_size=None, 
+          validation_all_values = False, 
+          validation_as_copy = False,
+          test_all_values = False, 
+          validation_size=0.1, test_size = 0.1, 
+          save_stats=False
+          ):
     """Create a mnist dataset for DENN."""
 
     dataset_params = {
@@ -633,10 +638,11 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
         ('modifier', 'simple_shuffle', (), {'target': "train"}),
     ]
     #copy all db
-    if not validation_all_values:
-        actions.append(('modifier', 'extract_to', ('train', 'validation', validation_size), {}))
     if not test_all_values:
         actions.append(('modifier', 'extract_to', ('train', 'test', test_size), {}))
+    if not validation_all_values:
+        val_action = "extract_to" if not validation_as_copy else 'random_copy_to'
+        actions.append(('modifier', val_action, ('train', 'validation', validation_size), {}))
     #end part
     actions = actions + [
         ('modifier', 'split', ('train',), {
@@ -647,7 +653,8 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
     if balanced_classes:
         for idx, (type_, action, args, kwargs) in enumerate(actions):
             if action == "extract_to":
-                actions[idx] = (type_, 'extract_to_with_class_ratio', args, kwargs)
+                actions[idx] = (
+                    type_, 'extract_to_with_class_ratio', args, kwargs)
 
     if depth > 1:
         actions.append(('modifier', 'add_depth', (depth,), {}))
