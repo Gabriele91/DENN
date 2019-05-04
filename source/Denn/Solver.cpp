@@ -391,7 +391,7 @@ namespace Denn
 			}
 			else
 			{
-				//std::lock_guard<std::mutex>  lock(m_mutex);
+				std::lock_guard<std::mutex>  lock(m_mutex);
 				//ref
 				SubPopulation::SPtr subpop = population()[subpop_id++];
 				Individual::SPtr individual = nullptr;
