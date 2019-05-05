@@ -1,6 +1,6 @@
 #pragma once
 #include "Denn/Config.h"
-#include "Denn/Layer.h"
+#include "Denn/NeuralNetwork/Layer.h"
 
 namespace Denn
 {

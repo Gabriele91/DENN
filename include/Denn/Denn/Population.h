@@ -1,12 +1,12 @@
 #pragma once
 #include "Denn/Config.h"
-#include "Denn/NeuralNetwork.h"
 #include "Individual.h"
 #include "SubPopulation.h"
 
 namespace Denn
 {
     //class dec
+    class NeuralNetwork;
     class Population;
     class SubPopulationGroup;
     //Population

@@ -1,5 +1,5 @@
 #include "Denn/Utilities/Networks.h"
-#include "Denn/Layer.h"
+#include "Denn/NeuralNetwork/Layer.h"
 
 namespace Denn
 {

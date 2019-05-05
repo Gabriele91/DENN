@@ -1,6 +1,6 @@
 #include <iterator>
 #include <ostream>
-#include "Denn/Layer.h"
+#include "Denn/NeuralNetwork/Layer.h"
 
 namespace Denn
 {

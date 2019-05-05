@@ -1,5 +1,5 @@
 #pragma once
-#include "Config.h"
+#include "Denn/Config.h"
 #include <unordered_map>
 
 namespace Denn

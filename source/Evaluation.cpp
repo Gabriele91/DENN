@@ -1,6 +1,6 @@
 #include "Denn/Evaluation.h"
-#include "Denn/NeuralNetwork.h"
 #include "Denn/DataSet/DataSet.h"
+#include "Denn/NeuralNetwork/NeuralNetwork.h"
 #include <algorithm>
 #include <sstream>
 #include <iterator>

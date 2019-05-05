@@ -6,9 +6,8 @@
 #include  "Instance.h"
 
 //NeuralNetwork includes
-#include  "Layer.h"
-#include  "NeuralNetwork.h"
-#include  "Evaluation.h"
+#include "NeuralNetwork/Layer.h"
+#include "NeuralNetwork/NeuralNetwork.h"
 
 //Dataset includes
 #include  "DataSet/DataSetLoader.h"

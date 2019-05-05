@@ -1,5 +1,6 @@
-#include "Denn/NeuralNetwork.h"
 #include "Denn/Denn/Population.h"
+#include "Denn/NeuralNetwork/NeuralNetwork.h"
+
 namespace Denn
 {
     //context

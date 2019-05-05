@@ -1,5 +1,5 @@
 #include "Denn/Layer/Dropout.h"
-#include "Denn/NeuralNetwork.h"
+#include "Denn/NeuralNetwork/NeuralNetwork.h"
 #include "Denn/Core/Random.h"
 #define _metadata(_x, _default) (_x < metadata.size() ? metadata[_x] : _default)
 #define _shapepooling(in, kernel, stride) (1 + std::ceil((in - kernel) / stride))

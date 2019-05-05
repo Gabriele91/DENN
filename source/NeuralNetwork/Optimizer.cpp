@@ -1,4 +1,4 @@
-#include "Denn/Optimizer.h"
+#include "Denn/NeuralNetwork/Optimizer.h"
 
 namespace Denn
 {
