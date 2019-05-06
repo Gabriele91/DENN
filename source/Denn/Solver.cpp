@@ -221,7 +221,7 @@ namespace Denn
                         return weight;
                     };
                     //init
-                    individual->matrix() = individual->matrix().unaryExpr(rand_weight);
+                    individual->array() = individual->array().unaryExpr(rand_weight);
 					individual->eval() = loss_function_worst();
                 }));
 				//next
@@ -367,7 +367,7 @@ namespace Denn
 					];
 				break;
 			}
-			(*newnn)[l][m] = individual->matrix();
+			(*newnn)[l][m].array() = individual->array();
 		}
 		return newnn;
 	}
@@ -386,7 +386,7 @@ namespace Denn
 			//cases
 			if(ind.subpopulation()->layer_id() == l && ind.subpopulation()->matrix_id() == m)
 			{
-				(*newnn)[l][m] = ind.matrix();
+				(*newnn)[l][m].array() = ind.array();
 				subpop_id++;
 			}
 			else
@@ -414,7 +414,7 @@ namespace Denn
 						];
 					break;
 				}
-				(*newnn)[l][m] = individual->matrix();
+				(*newnn)[l][m].array() = individual->array();
 			}
 		}
 		return newnn;

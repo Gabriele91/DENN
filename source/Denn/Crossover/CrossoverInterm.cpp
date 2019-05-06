@@ -14,8 +14,8 @@ namespace Denn
 			Individual& output
 		)
 		{
-			auto w_target = parent(id_target).matrix().array();
-			auto w_mutant = output.matrix().array();
+			auto w_target = parent(id_target).array();
+			auto w_mutant = output.array();
 			//CROSS
 			for (decltype(w_target.size()) e = 0; e != w_target.size(); ++e)
 			{

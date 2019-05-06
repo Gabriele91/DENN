@@ -24,11 +24,11 @@ namespace Denn
 			rand_deck.reinit(population().size());
 			rand_deck.reset();
 			//
-			auto& w_target = parent(id_target).matrix();
-			auto& x_a = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_b = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_c = parent(rand_deck.get_random_id(id_best)).matrix();
-			output.matrix() = (w_target + ((x_a - w_target) + (x_b - x_c)) * output.f()).unaryExpr(solver().clamp_function());
+			auto& w_target = parent(id_target).array();
+			auto& x_a = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_b = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_c = parent(rand_deck.get_random_id(id_best)).array();
+			output.array() = (w_target + ((x_a - w_target) + (x_b - x_c)) * output.f()).unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(CurrToRandOne, "curr_to_rand/1")

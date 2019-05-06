@@ -45,22 +45,22 @@ namespace Denn
 			rand_deck.reset();
 			rand_deck_ring_segment.reset();
 			//do mutation			
-			auto& w_target = parent(id_target).matrix();
-			auto& w_g_best = parent(best_parent_id()).matrix();
-			auto& w_l_best = parent(id_l_best).matrix();
-			auto& x_g_a = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_g_b = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_l_a = parent(rand_deck_ring_segment.get_random_id()).matrix();
-			auto& x_l_b = parent(rand_deck_ring_segment.get_random_id()).matrix();
+			auto& w_target = parent(id_target).array();
+			auto& w_g_best = parent(best_parent_id()).array();
+			auto& w_l_best = parent(id_l_best).array();
+			auto& x_g_a = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_g_b = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_l_a = parent(rand_deck_ring_segment.get_random_id()).array();
+			auto& x_l_b = parent(rand_deck_ring_segment.get_random_id()).array();
 			//global
-			Matrix g_m = ( w_target + ((w_g_best - w_target) + (x_g_a - x_g_b)) * output.f() );
+			ColArray g_m = ( w_target + ((w_g_best - w_target) + (x_g_a - x_g_b)) * output.f() );
 			//local
-			Matrix l_m = ( w_target + ((w_l_best - w_target) + (x_l_a - x_l_b)) * output.f() );
+			ColArray l_m = ( w_target + ((w_l_best - w_target) + (x_l_a - x_l_b)) * output.f() );
 			//final (lerp)
 			//from the DEGL's peper
 			//lambda = 1 -> g_m (aka rand-to-best/1)
 			//lambda = 0 -> l_m
-			Scalar* w_final_array = output.matrix().data();
+			Scalar* w_final_array = output.array().data();
 			Scalar* w_g_m_array   = g_m.data();
 			Scalar* w_l_m_array   = l_m.data();
 			for(Matrix::Index i=0; i != output.matrix().size(); ++i)

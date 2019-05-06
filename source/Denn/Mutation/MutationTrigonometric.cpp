@@ -33,11 +33,11 @@ namespace Denn
 			Scalar p_b = nn_b.eval()/ p;
 			Scalar p_c = nn_c.eval() / p;
 			//mutation
-			auto x_a = nn_a.matrix();
-			auto x_b = nn_b.matrix();
-			auto x_c = nn_c.matrix();
-			output.matrix() = (x_a + x_b + x_c) / Scalar(3) + (p_b -p_a) * (x_a - x_b) + (p_c - p_b) * (x_b - x_c) + (p_a - p_c) * (x_c - x_a);
-			output.matrix() = output.matrix().unaryExpr(solver().clamp_function());
+			auto x_a = nn_a.array();
+			auto x_b = nn_b.array();
+			auto x_c = nn_c.array();
+			output.array() = (x_a + x_b + x_c) / Scalar(3) + (p_b -p_a) * (x_a - x_b) + (p_c - p_b) * (x_b - x_c) + (p_a - p_c) * (x_c - x_a);
+			output.array() = output.array().unaryExpr(solver().clamp_function());
         }
 	};
 	REGISTERED_MUTATION(Trigonometric, "trig")

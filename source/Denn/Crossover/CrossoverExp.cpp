@@ -15,8 +15,8 @@ namespace Denn
 		)
 		{
 			//elements
-			auto w_target = parent(id_target).matrix().array();
-			auto w_mutant = output.matrix().array();
+			auto w_target = parent(id_target).array();
+			auto w_mutant = output.array();
 			//random i
 			size_t e_rand = random(id_target).index_rand(w_target.size());
 			size_t e_start = random(id_target).index_rand(w_target.size());

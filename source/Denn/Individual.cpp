@@ -17,23 +17,23 @@ namespace Denn
 	}
 	Individual::Individual(SubPopulation* subpop, AlignedMapMatrix weights)
 	: m_subpopulation(subpop)
-	, m_weights(weights)
+	, m_weights(weights.array())
 	{
 	}	
 	Individual::Individual(SubPopulation* subpop, ConstAlignedMapMatrix weights)
 	: m_subpopulation(subpop)
-	, m_weights(weights)
+	, m_weights(weights.array())
 	{
 	}	
 	Individual::Individual(SubPopulation* subpop, Attributes attrs, AlignedMapMatrix weights)
 	: m_subpopulation(subpop)
-	, m_weights(weights)
+	, m_weights(weights.array())
 	, m_attributes(attrs)
 	{
 	}
 	Individual::Individual(SubPopulation* subpop, Attributes attrs, ConstAlignedMapMatrix weights)
 	: m_subpopulation(subpop)
-	, m_weights(weights)
+	, m_weights(weights.array())
 	, m_attributes(attrs)
 	{
 	}
@@ -50,29 +50,37 @@ namespace Denn
 		m_attributes = individual.m_attributes;
 		m_eval       = individual.m_eval;
 	}
-
-	//cast
+	//matrix
 	AlignedMapMatrix Individual::matrix()
-	{
-		return AlignedMapMatrix(m_weights.data(), m_weights.rows(), m_weights.cols());
+	{ 
+		return AlignedMapMatrix(m_weights.data(), 1, m_weights.size()); 
 	}
 	ConstAlignedMapMatrix Individual::matrix() const
-	{
-		return ConstAlignedMapMatrix(m_weights.data(), m_weights.rows(), m_weights.cols());
+	{ 
+		return ConstAlignedMapMatrix(m_weights.data(), 1, m_weights.size()); 
+	}
+	AlignedMapMatrix Individual::matrix(const Matrix& msize)
+	{ 
+		return AlignedMapMatrix(m_weights.data(),msize.rows(),msize.cols()); 
+	}
+	ConstAlignedMapMatrix Individual::matrix(const Matrix& msize) const
+	{ 
+		return ConstAlignedMapMatrix(m_weights.data(),msize.rows(),msize.cols()); 
 	}
 
-	Individual::operator AlignedMapMatrix ()
-	{
-		return AlignedMapMatrix(m_weights.data(), m_weights.rows(), m_weights.cols());
+	ColArray& Individual::array() 
+	{ 
+		return  m_weights;
 	}
-	Individual::operator ConstAlignedMapMatrix () const
-	{
-		return ConstAlignedMapMatrix(m_weights.data(), m_weights.rows(), m_weights.cols());
+	const ColArray&  Individual::array() const
+	{ 
+		return  m_weights;
 	}
+
 
 	void Individual::no_0_weights()
 	{
-		matrix().noalias() = matrix().unaryExpr([](Scalar weight) -> Scalar
+		array() = array().unaryExpr([](Scalar weight) -> Scalar
 		{ 			
 			const Scalar eps = SCALAR_EPS;
 			while(std::abs(weight) <= eps) weight += std::copysign(eps, weight);

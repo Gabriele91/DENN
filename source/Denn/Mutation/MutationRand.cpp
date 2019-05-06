@@ -23,10 +23,10 @@ namespace Denn
 			rand_deck.reinit(population().size());
 			rand_deck.reset();
 			//
-			auto& x_a = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_b = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_c = parent(rand_deck.get_random_id(id_target)).matrix();
-			output.matrix() = (x_a + (x_b - x_c) * output.f()).unaryExpr(solver().clamp_function());
+			auto& x_a = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_b = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_c = parent(rand_deck.get_random_id(id_target)).array();
+			output.array() = (x_a + (x_b - x_c) * output.f()).unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(RandOne, "rand/1")
@@ -49,12 +49,12 @@ namespace Denn
 			rand_deck.reinit(population().size());
 			rand_deck.reset();
 			//
-			auto& x_a = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_b = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_c = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_d = parent(rand_deck.get_random_id(id_target)).matrix();
-			auto& x_e = parent(rand_deck.get_random_id(id_target)).matrix();
-			output.matrix()  = (x_a + ((x_b - x_c) + (x_d - x_e)) * output.f()).unaryExpr(solver().clamp_function());
+			auto& x_a = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_b = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_c = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_d = parent(rand_deck.get_random_id(id_target)).array();
+			auto& x_e = parent(rand_deck.get_random_id(id_target)).array();
+			output.array()  = (x_a + ((x_b - x_c) + (x_d - x_e)) * output.f()).unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(RandTwo, "rand/2")

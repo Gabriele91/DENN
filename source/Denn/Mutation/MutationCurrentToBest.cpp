@@ -26,11 +26,11 @@ namespace Denn
 			//id best
 			size_t id_best = population().best_parent_id();
 			//alias
-			auto& w_target = parent(id_target).matrix();
-			auto& w_best   = parent(id_best).matrix();
-			auto& x_a 	   = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_b 	   = parent(rand_deck.get_random_id(id_best)).matrix();
-			output.matrix()= ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
+			auto& w_target = parent(id_target).array();
+			auto& w_best   = parent(id_best).array();
+			auto& x_a 	   = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_b 	   = parent(rand_deck.get_random_id(id_best)).array();
+			output.array()= ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
 		}
 
 	};
@@ -72,22 +72,22 @@ namespace Denn
 			//id a
 			size_t id_a = rand_deck.get_random_id(id_target);
 			//from_archive ? archive[r2] : father(r2);
-			auto& w_target = parent(id_target).matrix();
-			auto& w_best   = parent(id_best).matrix();
-			auto& x_a 	   = parent(id_a).matrix();
+			auto& w_target = parent(id_target).array();
+			auto& w_best   = parent(id_best).array();
+			auto& x_a 	   = parent(id_a).array();
 			//b from archive (JADE/SHADE)
 			if(m_archive)
 			{
 				size_t rand_b = random(id_target).index_rand(m_archive->size() + population().size() - 2);
 				auto x_b = rand_b < m_archive->size()
-						  ? archive(rand_b).matrix() 
-						  : parent(rand_deck.get_random_id(id_target)).matrix();
-				output.matrix() = ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
+						  ? archive(rand_b).array() 
+						  : parent(rand_deck.get_random_id(id_target)).array();
+				output.array() = ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
 			}
 			else 
 			{
-				auto x_b = parent(rand_deck.get_random_id(id_best)).matrix();
-				output.matrix() = ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
+				auto x_b = parent(rand_deck.get_random_id(id_best)).array();
+				output.array() = ( w_target + ((w_best - w_target) + (x_a - x_b)) * output.f() ).unaryExpr(solver().clamp_function());
 			}
 	
 		}

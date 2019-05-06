@@ -25,10 +25,10 @@ namespace Denn
 			//id best
 			size_t id_best = best_parent_id();
 			//
-			auto& x_best    = parent(id_best).matrix();
-			auto& x_a       = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_b       = parent(rand_deck.get_random_id(id_best)).matrix();
-			output.matrix() = (x_best + (x_a - x_b) * output.f()).unaryExpr(solver().clamp_function());
+			auto& x_best    = parent(id_best).array();
+			auto& x_a       = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_b       = parent(rand_deck.get_random_id(id_best)).array();
+			output.array() = (x_best + (x_a - x_b) * output.f()).unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(BestOne, "best/1")
@@ -54,12 +54,12 @@ namespace Denn
 			//id best
 			size_t id_best = best_parent_id();
 			//
-			auto& x_best = parent(id_best).matrix();
-			auto& x_a    = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_b    = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_c    = parent(rand_deck.get_random_id(id_best)).matrix();
-			auto& x_d    = parent(rand_deck.get_random_id(id_best)).matrix();
-			output.matrix() = (x_best + ((x_a - x_b) + (x_c - x_d)) * output.f()).unaryExpr(solver().clamp_function());
+			auto& x_best = parent(id_best).array();
+			auto& x_a    = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_b    = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_c    = parent(rand_deck.get_random_id(id_best)).array();
+			auto& x_d    = parent(rand_deck.get_random_id(id_best)).array();
+			output.array() = (x_best + ((x_a - x_b) + (x_c - x_d)) * output.f()).unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(BestTwo, "best/2")

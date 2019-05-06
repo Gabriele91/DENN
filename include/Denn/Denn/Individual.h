@@ -57,13 +57,11 @@ namespace Denn
 		//matrix
 		AlignedMapMatrix matrix();
 		ConstAlignedMapMatrix matrix() const;
+		AlignedMapMatrix matrix(const Matrix& msize);
+		ConstAlignedMapMatrix matrix(const Matrix& msize) const;
 
-		auto array() { return  matrix().array(); }
-		auto array() const { return  matrix().array(); }
-
-		//cast
-		operator AlignedMapMatrix ();
-		operator ConstAlignedMapMatrix () const;
+		ColArray& array();
+		const ColArray& array() const;
 		
 		//denn help function
 		void no_0_weights();
@@ -77,7 +75,7 @@ namespace Denn
 	    //attributes
 		Scalar m_eval{ std::numeric_limits<Scalar>::max() };
 		std::array< Scalar, size_t(Attribute::MAX) > m_attributes;
-		Matrix m_weights;
+		ColArray m_weights;
 	};
 	//Alias list of Individuals
 	using IndividualList  = std::vector< Individual::SPtr >;
