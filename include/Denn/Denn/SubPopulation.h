@@ -6,6 +6,7 @@ namespace Denn
 {
 	//Random engine
 	class Random;
+	class NeuralNetwork;
 	//Population
 	class SubPopulation : public std::enable_shared_from_this< SubPopulation >
 	{
@@ -74,18 +75,19 @@ namespace Denn
 		SubPopulation
 		(
 			size_t np,
-			size_t layer_index,
-			size_t matrix_index,
-			ConstAlignedMapMatrix weights
+			//inf network
+			const IndividualMap& map,
+			const NeuralNetwork& nnet
 		);
 
 		SubPopulation
 		(
+			//np & attributes
 			size_t np,
-			size_t layer_index,
-			size_t matrix_index,
 			const Attributes& attrs, 
-			ConstAlignedMapMatrix weights
+			//inf network
+			const IndividualMap& map,
+			const NeuralNetwork& nnet
 		);
 
 		//return ptr
@@ -102,8 +104,7 @@ namespace Denn
 		void   clear();
 
 		//info
-		size_t layer_id() const;
-		size_t matrix_id() const;
+		const IndividualMap& map() const;
 
 		//vector operator
 		IndividualList& parents();
@@ -137,7 +138,6 @@ namespace Denn
 		size_t pbest_parent_id(Random& random,bool minimize = true, Scalar prob=0.1);
 		size_t pbest_son_id(Random& random,bool minimize = true, Scalar prob=0.1);
 
-
 		//sort
 		void sort(bool minimize = true);
 		void sort_sons(bool minimize = true);
@@ -148,9 +148,7 @@ namespace Denn
 		
 	protected:
 		
-		size_t m_layer_index{0};
-		size_t m_matrix_index{0};
-
+		IndividualMap  m_map;
 		IndividualList m_parents;
 		IndividualList m_sons;
 

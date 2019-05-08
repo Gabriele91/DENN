@@ -1,7 +1,17 @@
 #include "Denn/Denn/Individual.h"
+#include "Denn/Denn/SubPopulation.h"
 
 namespace Denn
 {
+	//get subpopulation ref
+	const SubPopulation* Individual::subpopulation() const 
+	{ 
+		return m_subpopulation;
+	}
+	const IndividualMap* Individual::map() const 
+	{
+		return subpopulation() ? &subpopulation()->map() : nullptr; 
+	}
 	//return ptr
 	Individual::SPtr Individual::get_ptr() { return this->shared_from_this(); }
 	//shared copy
@@ -9,33 +19,42 @@ namespace Denn
 	{
 		return std::make_shared<Individual>(*this);
 	}
+	//shared copy
+	Individual::SPtr Individual::copy(SubPopulation* subpop) const
+	{
+		auto tcopy = copy();
+		tcopy->m_subpopulation = subpop;
+		return tcopy;
+	}
 
 	//init
 	Individual::Individual() 
 	: m_subpopulation(nullptr)
 	{
 	}
-	Individual::Individual(SubPopulation* subpop, AlignedMapMatrix weights)
+	//from map
+	Individual::Individual(SubPopulation* subpop, const NeuralNetwork& nn)
 	: m_subpopulation(subpop)
-	, m_weights(weights.array())
 	{
-	}	
-	Individual::Individual(SubPopulation* subpop, ConstAlignedMapMatrix weights)
-	: m_subpopulation(subpop)
-	, m_weights(weights.array())
-	{
-	}	
-	Individual::Individual(SubPopulation* subpop, Attributes attrs, AlignedMapMatrix weights)
-	: m_subpopulation(subpop)
-	, m_weights(weights.array())
-	, m_attributes(attrs)
-	{
+		//size
+		size_t array_size = 0;
+		for(auto pair : *map()) array_size += nn[pair.first][pair.second].size();
+		//init
+		m_weights.resize(array_size);
+		//copy all
+		copy_from(nn);
 	}
-	Individual::Individual(SubPopulation* subpop, Attributes attrs, ConstAlignedMapMatrix weights)
+	Individual::Individual(SubPopulation* subpop, Attributes attrs, const NeuralNetwork& nn)
 	: m_subpopulation(subpop)
-	, m_weights(weights.array())
 	, m_attributes(attrs)
 	{
+		//size
+		size_t array_size = 0;
+		for(auto pair : *map()) array_size += nn[pair.first][pair.second].size();
+		//init
+		m_weights.resize(array_size);
+		//copy all
+		copy_from(nn);
 	}
 	
 	//copy attributes from a other individual
@@ -131,4 +150,38 @@ namespace Denn
 		return m_attributes[size_t(a)];
 	}
 
+	//apply to network
+	void Individual::copy_to(NeuralNetwork& nn)
+	{
+		if(!map()) return;
+		//index
+		size_t offset = 0;
+		//
+		for(auto pair : *map())
+		{
+			//data
+			auto data = nn[pair.first][pair.second].array();
+			//data = array().block(id,0,data.size(),1).array();
+			for(int i=0; i < data.size(); ++i) 
+				data(i) = m_weights(offset+i);
+			offset += data.size();
+		}
+	}
+
+	//copy value to individual
+	void Individual::copy_from(const NeuralNetwork& nn)
+	{
+		if(!map()) return;
+		//index
+		size_t offset = 0;
+		//
+		for(auto pair : *map())
+		{
+			//data
+			auto data = nn[pair.first][pair.second].array();
+			for(int i=0; i < data.size(); ++i) 
+				m_weights(offset+i) = data(i);
+			offset += data.size();
+		}
+	}
 }

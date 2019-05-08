@@ -345,8 +345,8 @@ namespace Denn
         size_t subpop_id = 0;
         for(size_t l = 0; l < m_start_network.size(); ++l)
         for(size_t m = 0; m < m_start_network[l].size(); ++m)
+		for(auto subpop : population())
 		{
-			SubPopulation::SPtr subpop = population()[subpop_id++];
 			Individual::SPtr individual = nullptr;
 			switch (best.build_type)
 			{
@@ -367,7 +367,7 @@ namespace Denn
 					];
 				break;
 			}
-			(*newnn)[l][m].array() = individual->array();
+			individual->copy_to(*newnn);
 		}
 		return newnn;
 	}
@@ -379,21 +379,16 @@ namespace Denn
 			newnn = m_start_network.copy();
 			newnn->random() = &random(thread_id);
 		}
-        size_t subpop_id = 0;
-        for(size_t l = 0; l < m_start_network.size(); ++l)
-        for(size_t m = 0; m < m_start_network[l].size(); ++m)
+		for(auto subpop : population())
 		{
 			//cases
-			if(ind.subpopulation()->layer_id() == l && ind.subpopulation()->matrix_id() == m)
+			if(ind.subpopulation() == subpop.get())
 			{
-				(*newnn)[l][m].array() = ind.array();
-				subpop_id++;
+				ind.copy_to(*newnn);
 			}
 			else
 			{
 				std::lock_guard<std::mutex>  lock(m_mutex);
-				//ref
-				SubPopulation::SPtr subpop = population()[subpop_id++];
 				Individual::SPtr individual = nullptr;
 				switch (best.build_type)
 				{
@@ -414,7 +409,7 @@ namespace Denn
 						];
 					break;
 				}
-				(*newnn)[l][m].array() = individual->array();
+				individual->copy_to(*newnn);
 			}
 		}
 		return newnn;

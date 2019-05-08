@@ -1,4 +1,5 @@
 #include "Denn/Denn/SubPopulation.h"
+#include "Denn/NeuralNetwork/NeuralNetwork.h"
 namespace Denn
 {
 	///////////////////////////////////////////////////////////////////////////
@@ -49,35 +50,32 @@ namespace Denn
 	SubPopulation::SubPopulation
 	(
 		size_t np,
-		size_t layer_index,
-		size_t matrix_index,
-		ConstAlignedMapMatrix weights
+		const IndividualMap& map,
+		const NeuralNetwork& nnet
 	)
-	: m_layer_index(layer_index)
-	, m_matrix_index(matrix_index)
+	: m_map(map)
 	{ 
 		for(size_t n = 0; n != np; ++n)
 		{
-			m_parents.push_back(std::make_shared<Individual>(this, weights));
-			m_sons.push_back(std::make_shared<Individual>(this, weights));
+			m_parents.push_back(std::make_shared<Individual>(this, nnet));
+			m_sons.push_back(std::make_shared<Individual>(this, nnet));
 		}
 	}
 
 	SubPopulation::SubPopulation
 	(
 		size_t np,
-		size_t layer_index,
-		size_t matrix_index,
 		const Attributes& attrs, 
-		ConstAlignedMapMatrix weights
+		//inf network
+		const IndividualMap& map,
+		const NeuralNetwork& nnet
 	)
-	: m_layer_index(layer_index)
-	, m_matrix_index(matrix_index)
+	: m_map(map)
 	{ 
 		for(size_t n = 0; n != np; ++n)
 		{
-			m_parents.push_back(std::make_shared<Individual>(this, attrs, weights));
-			m_sons.push_back(std::make_shared<Individual>(this, attrs, weights));
+			m_parents.push_back(std::make_shared<Individual>(this, attrs, nnet));
+			m_sons.push_back(std::make_shared<Individual>(this, attrs, nnet));
 		}
 	}
 	//vector methods 		
@@ -106,8 +104,10 @@ namespace Denn
 		m_sons.clear();	  
 	}		
 
-	size_t SubPopulation::layer_id()  const{ return m_layer_index; }
-	size_t SubPopulation::matrix_id() const{ return m_matrix_index; }
+	const IndividualMap& SubPopulation::map()  const 
+	{ 
+		return m_map; 
+	}
 	
 	//vector operator
 	IndividualList& SubPopulation::parents()
@@ -314,13 +314,12 @@ namespace Denn
 		//malloc 
 		SubPopulation::SPtr new_pop{new SubPopulation()};
 		//set layer id/
-		new_pop->m_layer_index = layer_id();
-		new_pop->m_matrix_index = matrix_id();
+		new_pop->m_map = map();
 		//init
 		for(size_t i = 0;i != size(); ++i)
 		{ 
-			new_pop->parents().push_back(parents()[i]->copy());
-		    new_pop->sons().push_back(sons()[i]->copy());
+			new_pop->parents().push_back(parents()[i]->copy(new_pop.get()));
+		    new_pop->sons().push_back(sons()[i]->copy(new_pop.get()));
 		}
 		//return
 		return new_pop;

@@ -10,8 +10,8 @@ namespace Denn
         for(size_t l = 0; l < master.size(); ++l)
         for(size_t m = 0; m < master[l].size(); ++m)
         {
-            ConstAlignedMapMatrix mapnn(master[l][m].data(),master[l][m].rows(),master[l][m].cols());
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, l, m, mapnn));
+            IndividualMap imap({IndividualMap::IndexPair{l,m}});
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, imap, master));
         }
     }
     Population::Population(const std::vector<size_t>& nps, const NeuralNetwork& master)
@@ -20,8 +20,8 @@ namespace Denn
         for(size_t l = 0; l < master.size(); ++l)
         for(size_t m = 0; m < master[l].size(); ++m)
         {
-            ConstAlignedMapMatrix mapnn(master[l][m].data(),master[l][m].rows(),master[l][m].cols());
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id], l, m, mapnn));
+            IndividualMap imap({IndividualMap::IndexPair{l,m}});
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id++], imap, master));
         }
     }
 
@@ -31,8 +31,8 @@ namespace Denn
         for(size_t l = 0; l < master.size(); ++l)
         for(size_t m = 0; m < master[l].size(); ++m)
         {
-            ConstAlignedMapMatrix mapnn(master[l][m].data(),master[l][m].rows(),master[l][m].cols());
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, l, m, attrs, mapnn));
+            IndividualMap imap({IndividualMap::IndexPair{l,m}});
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, attrs, imap, master));
         }
     }
     Population::Population(const std::vector<size_t>& nps,const Attributes& attrs, const NeuralNetwork& master)
@@ -41,8 +41,8 @@ namespace Denn
         for(size_t l = 0; l < master.size(); ++l)
         for(size_t m = 0; m < master[l].size(); ++m)
         {
-            ConstAlignedMapMatrix mapnn(master[l][m].data(),master[l][m].rows(),master[l][m].cols());
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id], l, m, attrs, mapnn));
+            IndividualMap imap({IndividualMap::IndexPair{l,m}});
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id++], attrs, imap, master));
         }
     }
 

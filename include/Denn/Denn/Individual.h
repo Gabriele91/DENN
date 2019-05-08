@@ -5,6 +5,35 @@
 
 namespace Denn
 {
+	//class dec
+	class SubPopulation;
+	//description of layout of a individual
+	struct IndividualMap
+	{
+		//list
+		using IndexPair =  std::pair< size_t, size_t > ;
+		using IndexPairList = std::vector< IndexPair >;  
+		using Iterator = std::vector< IndexPair >::iterator;  
+		using CIterator = std::vector< IndexPair >::const_iterator;  
+		//struct
+		IndexPairList m_indexs;
+		//constructor
+		IndividualMap() = default;
+		IndividualMap(const IndexPairList& list) : m_indexs(list) { }
+		//add
+		size_t size() const { return m_indexs.size(); }
+		size_t layer(size_t i){ return  m_indexs[i].first; }
+		size_t matrix(size_t i){ return  m_indexs[i].second; }
+		//push 
+		void push(const IndexPair& pair){ m_indexs.push_back(pair); }
+		void clear(){ m_indexs.clear(); }
+		//iterators
+		Iterator begin() { return m_indexs.begin(); }
+		CIterator begin() const { return m_indexs.begin(); }
+		Iterator end() { return m_indexs.end(); }
+		CIterator end() const { return m_indexs.end(); }
+
+	};
 	//attributes
 	enum class Attribute : size_t
 	{
@@ -13,8 +42,6 @@ namespace Denn
 		P,
 		MAX
 	};
-	//class dec
-	class SubPopulation;
 	//alias	
 	using Attributes = std::array< Scalar, size_t(Attribute::MAX) >;
 	////////////////////////////////////////////////////////////////////////
@@ -29,14 +56,14 @@ namespace Denn
 		SPtr get_ptr();
 		//shared copy
 		SPtr copy() const;
+		//shared copy
+		SPtr copy(SubPopulation* subpop) const;
 
 		//attributes
 		Individual();
-		Individual(SubPopulation* subpop, AlignedMapMatrix weights);
-		Individual(SubPopulation* subpop, ConstAlignedMapMatrix weights);
-		Individual(SubPopulation* subpop, Attributes attrs, AlignedMapMatrix weights);
-		Individual(SubPopulation* subpop, Attributes attrs, ConstAlignedMapMatrix weights);
-
+		Individual(SubPopulation* subpop, const NeuralNetwork& nn);
+		Individual(SubPopulation* subpop, Attributes attrs, const NeuralNetwork& nn);
+		
 		//copy attributes from a other individual
 		void copy_from(const Individual& individual);
 		void copy_attributes(const Individual& individual);
@@ -67,7 +94,13 @@ namespace Denn
 		void no_0_weights();
 
 		//get subpopulation ref
-		const SubPopulation* subpopulation() const { return m_subpopulation; }
+		const SubPopulation* subpopulation() const;
+		const IndividualMap* map() const;
+		
+		//apply to network
+		void copy_to(NeuralNetwork& nn);
+		//copy value to individual
+		void copy_from(const NeuralNetwork& nn);
 
 	protected:
 		//subpop
