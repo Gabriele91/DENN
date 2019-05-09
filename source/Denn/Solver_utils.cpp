@@ -14,6 +14,11 @@ namespace Denn
 
 	const DataSetScalar& Solver::current_batch() const{ return m_dataset_batch.last_batch(); }
 	const DataSetLoader* Solver::get_datase_loader() const{ return m_dataset_loader; }
+	bool Solver::next_batch()
+	{
+		m_dataset_batch.read_batch();
+		return true;
+	}
 
 	Scalar Solver::loss_function_eval(Individual& i, size_t thread_id, bool training_phase) const
 	{

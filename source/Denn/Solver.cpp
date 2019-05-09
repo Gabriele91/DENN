@@ -232,11 +232,5 @@ namespace Denn
 			best.network = network;
 		}
 	}
-	//load next batch
-	bool Solver::next_batch()
-	{
-		m_dataset_batch.read_batch();
-		return true;
-	}
 
 }
