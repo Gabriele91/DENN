@@ -52,11 +52,6 @@ namespace Denn
 
         //context        
 		Population(){}
-        Population(size_t np, const NeuralNetwork& master);
-        Population(const std::vector<size_t>& nps, const NeuralNetwork& master);
-        Population(size_t np,const Attributes& attrs, const NeuralNetwork& master);
-        Population(const std::vector<size_t>& nps,const Attributes& attrs, const NeuralNetwork& master);
-        //map of subnets
         Population(const PopulationDescription& decs, const NeuralNetwork& master);
         Population(const PopulationDescription& decs, const Attributes& attrs, const NeuralNetwork& master);
         
@@ -73,12 +68,17 @@ namespace Denn
         ConstIterator begin() const { return m_sub_pops.begin(); }
         ConstIterator end() const { return m_sub_pops.end(); }
         
+        //info
+        const PopulationDescription& description() const;
+
         //swap
         void swap(size_t pop_id, size_t ind_id);
         void swap_best(bool minimize = true);
         void swap_best(size_t pop_id, bool minimize = true);
 
     protected:
+        //pop
+        PopulationDescription m_pop_descs;
         //sliders
         SubPopulationList m_sub_pops;
 		//Variant

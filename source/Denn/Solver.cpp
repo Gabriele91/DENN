@@ -217,19 +217,65 @@ namespace Denn
 	}
 	void Solver::execute_update_best(bool first)
 	{
-		//netowrk
-		auto network = build_neural();
-		//eval
-		auto eval = *parameters().m_use_validation  
-					? validation_function_eval(network,/*no training_phase*/ false) 
-					: loss_function_eval(network,/*no training_phase*/ false) ;
-		//compare
-		if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval))||
-		    (!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
-			first)
+		switch (GlobalSelectionNetwork::get(parameters().m_conet_selector))
 		{
-			best.eval = eval;
-			best.network = network;
+		default:
+		case GlobalSelectionNetwork::GN_BEST:
+		{
+			//netowrk
+			auto network = build_neural();
+			//eval
+			auto eval = *parameters().m_use_validation
+							? validation_function_eval(network, /*no training_phase*/ false)
+							: loss_function_eval(network, /*no training_phase*/ false);
+			//compare
+			if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
+				(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
+				first)
+			{
+				best.eval = eval;
+				best.network = network;
+			}
+		}
+		break;
+		case GlobalSelectionNetwork::GN_LINE:
+		{
+			for (auto network : build_line_np_neural())
+			{
+				//eval
+				auto eval = *parameters().m_use_validation
+								? validation_function_eval(network, /*no training_phase*/ false)
+								: loss_function_eval(network, /*no training_phase*/ false);
+				//comparem
+				if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
+					(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
+					first)
+				{
+					best.eval = eval;
+					best.network = network;
+				}
+			}
+		}
+		break;
+		case GlobalSelectionNetwork::GN_CROSS:
+		{
+			for (auto network : build_cross_np_neural())
+			{
+				//eval
+				auto eval = *parameters().m_use_validation
+								? validation_function_eval(network, /*no training_phase*/ false)
+								: loss_function_eval(network, /*no training_phase*/ false);
+				//comparem
+				if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
+					(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
+					first)
+				{
+					best.eval = eval;
+					best.network = network;
+				}
+			}
+		}
+		break;
 		}
 	}
 

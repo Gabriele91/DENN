@@ -76,4 +76,30 @@ namespace Denn
 		}
 		return newnn;
 	}
+
+	//all nets
+	std::vector<NeuralNetwork::SPtr> Solver::build_line_np_neural() const
+	{
+		//nests
+		std::vector<NeuralNetwork::SPtr>  nets;
+		//compute np
+		size_t np = compute_min_np(population().description());
+		//combine
+		for (int n = 0; n < np; ++n)
+		{
+			//copy network
+			auto newnn = m_start_network.copy();
+			newnn->random() = &random();
+			//create the i-network
+			for (auto subpop : population())
+				subpop->parents()[n]->copy_to(*newnn);
+			//..
+			nets.push_back(newnn);
+		}
+		return nets;
+	}
+	std::vector<NeuralNetwork::SPtr> Solver::build_cross_np_neural() const
+	{
+		return {}; //todo
+	}
 }

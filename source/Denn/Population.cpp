@@ -5,6 +5,7 @@ namespace Denn
 {
     //context
     Population::Population(const PopulationDescription& pdescs, const NeuralNetwork& master)
+    : m_pop_descs(pdescs)
     {
         size_t np_id = 0;
         for(const SubPopulationDescription& des : pdescs)
@@ -14,6 +15,7 @@ namespace Denn
     }
 
     Population::Population(const PopulationDescription& pdescs, const Attributes& attrs, const NeuralNetwork& master)
+    : m_pop_descs(pdescs)
     {
         size_t np_id = 0;
         for(const SubPopulationDescription& des : pdescs)
@@ -43,6 +45,12 @@ namespace Denn
     size_t Population::size() const
     {
         return m_sub_pops.size();
+    }
+
+    //info
+    const PopulationDescription& Population::description() const
+    {
+        return m_pop_descs;
     }
 
     //sub pop

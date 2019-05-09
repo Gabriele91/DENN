@@ -101,6 +101,52 @@ public:
 	}
 };
 
+class GlobalSelectionNetwork
+{
+public:
+	enum Value
+	{
+		GN_BEST,
+		GN_LINE,
+		GN_CROSS,
+		GN_SIZE
+	};
+
+	static std::vector<std::string> list_of_global_selectors()
+	{
+		return {"best", "line", "cross"};
+	}
+
+	static std::string names_of_global_selectors(const std::string &sep = ", ")
+	{
+		std::stringstream sout;
+		auto list = list_of_global_selectors();
+		std::copy(list.begin(), list.end() - 1, std::ostream_iterator<std::string>(sout, sep.c_str()));
+		sout << *(list.end() - 1);
+		return sout.str();
+	}
+
+	static bool exists(const std::string &value)
+	{
+		for (auto &type : list_of_global_selectors())
+			if (type == value)
+				return true;
+		return false;
+	}
+
+	static Value get(const std::string &value)
+	{
+		int i = 0;
+		for (auto &type : list_of_global_selectors())
+		{
+			if (type == value)
+				return Value(i);
+			++i;
+		}
+		return GN_SIZE;
+	}
+};
+
 class Solver
 {
 public:
@@ -164,10 +210,6 @@ public:
 protected:
     //funcs
 	bool init();
-	//map population
-	PopulationDescription one_sub_population();
-	PopulationDescription layer_sub_population();
-	PopulationDescription matrix_sub_population();
     //Denn
     void execute_a_pass(size_t pass, size_t n_sub_pass);
 	void execute_a_sub_pass(size_t pass, size_t sub_pass);
@@ -177,10 +219,17 @@ protected:
 	void loss_function_eval_all();
 	bool next_batch();
     //utils
-    void execute_loss_function_on_all_population(Population& population) const;
+	void execute_loss_function_on_all_population(Population &population) const;
+	//map population
+	PopulationDescription one_sub_population();
+	PopulationDescription layer_sub_population();
+	PopulationDescription matrix_sub_population();
 	//build network
 	NeuralNetwork::SPtr build_neural() const;
-	NeuralNetwork::SPtr build_neural_network(Individual& i, size_t thread_id = 0) const;
+	NeuralNetwork::SPtr build_neural_network(Individual &i, size_t thread_id = 0) const;
+	//all nets
+	std::vector<NeuralNetwork::SPtr> build_line_np_neural() const;
+	std::vector<NeuralNetwork::SPtr> build_cross_np_neural() const;
 	//gen random function
 	RandomFunction       gen_random_func() const;
 	RandomFunctionThread gen_random_func_thread() const;
