@@ -8,7 +8,23 @@ namespace Denn
     //class dec
     class NeuralNetwork;
     class Population;
-    class SubPopulationGroup;
+    //subpop desc
+    struct SubPopulationDescription
+    {
+        size_t m_np;
+        IndividualMap m_map;
+    };
+    //alias
+    using PopulationDescription = std::vector<SubPopulationDescription>;
+    //help func
+    inline size_t compute_max_np(const PopulationDescription& popdecs)
+    {
+        if(!popdecs.size()) return 0;
+        size_t np = popdecs[0].m_np;
+        for(size_t i = 1; i < popdecs.size(); ++i) 
+            np = std::max(np, popdecs[i].m_np);
+        return np;
+    }
     //Population
     class Population  : public std::enable_shared_from_this< Population >
     {
@@ -31,6 +47,9 @@ namespace Denn
         Population(const std::vector<size_t>& nps, const NeuralNetwork& master);
         Population(size_t np,const Attributes& attrs, const NeuralNetwork& master);
         Population(const std::vector<size_t>& nps,const Attributes& attrs, const NeuralNetwork& master);
+        //map of subnets
+        Population(const PopulationDescription& decs, const NeuralNetwork& master);
+        Population(const PopulationDescription& decs, const Attributes& attrs, const NeuralNetwork& master);
         
         //size
         size_t size() const;

@@ -162,30 +162,24 @@ namespace Denn
 		m_clamp_function = gen_clamp_func();
 		//clear random engines
 		m_population_random.clear();
+		//conet build mode
+		int split_type = SplitNetwork::get(*parameters().m_conet_split);
 		//vecotr np
-		std::vector<size_t> nps;
-		//cases
-        for(size_t l = 0; l < m_start_network.size(); ++l)
-        for(size_t m = 0; m < m_start_network[l].size(); ++m)
+		PopulationDescription popdecs;
+		switch (split_type)
 		{
-			if(*parameters().m_np_perc > Scalar(0))
-			{
-				nps.push_back(size_t(m_start_network[l][m].rows() * *parameters().m_np_perc));
-			}
-			else 
-			{
-				nps.push_back(*parameters().m_np);
-			}
+		default:
+		case SplitNetwork::SN_MATRIX: popdecs = matrix_sub_population(); break;
+		case SplitNetwork::SN_LAYER: popdecs = layer_sub_population(); break;
+		case SplitNetwork::SN_ONE: popdecs = one_sub_population(); break;
 		}
 		//get np
-		const size_t max_np = *std::max_element(std::begin(nps), std::end(nps)); //init current_np();
+		const size_t max_np = compute_max_np(popdecs); //init current_np();
 		//min size
 		if (!max_np) return false;
 		//init random engines
 		for(size_t i=0; i != max_np ;++i)
-		{
 			m_population_random.emplace_back(random().uirand());
-		}
 		//conet build mode
 		best.build_type = BuildNetwork::get(*parameters().m_conet_build);
 		//init attributes
@@ -196,7 +190,7 @@ namespace Denn
 			*parameters().m_perc_of_best,
 		};
 		//init pop
-		m_population = std::make_shared<Population>(nps, attributes, m_start_network);
+		m_population = std::make_shared<Population>(popdecs, attributes, m_start_network);
         //init 
         PromiseList promises;
 		//random init function
@@ -240,6 +234,67 @@ namespace Denn
         }
 		//true
 		return true;
+	}
+	//map population
+	PopulationDescription Solver::one_sub_population()
+	{
+		size_t np = 0;
+		IndividualMap imap;
+		PopulationDescription desc;
+        for(size_t l = 0; l < m_start_network.size(); ++l)
+		{
+			for(size_t m = 0; m < m_start_network[l].size(); ++m)
+			{
+				imap.push(IndividualMap::IndexPair{l,m});
+				np += m_start_network[l][m].rows();
+			}
+		}
+		if(*parameters().m_np_perc > Scalar(0))
+			np = np * (*parameters().m_np_perc);
+		else
+			np =  *parameters().m_np;		
+		desc.push_back(SubPopulationDescription{ np, imap });
+		return desc;
+	}
+	PopulationDescription Solver::layer_sub_population()
+	{
+		PopulationDescription desc;
+        for(size_t l = 0; l < m_start_network.size(); ++l)
+			if(m_start_network[l].size())
+			{
+				size_t np = 0;
+				IndividualMap imap;
+				for(size_t m = 0; m < m_start_network[l].size(); ++m)
+				{
+					imap.push(IndividualMap::IndexPair{l,m});
+					np += m_start_network[l][m].rows();
+				}
+				if(*parameters().m_np_perc > Scalar(0))
+					np = np * (*parameters().m_np_perc);
+				else
+					np =  *parameters().m_np;
+				desc.push_back(SubPopulationDescription{ np, imap });
+			}
+		return desc;
+	}
+	PopulationDescription Solver::matrix_sub_population()
+	{
+		PopulationDescription desc;
+        for(size_t l = 0; l < m_start_network.size(); ++l)
+        for(size_t m = 0; m < m_start_network[l].size(); ++m)
+        {
+			size_t np =  *parameters().m_np_perc > Scalar(0)
+						? size_t(m_start_network[l][m].rows() * *parameters().m_np_perc) 
+						:*parameters().m_np;
+
+			desc.push_back(SubPopulationDescription{ 
+				np, 
+        		IndividualMap({ 
+					IndividualMap::IndexPair{l,m}
+				})
+			});
+		}
+		return desc;
 	}
 	//Denn
 	void Solver::execute_a_pass(size_t pass, size_t n_sub_pass)

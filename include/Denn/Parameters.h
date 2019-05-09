@@ -47,6 +47,7 @@ namespace Denn
 		
 		//coevo
 		ReadOnly<std::string>			 m_conet_build   { "conet_build", "best" };
+		ReadOnly<std::string>			 m_conet_split   { "conet_split", "matrix" };
 		//DE
 		ReadOnly<Scalar>	             m_default_f     { "f_default",Scalar(1.0)   };
 		ReadOnly<Scalar>	             m_default_cr    { "cr_default",Scalar(1.0)   };

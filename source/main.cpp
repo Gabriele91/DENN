@@ -38,5 +38,5 @@ int main(int argc,const char** argv)
     if (!instance)            return 128;
     if (!instance->execute()) return 255;
     ////////////////////////////////////////////////////////////////////////////////////////////////
-return 0;
+    return 0;
 }

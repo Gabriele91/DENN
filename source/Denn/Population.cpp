@@ -4,48 +4,23 @@
 namespace Denn
 {
     //context
-    Population::Population(size_t np, const NeuralNetwork& master)
+    Population::Population(const PopulationDescription& pdescs, const NeuralNetwork& master)
     {
         size_t np_id = 0;
-        for(size_t l = 0; l < master.size(); ++l)
-        for(size_t m = 0; m < master[l].size(); ++m)
+        for(const SubPopulationDescription& des : pdescs)
         {
-            IndividualMap imap({IndividualMap::IndexPair{l,m}});
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, imap, master));
-        }
-    }
-    Population::Population(const std::vector<size_t>& nps, const NeuralNetwork& master)
-    {
-        size_t np_id = 0;
-        for(size_t l = 0; l < master.size(); ++l)
-        for(size_t m = 0; m < master[l].size(); ++m)
-        {
-            IndividualMap imap({IndividualMap::IndexPair{l,m}});
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id++], imap, master));
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(des.m_np,  des.m_map, master));
         }
     }
 
-    Population::Population(size_t np, const Attributes& attrs, const NeuralNetwork& master)
+    Population::Population(const PopulationDescription& pdescs, const Attributes& attrs, const NeuralNetwork& master)
     {
         size_t np_id = 0;
-        for(size_t l = 0; l < master.size(); ++l)
-        for(size_t m = 0; m < master[l].size(); ++m)
+        for(const SubPopulationDescription& des : pdescs)
         {
-            IndividualMap imap({IndividualMap::IndexPair{l,m}});
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(np, attrs, imap, master));
+            m_sub_pops.push_back(std::make_shared<SubPopulation>(des.m_np, attrs, des.m_map, master));
         }
     }
-    Population::Population(const std::vector<size_t>& nps,const Attributes& attrs, const NeuralNetwork& master)
-    {
-        size_t np_id = 0;
-        for(size_t l = 0; l < master.size(); ++l)
-        for(size_t m = 0; m < master[l].size(); ++m)
-        {
-            IndividualMap imap({IndividualMap::IndexPair{l,m}});
-            m_sub_pops.push_back(std::make_shared<SubPopulation>(nps[np_id++], attrs, imap, master));
-        }
-    }
-
     //return ptr
     Population::SPtr Population::get_ptr()
     {

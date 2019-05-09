@@ -57,7 +57,21 @@ namespace Denn
                 //ok 
                 return BuildNetwork::exists(*m_conet_build);
             }
-            , { "string", BuildNetwork::list_of_build() }
+            , { "string", BuildNetwork::list_of_builders() }
+        },
+        ParameterInfo {
+            m_conet_split, "How to split network in subpopulation", { "-snet" },
+            [this](Arguments& args) -> bool  
+            { 
+                std::string str_m_type = args.get_string();
+                //all lower case
+                std::transform(str_m_type.begin(),str_m_type.end(), str_m_type.begin(), ::tolower);
+                //save
+				m_conet_split = str_m_type;
+                //ok 
+                return SplitNetwork::exists(*m_conet_split);
+            }
+            , { "string", SplitNetwork::list_of_splitters() }
         },
         ParameterInfo {
             m_batch_size, "Batch size", { "-b" },
@@ -353,6 +367,14 @@ namespace Denn
 		ParameterInfo{
 			"Print list of layers",{ "--layer-list",    "-llist" },
 			[this](Arguments& args) -> bool { std::cout << LayerFactory::names_of_layers() << std::endl; return true; }
+		},
+		ParameterInfo{
+			"Print kind of network builder",{ "--buildnet-list",    "-bnlist" },
+			[this](Arguments& args) -> bool { std::cout << BuildNetwork::names_of_builders() << std::endl; return true; }
+		},
+		ParameterInfo{
+			"Print kind of network splitter",{ "--split-list",    "-snlist" },
+			[this](Arguments& args) -> bool { std::cout << SplitNetwork::names_of_splitters() << std::endl; return true; }
 		},
         ParameterInfo{
             "Print the help", { "--help",    "-h"  },
