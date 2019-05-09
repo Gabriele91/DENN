@@ -25,6 +25,15 @@ namespace Denn
             np = std::max(np, popdecs[i].m_np);
         return np;
     }
+    //help func
+    inline size_t compute_min_np(const PopulationDescription& popdecs)
+    {
+        if(!popdecs.size()) return 0;
+        size_t np = popdecs[0].m_np;
+        for(size_t i = 1; i < popdecs.size(); ++i) 
+            np = std::min(np, popdecs[i].m_np);
+        return np;
+    }
     //Population
     class Population  : public std::enable_shared_from_this< Population >
     {

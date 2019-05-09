@@ -22,130 +22,6 @@ namespace Denn
 	{
 	}
 
-	/////////////////////////////////////////////////
-	//info
-	const Parameters& Solver::parameters() const { return m_paramters; }
-	const Population& Solver::population() const{ return *m_population; }
-	const EvolutionMethodList& Solver::evolution_methods() const{ return m_e_methods; }
-	const Solver::ClampFunction& Solver::clamp_function() const{ return m_clamp_function;  }
-	Random& Solver::random(size_t i) const{ return m_population_random[i]; }
-	Random& Solver::random() const{ return m_main_random; }
-
-	const DataSetScalar& Solver::current_batch() const{ return m_dataset_batch.last_batch(); }
-	const DataSetLoader* Solver::get_datase_loader() const{ return m_dataset_loader; }
-
-	Scalar Solver::loss_function_eval(Individual& i, size_t thread_id, bool training_phase) const
-	{
-		return 	(*loss_function())(*build_neural_network(i, thread_id), current_batch(), training_phase);
-	}
-	Scalar Solver::validation_function_eval(Individual& ind, size_t thread_id, bool training_phase) const
-	{
-		DataSetScalar validation;
-		m_dataset_loader->read_validation(validation);
-		return 	(*validation_function())(*build_neural_network(ind, thread_id), validation, training_phase);
-	}
-	Scalar Solver::test_function_eval(Individual& ind, size_t thread_id, bool training_phase) const
-	{
-		DataSetScalar test;
-		m_dataset_loader->read_test(test);
-		return 	(*test_function())(*build_neural_network(ind, thread_id), test, training_phase);
-	}
-
-	Scalar Solver::loss_function_eval(NeuralNetwork& nn, bool training_phase) const
-	{
-		return 	(*loss_function())(nn, current_batch(), training_phase);
-	}
-	Scalar Solver::validation_function_eval(NeuralNetwork& nn, bool training_phase) const
-	{
-		DataSetScalar validation;
-		m_dataset_loader->read_validation(validation);
-		return 	(*validation_function())(nn, validation, training_phase);
-	}
-	Scalar Solver::test_function_eval(NeuralNetwork& nn, bool training_phase) const
-	{
-		DataSetScalar test;
-		m_dataset_loader->read_test(test);
-		return 	(*test_function())(nn, test, training_phase);
-	}
-
-	Evaluation::SPtr Solver::loss_function() const{ return m_loss_function; }
-	Evaluation::SPtr Solver::validation_function() const{ return m_validation_function; }
-	Evaluation::SPtr Solver::test_function() const{ return m_test_function; }
-	
-	bool Solver::loss_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_loss_function->minimize() 
-		?  left <= right
-		:  right <= left
-		;
-	}
-	bool Solver::validation_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_validation_function->minimize() 
-		?  left <= right
-		:  right <= left
-		;
-	}
-	bool Solver::test_function_compare(Scalar left, Scalar right) const
-	{
-		return  m_test_function->minimize() 
-		?  left <= right
-		:  right <= left
-		;
-	}
-
-	Scalar Solver::loss_function_worst() const
-	{
-		return  m_loss_function->minimize() 
-		?   std::numeric_limits<Scalar>::max() 
-		:  -std::numeric_limits<Scalar>::max()
-		;
-	}
-	Scalar Solver::validation_function_worst() const
-	{
-		return  m_validation_function->minimize() 
-		?   std::numeric_limits<Scalar>::max() 
-		:  -std::numeric_limits<Scalar>::max()
-		;
-	}
-	Scalar Solver::test_function_worst() const
-	{
-		return  m_test_function->minimize() 
-		?   std::numeric_limits<Scalar>::max() 
-		:  -std::numeric_limits<Scalar>::max()
-		;
-	}
-	/////////////////////////////////////////////////
-	//fit
-	const NeuralNetwork& Solver::fit()
-	{
-		//init all
-		if (!init()) return m_start_network;
-		//global info
-		const size_t n_global_pass = ((size_t)parameters().m_generations / 
-									  (size_t)parameters().m_sub_gens);
-		const size_t n_sub_pass = parameters().m_sub_gens;
-		//default best
-		execute_update_best(true);
-		//start output
-		m_output->start();
-		//main loop
-		for (size_t pass = 0; pass != n_global_pass; ++pass)
-		{
-			execute_a_pass(pass, n_sub_pass);
-			//next
-			next_batch();
-		}
-		//force to test on validation 
-		if(*parameters().m_last_with_validation && !*parameters().m_use_validation)
-		{
-			best.eval = validation_function_eval(best.network,/*no training_phase*/ false) ;
-		}
-		//end output
-		m_output->end();
-		//result
-		return *best.network;
-	}
 	//Init solver
     bool Solver::init()
     {		
@@ -234,67 +110,36 @@ namespace Denn
         }
 		//true
 		return true;
-	}
-	//map population
-	PopulationDescription Solver::one_sub_population()
+	}	
+	//fit
+	const NeuralNetwork& Solver::fit()
 	{
-		size_t np = 0;
-		IndividualMap imap;
-		PopulationDescription desc;
-        for(size_t l = 0; l < m_start_network.size(); ++l)
+		//init all
+		if (!init()) return m_start_network;
+		//global info
+		const size_t n_global_pass = ((size_t)parameters().m_generations / 
+									  (size_t)parameters().m_sub_gens);
+		const size_t n_sub_pass = parameters().m_sub_gens;
+		//default best
+		execute_update_best(true);
+		//start output
+		m_output->start();
+		//main loop
+		for (size_t pass = 0; pass != n_global_pass; ++pass)
 		{
-			for(size_t m = 0; m < m_start_network[l].size(); ++m)
-			{
-				imap.push(IndividualMap::IndexPair{l,m});
-				np += m_start_network[l][m].rows();
-			}
+			execute_a_pass(pass, n_sub_pass);
+			//next
+			next_batch();
 		}
-		if(*parameters().m_np_perc > Scalar(0))
-			np = np * (*parameters().m_np_perc);
-		else
-			np =  *parameters().m_np;		
-		desc.push_back(SubPopulationDescription{ np, imap });
-		return desc;
-	}
-	PopulationDescription Solver::layer_sub_population()
-	{
-		PopulationDescription desc;
-        for(size_t l = 0; l < m_start_network.size(); ++l)
-			if(m_start_network[l].size())
-			{
-				size_t np = 0;
-				IndividualMap imap;
-				for(size_t m = 0; m < m_start_network[l].size(); ++m)
-				{
-					imap.push(IndividualMap::IndexPair{l,m});
-					np += m_start_network[l][m].rows();
-				}
-				if(*parameters().m_np_perc > Scalar(0))
-					np = np * (*parameters().m_np_perc);
-				else
-					np =  *parameters().m_np;
-				desc.push_back(SubPopulationDescription{ np, imap });
-			}
-		return desc;
-	}
-	PopulationDescription Solver::matrix_sub_population()
-	{
-		PopulationDescription desc;
-        for(size_t l = 0; l < m_start_network.size(); ++l)
-        for(size_t m = 0; m < m_start_network[l].size(); ++m)
-        {
-			size_t np =  *parameters().m_np_perc > Scalar(0)
-						? size_t(m_start_network[l][m].rows() * *parameters().m_np_perc) 
-						:*parameters().m_np;
-
-			desc.push_back(SubPopulationDescription{ 
-				np, 
-        		IndividualMap({ 
-					IndividualMap::IndexPair{l,m}
-				})
-			});
+		//force to test on validation 
+		if(*parameters().m_last_with_validation && !*parameters().m_use_validation)
+		{
+			best.eval = validation_function_eval(best.network,/*no training_phase*/ false) ;
 		}
-		return desc;
+		//end output
+		m_output->end();
+		//result
+		return *best.network;
 	}
 	//Denn
 	void Solver::execute_a_pass(size_t pass, size_t n_sub_pass)
@@ -360,7 +205,7 @@ namespace Denn
 			++it_emethod;
 		}	
 	}
-	/////////////////////////////////////////////////////////////////
+	//eval
 	void Solver::loss_function_eval_all()
 	{
 		for (SubPopulation::SPtr subpop : population()) 
@@ -370,13 +215,6 @@ namespace Denn
 			parent->eval() = loss_function_eval(*parent);
 		}
 	}
-	//load next batch
-	bool Solver::next_batch()
-	{
-		m_dataset_batch.read_batch();
-		return true;
-	}
-	/////////////////////////////////////////////////////////////////
 	void Solver::execute_update_best(bool first)
 	{
 		//netowrk
@@ -394,143 +232,11 @@ namespace Denn
 			best.network = network;
 		}
 	}
-	NeuralNetwork::SPtr Solver::build_neural() const
+	//load next batch
+	bool Solver::next_batch()
 	{
-		NeuralNetwork::SPtr newnn = m_start_network.copy();
-        size_t subpop_id = 0;
-        for(size_t l = 0; l < m_start_network.size(); ++l)
-        for(size_t m = 0; m < m_start_network[l].size(); ++m)
-		for(auto subpop : population())
-		{
-			Individual::SPtr individual = nullptr;
-			switch (best.build_type)
-			{
-				default:
-				case BuildNetwork::BN_BEST:
-					individual = subpop->parents()[
-						subpop->best_parent_id(loss_function()->minimize())
-					];
-				break;
-				case BuildNetwork::BN_PBEST:
-					individual = subpop->parents()[
-						subpop->pbest_parent_id(random(), loss_function()->minimize())
-					];
-				break;
-				case BuildNetwork::BN_ROULETTE:
-					individual = subpop->parents()[
-						subpop->roulette_wheel_selection_parent_id(random(), loss_function()->minimize())
-					];
-				break;
-			}
-			individual->copy_to(*newnn);
-		}
-		return newnn;
+		m_dataset_batch.read_batch();
+		return true;
 	}
-	NeuralNetwork::SPtr Solver::build_neural_network(Individual& ind, size_t thread_id) const 
-	{
-		NeuralNetwork::SPtr newnn = nullptr;
-		{
-			std::lock_guard<std::mutex>  lock(m_mutex);
-			newnn = m_start_network.copy();
-			newnn->random() = &random(thread_id);
-		}
-		for(auto subpop : population())
-		{
-			//cases
-			if(ind.subpopulation() == subpop.get())
-			{
-				ind.copy_to(*newnn);
-			}
-			else
-			{
-				std::lock_guard<std::mutex>  lock(m_mutex);
-				Individual::SPtr individual = nullptr;
-				switch (best.build_type)
-				{
-					default:
-					case BuildNetwork::BN_BEST:
-						individual = subpop->parents()[
-							subpop->best_parent_id(loss_function()->minimize())
-						];
-					break;
-					case BuildNetwork::BN_PBEST:
-						individual = subpop->parents()[
-							subpop->pbest_parent_id(random(thread_id), loss_function()->minimize())
-						];
-					break;
-					case BuildNetwork::BN_ROULETTE:
-						individual = subpop->parents()[
-							subpop->roulette_wheel_selection_parent_id(random(thread_id), loss_function()->minimize())
-						];
-					break;
-				}
-				individual->copy_to(*newnn);
-			}
-		}
-		return newnn;
-	}
-	/////////////////////////////////////////////////////////////////
-	//gen random function
-	Solver::RandomFunction Solver::gen_random_func() const
-	{
-		if(*parameters().m_distribution == "uniform")
-		{
-			Scalar min = parameters().m_uniform_min;
-			Scalar max = parameters().m_uniform_max;
-			return [this,min,max](Scalar x) -> Scalar
-			{
-				return Scalar(random().uniform(min, max));
-			};
-		}
-		else if(*parameters().m_distribution == "normal")
-		{
-			Scalar mu = parameters().m_normal_mu;
-			Scalar sigma = parameters().m_normal_sigma;
-			return [this,mu,sigma](Scalar x) -> Scalar
-			{
-				return Scalar(random().normal(mu, sigma));
-			};
-		}
-		else 
-		{
-			denn_assert(0);
-			return [](Scalar) -> Scalar{ return 0; };
-		}
-	}
-	Solver::RandomFunctionThread Solver::gen_random_func_thread() const
-	{		
-		if(*parameters().m_distribution == "uniform")
-		{
-			Scalar min = parameters().m_uniform_min;
-			Scalar max = parameters().m_uniform_max;
-			return [this,min,max](Scalar x, size_t i) -> Scalar
-			{
-				return Scalar(random(i).uniform(min, max));
-			};
-		}
-		else if(*parameters().m_distribution == "normal")
-		{
-			Scalar mu = parameters().m_normal_mu;
-			Scalar sigma = parameters().m_normal_sigma;
-			return [this,mu,sigma](Scalar x, size_t i) -> Scalar
-			{
-				return Scalar(random(i).normal(mu, sigma));
-			};
-		}
-		else 
-		{
-			denn_assert(0);
-			return [](Scalar, size_t i) -> Scalar{ return 0; };
-		}
-	}
-	//gen clamp function	
-	Solver::ClampFunction Solver::gen_clamp_func() const
-	{
-		Scalar min = parameters().m_clamp_min;
-		Scalar max = parameters().m_clamp_max;
-		return [min,max](Scalar x) -> Scalar
-		{
-			return Denn::clamp<Scalar>(x, min, max);
-		};
-	}
+
 }
