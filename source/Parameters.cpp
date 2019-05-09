@@ -46,7 +46,7 @@ namespace Denn
             m_np_perc, "Percentage of parents respect to parameters", { "-npp"  }
         },
         ParameterInfo {
-            m_conet_build, "How to build the main network", { "-cnet" },
+            m_conet_build, "How to build the main network", { "-cbnet" },
             [this](Arguments& args) -> bool  
             { 
                 std::string str_m_type = args.get_string();
@@ -60,7 +60,7 @@ namespace Denn
             , { "string", BuildNetwork::list_of_builders() }
         },
         ParameterInfo {
-            m_conet_split, "How to split network in subpopulation", { "-snet" },
+            m_conet_split, "How to split network in subpopulation", { "-csnet" },
             [this](Arguments& args) -> bool  
             { 
                 std::string str_m_type = args.get_string();
@@ -72,6 +72,20 @@ namespace Denn
                 return SplitNetwork::exists(*m_conet_split);
             }
             , { "string", SplitNetwork::list_of_splitters() }
+        },
+        ParameterInfo {
+            m_conet_select, "How to choose the network", { "-cgnet" },
+            [this](Arguments& args) -> bool  
+            { 
+                std::string str_m_type = args.get_string();
+                //all lower case
+                std::transform(str_m_type.begin(),str_m_type.end(), str_m_type.begin(), ::tolower);
+                //save
+				m_conet_select = str_m_type;
+                //ok 
+                return GlobalSelectionNetwork::exists(*m_conet_select);
+            }
+            , { "string", GlobalSelectionNetwork::list_of_global_selectors() }
         },
         ParameterInfo {
             m_batch_size, "Batch size", { "-b" },
@@ -375,6 +389,10 @@ namespace Denn
 		ParameterInfo{
 			"Print kind of network splitter",{ "--split-list",    "-snlist" },
 			[this](Arguments& args) -> bool { std::cout << SplitNetwork::names_of_splitters() << std::endl; return true; }
+		},
+		ParameterInfo{
+			"Print kind of network global selectors",{ "--global-select-list",    "-gnlist" },
+			[this](Arguments& args) -> bool { std::cout << GlobalSelectionNetwork::names_of_global_selectors() << std::endl; return true; }
 		},
         ParameterInfo{
             "Print the help", { "--help",    "-h"  },
