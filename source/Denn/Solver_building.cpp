@@ -27,6 +27,8 @@ namespace Denn
 					individual = subpop->parents()[
 						subpop->roulette_wheel_selection_parent_id(random(), loss_function()->minimize())
 					];
+				case BuildNetwork::BN_RANDOM:
+					individual = subpop->parents()[random().index_rand(subpop->size())];
 				break;
 			}
 			individual->copy_to(*newnn);
@@ -41,6 +43,28 @@ namespace Denn
 			newnn = m_start_network.copy();
 			newnn->random() = &random(thread_id);
 		}
+		//subpop id
+        size_t subpop_id = 0;
+		size_t subpop_ind_id = 0;
+		//search id
+		if(best.build_type == BuildNetwork::BN_RANDOM)
+		{
+			for(auto subpop : population())
+			for(size_t i = 0 ; i < subpop->size(); ++i)
+			{
+				if(ind.get_ptr() == subpop->parents()[i])
+				{
+					subpop_ind_id = subpop_id;
+					break;
+				}
+				else if(ind.get_ptr() == subpop->sons()[i])
+				{
+					subpop_ind_id = subpop_id;
+					break;
+				}
+			}
+		}
+		//pop
 		for(auto subpop : population())
 		{
 			//cases
@@ -70,9 +94,16 @@ namespace Denn
 							subpop->roulette_wheel_selection_parent_id(random(thread_id), loss_function()->minimize())
 						];
 					break;
+					case BuildNetwork::BN_RANDOM:
+						individual = subpop->parents()[random().index_rand(subpop->size())];
+					break;
+					case BuildNetwork::BN_LINE:
+						individual = subpop->parents()[subpop_ind_id];
+					break;
 				}
 				individual->copy_to(*newnn);
 			}
+			++subpop_id;
 		}
 		return newnn;
 	}

@@ -59,12 +59,14 @@ public:
 		BN_BEST,
 		BN_PBEST,
 		BN_ROULETTE,
+		BN_RANDOM,
+		BN_LINE,
 		BN_SIZE
 	};
 
 	static std::vector<std::string> list_of_builders()
 	{
-		return { "best", "pbest", "roulette" };
+		return { "best", "pbest", "roulette", "random", "line" };
 	}
 
 	static std::string names_of_builders(const std::string& sep = ", ")
