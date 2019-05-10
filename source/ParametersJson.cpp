@@ -150,6 +150,7 @@ namespace Denn
 				}
 
 			}
+            return true;
     }
 
     Parameters::ReturnType Parameters::from_json

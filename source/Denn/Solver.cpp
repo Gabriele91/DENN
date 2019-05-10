@@ -217,65 +217,41 @@ namespace Denn
 	}
 	void Solver::execute_update_best(bool first)
 	{
-		switch (GlobalSelectionNetwork::get(parameters().m_conet_selector))
+		std::vector< NeuralNetwork::SPtr > nets;
+		switch (GlobalSelectionNetwork::get(parameters().m_conet_select))
 		{
 		default:
 		case GlobalSelectionNetwork::GN_BEST:
 		{
-			//netowrk
-			auto network = build_neural();
-			//eval
-			auto eval = *parameters().m_use_validation
-							? validation_function_eval(network, /*no training_phase*/ false)
-							: loss_function_eval(network, /*no training_phase*/ false);
-			//compare
-			if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
-				(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
-				first)
-			{
-				best.eval = eval;
-				best.network = network;
-			}
+			nets.push_back(build_neural());
 		}
 		break;
 		case GlobalSelectionNetwork::GN_LINE:
 		{
-			for (auto network : build_line_np_neural())
-			{
-				//eval
-				auto eval = *parameters().m_use_validation
-								? validation_function_eval(network, /*no training_phase*/ false)
-								: loss_function_eval(network, /*no training_phase*/ false);
-				//comparem
-				if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
-					(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
-					first)
-				{
-					best.eval = eval;
-					best.network = network;
-				}
-			}
+			nets = build_line_np_neural();
 		}
 		break;
 		case GlobalSelectionNetwork::GN_CROSS:
 		{
-			for (auto network : build_cross_np_neural())
-			{
-				//eval
-				auto eval = *parameters().m_use_validation
-								? validation_function_eval(network, /*no training_phase*/ false)
-								: loss_function_eval(network, /*no training_phase*/ false);
-				//comparem
-				if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) ||
-					(!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) ||
-					first)
-				{
-					best.eval = eval;
-					best.network = network;
-				}
-			}
+			nets = build_cross_np_neural();
 		}
 		break;
+		}
+
+		for (auto network : nets)
+		{
+			auto eval = *parameters().m_use_validation
+					   ? validation_function_eval(network, false)
+					   : loss_function_eval(network, false);
+			//compare
+			if ((*parameters().m_use_validation && validation_function_compare(eval, best.eval)) 
+			|| (!*parameters().m_use_validation && loss_function_compare(eval, best.eval)) 
+			|| first)
+			{
+				best.eval = eval;
+				best.network = network;
+				first = false;
+			}
 		}
 	}
 
