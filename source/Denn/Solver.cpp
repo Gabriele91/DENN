@@ -218,7 +218,7 @@ namespace Denn
 	void Solver::execute_update_best(bool first)
 	{
 		std::vector< NeuralNetwork::SPtr > nets;
-		switch (GlobalSelectionNetwork::get(parameters().m_conet_select))
+		switch (GlobalSelectionNetwork::get(*parameters().m_conet_select))
 		{
 		default:
 		case GlobalSelectionNetwork::GN_BEST:

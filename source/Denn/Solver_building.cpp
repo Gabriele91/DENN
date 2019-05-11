@@ -6,7 +6,6 @@ namespace Denn
 	NeuralNetwork::SPtr Solver::build_neural() const
 	{
 		NeuralNetwork::SPtr newnn = m_start_network.copy();
-        size_t subpop_id = 0;
 		for(auto subpop : population())
 		{
 			Individual::SPtr individual = nullptr;
@@ -116,7 +115,7 @@ namespace Denn
 		//compute np
 		size_t np = compute_min_np(population().description());
 		//combine
-		for (int n = 0; n < np; ++n)
+		for (size_t n = 0; n < np; ++n)
 		{
 			//copy network
 			auto newnn = m_start_network.copy();
@@ -129,8 +128,45 @@ namespace Denn
 		}
 		return nets;
 	}
+
+	static std::vector<NeuralNetwork::SPtr> gen_cross_neural_networks
+	(
+		Random& random,
+		const NeuralNetwork& start_network,
+		const Denn::Population& population,
+		size_t spop = 0
+	)
+	{
+		std::vector<NeuralNetwork::SPtr> nnets;
+		if(spop == population.size() - 1)
+		{
+			for (size_t n = 0; n < population[spop]->size(); ++n)
+			{
+				auto newnn = start_network.copy();
+				newnn->random() = &random;
+				population[spop]->parents()[n]->copy_to(*newnn);
+				nnets.push_back(newnn);
+			}
+		}
+		else 
+		{
+			std::vector<NeuralNetwork::SPtr>  sub_nnets = gen_cross_neural_networks(random, start_network, population, spop+1);
+			for (size_t n = 0; n < population[spop]->size(); ++n)
+			{
+				for (size_t s = 0; s < sub_nnets.size(); ++s)
+				{
+					auto newnn = sub_nnets[s]->copy();
+					newnn->random() = &random;
+					population[spop]->parents()[n]->copy_to(*newnn);
+					nnets.push_back(newnn);
+				}
+			}
+		}
+		return nnets;
+	}
+
 	std::vector<NeuralNetwork::SPtr> Solver::build_cross_np_neural() const
 	{
-		return {}; //todo
+		return gen_cross_neural_networks(random(), m_start_network, population());
 	}
 }
