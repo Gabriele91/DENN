@@ -400,6 +400,7 @@ class Generator(object):
         n_features = len(
             self.dataset[0][0][0]) if self.depth > 1 else len(self.dataset[0][0])
         n_classes = len(self.dataset[0][1])
+
         self.header = Header(
             "<H5if3I",
             [
@@ -621,7 +622,8 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
           validation_as_copy = False,
           test_all_values = False, 
           validation_size=0.1, test_size = 0.1, 
-          save_stats=False
+          save_stats=False,
+          binary = False
           ):
     """Create a mnist dataset for DENN."""
 
@@ -631,6 +633,7 @@ def nbit_parity(out_filename, nbit=None, dest_folder=getcwd(), depth=1,
         'onehot': one_hot,
         'validation_all_values' : validation_all_values,
         'test_all_values' : test_all_values,
+        'binary' : binary
     }
     #first part
     actions = [
