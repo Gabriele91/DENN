@@ -310,7 +310,7 @@ namespace Denn
 	}
 
 	//self operatos
-	NeuralNetwork& NeuralNetwork::operator += (NeuralNetwork& right)
+	NeuralNetwork& NeuralNetwork::operator += (const NeuralNetwork& right)
 	{
 		for(size_t l=0;l < size(); ++l)
 		for(size_t m=0;m < m_layers[l]->size(); ++m)
@@ -319,7 +319,7 @@ namespace Denn
 		}
 		return (*this);
 	}
-	NeuralNetwork& NeuralNetwork::operator -= (NeuralNetwork& right)
+	NeuralNetwork& NeuralNetwork::operator -= (const NeuralNetwork& right)
 	{
 		for(size_t l=0;l < size(); ++l)
 		for(size_t m=0;m < m_layers[l]->size(); ++m)
@@ -328,7 +328,7 @@ namespace Denn
 		}
 		return (*this);
 	}
-	NeuralNetwork& NeuralNetwork::operator *= (NeuralNetwork& right)
+	NeuralNetwork& NeuralNetwork::operator *= (const NeuralNetwork& right)
 	{
 		for(size_t l=0;l < size(); ++l)
 		for(size_t m=0;m < m_layers[l]->size(); ++m)
@@ -337,7 +337,7 @@ namespace Denn
 		}
 		return (*this);
 	}
-	NeuralNetwork& NeuralNetwork::operator /= (NeuralNetwork& right)
+	NeuralNetwork& NeuralNetwork::operator /= (const NeuralNetwork& right)
 	{
 		for(size_t l=0;l < size(); ++l)
 		for(size_t m=0;m < m_layers[l]->size(); ++m)
@@ -348,28 +348,28 @@ namespace Denn
 	}
 
 	//operatos
-	NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator + (const NeuralNetwork& left,const  NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		tmp += right;
 		return tmp;
 	}
 
-	NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator - (const NeuralNetwork& left,const  NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		tmp -= right;
 		return tmp;
 	}
 
-	NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator * (const NeuralNetwork& left,const  NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		tmp *= right;
 		return tmp;
 	}
 
-	NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator / (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		tmp /= right;
@@ -377,7 +377,7 @@ namespace Denn
 	}
 
 	//logic operatos
-	NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator < (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -392,7 +392,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator > (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -407,7 +407,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator == (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -422,7 +422,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator <= (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -437,7 +437,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right) 
+	NeuralNetwork operator >= (const NeuralNetwork& left, const NeuralNetwork& right) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -454,7 +454,7 @@ namespace Denn
 
 	//logics vs float
 	
-	NeuralNetwork operator < (NeuralNetwork& left, Scalar value) 
+	NeuralNetwork operator < (const NeuralNetwork& left, Scalar value) 
 	{
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -468,7 +468,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator > (NeuralNetwork& left, Scalar value) 
+	NeuralNetwork operator > (const NeuralNetwork& left, Scalar value) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -482,7 +482,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator == (NeuralNetwork& left, Scalar value) 
+	NeuralNetwork operator == (const NeuralNetwork& left, Scalar value) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -496,7 +496,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator <= (NeuralNetwork& left, Scalar value) 
+	NeuralNetwork operator <= (const NeuralNetwork& left, Scalar value) 
 	{
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)
@@ -510,7 +510,7 @@ namespace Denn
 		return tmp;
 	}
 
-	NeuralNetwork operator >= (NeuralNetwork& left, Scalar value) 
+	NeuralNetwork operator >= (const NeuralNetwork& left, Scalar value) 
 	{ 
 		NeuralNetwork tmp(left);  
 		for(size_t l=0;l < tmp.size(); ++l)

@@ -250,7 +250,7 @@ namespace Denn
 		//sub pass
 		for (size_t sub_pass = 0; sub_pass != n_sub_pass; ++sub_pass)
 		{
-			execute_a_sub_pass(pass, sub_pass);
+			execute_a_sub_pass(pass * n_sub_pass + sub_pass);
 		}
 		//end pass
 		m_e_method->end_a_gen_pass(m_population);
@@ -263,12 +263,12 @@ namespace Denn
 		//output
 		if(m_output) m_output->end_a_pass();
 	}
-	void DennAlgorithm::execute_a_sub_pass(size_t pass, size_t sub_pass)
+	void DennAlgorithm::execute_a_sub_pass(size_t gen)
 	{
 		//output
 		if(m_output) m_output->start_a_sub_pass();
 		//pass
-		execute_pass();
+		execute_pass(gen);
 		//output
 		if(m_output) m_output->end_a_sub_pass();
 	}
@@ -469,12 +469,68 @@ namespace Denn
 	
 	/////////////////////////////////////////////////////////////////
 	//execute a pass
-	void DennAlgorithm::execute_pass()
+	void DennAlgorithm::execute_pass(size_t gen)
 	{
 		m_e_method->start_a_subgen_pass(m_population);
 		if (m_thpool) parallel_execute_pass(*m_thpool);
 		else          serial_execute_pass();
 		m_e_method->end_a_subgen_pass(m_population);
+
+		//delta of pop
+		if(*m_params.m_save_population_var && current_np())
+		{
+			//get np
+			size_t np = current_np();
+			//get parents
+			auto& parents = m_population.parents();
+			//network
+			auto avg_nn(parents[0]->m_network);
+			//compute avg
+			for (size_t i = 1; i != np; ++i)
+			{
+				auto& parent = parents[i];
+				avg_nn += parent->m_network;
+			}
+			avg_nn.apply([np](Scalar w) -> Scalar {
+				return w / Scalar(np);
+			});
+			//network
+			auto var_nn(m_default->m_network);
+			var_nn.fill(0);
+			//compute variance
+			for (size_t i = 0; i != np; ++i)
+			{
+				auto& parent = parents[i];
+				auto  diffnn = (parent->m_network - avg_nn);
+				var_nn += diffnn * diffnn;
+			}
+			//compute avg
+			var_nn.apply([np](Scalar w) -> Scalar {
+				return w / Scalar(np);
+			});
+			
+			//cout
+			static size_t varpop_counter=0;
+			++varpop_counter;
+			//string name
+			auto path = Filesystem::get_directory(m_params.m_population_var_output);
+			auto name = Filesystem::get_basename(m_params.m_population_var_output);
+			auto ext = Filesystem::get_extension(m_params.m_population_var_output);
+			//fainal name
+			auto outputpath = path + "/" + 
+								name + "_var_pop_" +
+								std::to_string(varpop_counter) + "_" +
+								std::to_string(gen) + ext;			
+			//output
+			std::ofstream m_file(outputpath);
+			SerializeOutputFactory::create(ext, m_file, m_params)->serialize_best(
+				0, //no time
+				0, //no eval
+				0, //no f 
+				0, //no cr
+				var_nn
+			);
+		}
 	}
 	void DennAlgorithm::serial_execute_pass()
 	{

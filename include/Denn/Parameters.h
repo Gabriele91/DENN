@@ -45,8 +45,10 @@ namespace Denn
 		ReadOnly<unsigned int>	        m_seed                       { "seed", (unsigned int)(std::random_device{}())  };
 
 		//intermedie results
-		ReadOnly<bool>        m_save_intermediate   				 { "save_intermediate", bool(false), true /* false? */ };
+		ReadOnly<bool>        m_save_intermediate   				 { "save_intermediate",   bool(false), true /* false? */ };
+		ReadOnly<bool>        m_save_population_var   				 { "save_population_var", bool(false), true /* false? */ };
 		ReadOnly<std::string> m_intermediate_output 				 { "intermediate_output", "", true /* false? */ };
+		ReadOnly<std::string> m_population_var_output 				 { "population_var",      "", true /* false? */ };
 
 		//main info
 		ReadOnly<std::string>	         m_instance      { "instance", "default" };

@@ -223,7 +223,7 @@ protected:
 	/////////////////////////////////////////////////////////////////
 	//Intermedie steps
 	void execute_a_pass(size_t pass, size_t n_sub_pass);
-	void execute_a_sub_pass(size_t pass, size_t sub_pass);
+	void execute_a_sub_pass(size_t gen);
 	void execute_update_best(int pass, int sub_pass);
 	void execute_update_mask(int pass, int sub_pass);
 	void execute_update_best_on_validation();
@@ -231,7 +231,7 @@ protected:
 	void execute_update_restart(size_t pass);
 	/////////////////////////////////////////////////////////////////
 	//execute a pass
-	void execute_pass();
+	void execute_pass(size_t gen);
 	void serial_execute_pass();
 	void parallel_execute_pass(ThreadPool& thpool);
 	void  execute_generation_task(size_t i);

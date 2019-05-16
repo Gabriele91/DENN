@@ -87,7 +87,13 @@ namespace Denn
             m_save_intermediate, "Enable the saving of intermediete result during the evolution", { "-si" }
         },
         ParameterInfo {
+            m_save_population_var, "Enable the saving of population var result during the evolution", { "-spv" }
+        },
+        ParameterInfo {
             m_intermediate_output, "Path of output of intermediete result (<path>/<name results>.<format>)", { "-io" }
+        },
+        ParameterInfo {
+            m_population_var_output, "Path of output of population var result (<path>/<name results>.<format>)", { "-ipv" }
         },
         ParameterInfo {
             m_evolution_type, "Type of evolution method", { "--evolution",    "-em"  },

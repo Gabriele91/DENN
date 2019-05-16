@@ -105,10 +105,10 @@ public:
 	Random*& random()       { return m_random; }
 	Random*  random() const { return m_random; }
 	/////////////////////////////////////////////////////////////////////////
-	NeuralNetwork&  operator += (NeuralNetwork& right);
-	NeuralNetwork&  operator -= (NeuralNetwork& right);
-	NeuralNetwork&  operator *= (NeuralNetwork& right);
-	NeuralNetwork&  operator /= (NeuralNetwork& right);
+	NeuralNetwork&  operator += (const NeuralNetwork& right);
+	NeuralNetwork&  operator -= (const NeuralNetwork& right);
+	NeuralNetwork&  operator *= (const NeuralNetwork& right);
+	NeuralNetwork&  operator /= (const NeuralNetwork& right);
 	
 protected:
 	//layer list
@@ -131,22 +131,22 @@ inline NeuralNetwork::Scalar distance_pow2<const NeuralNetwork>(const NeuralNetw
 }
 
 //math operations
-extern NeuralNetwork operator + (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator - (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator * (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator / (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator + (const NeuralNetwork& left,const NeuralNetwork& right);
+extern NeuralNetwork operator - (const NeuralNetwork& left,const NeuralNetwork& right);
+extern NeuralNetwork operator * (const NeuralNetwork& left,const NeuralNetwork& right);
+extern NeuralNetwork operator / (const NeuralNetwork& left,const NeuralNetwork& right);
 
 //logic operatos
-extern NeuralNetwork operator < (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator > (NeuralNetwork& left, NeuralNetwork& right); 
-extern NeuralNetwork operator == (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator <= (NeuralNetwork& left, NeuralNetwork& right);
-extern NeuralNetwork operator >= (NeuralNetwork& left, NeuralNetwork& right);
+extern NeuralNetwork operator < (const NeuralNetwork& left,const  NeuralNetwork& right);
+extern NeuralNetwork operator > (const NeuralNetwork& left,const  NeuralNetwork& right); 
+extern NeuralNetwork operator == (const NeuralNetwork& left,const  NeuralNetwork& right);
+extern NeuralNetwork operator <= (const NeuralNetwork& left,const  NeuralNetwork& right);
+extern NeuralNetwork operator >= (const NeuralNetwork& left,const  NeuralNetwork& right);
 
-extern NeuralNetwork operator < (NeuralNetwork& left, Scalar value);
-extern NeuralNetwork operator > (NeuralNetwork& left, Scalar value);
-extern NeuralNetwork operator == (NeuralNetwork& left, Scalar value);
-extern NeuralNetwork operator <= (NeuralNetwork& left, Scalar value);
-extern NeuralNetwork operator >= (NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator < (const NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator > (const NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator == (const NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator <= (const NeuralNetwork& left, Scalar value);
+extern NeuralNetwork operator >= (const NeuralNetwork& left, Scalar value);
 
 }
