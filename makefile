@@ -57,7 +57,7 @@ CC_FLAGS = -std=c++14 -I $(DIPS_INCLUDE) -I $(S_INC)
 # RELEASE_FLAGS
 RELEASE_FLAGS = -O3 -DNDEBUG -fomit-frame-pointer -Wno-unused-result
 # DEBUG_FLAGS
-DEBUG_FLAGS = -g -D_DEBUG -Wall -Wno-misleading-indentation
+DEBUG_FLAGS = -g -D_DEBUG -Wall 
 # Linker
 LDFLAGS += -lm -lutil $(DIPS_LIBS)
 
@@ -66,12 +66,15 @@ LDFLAGS += -lm -lutil $(DIPS_LIBS)
 ifeq ($(shell uname -s),Linux)
 # too slow -fopenmp 
 C_FLAGS += -pthread 
+DEBUG_FLAGS += -Wno-misleading-indentation
 #clang
 ifneq ($(findstring clang,$(VERION_COMPILER)), clang) 
 # remove gcc warning (eigen)
 C_FLAGS += -Wno-int-in-bool-context
 # only linux + gcc
 C_FLAGS += -lpthread
+#clang equivalent of  -Wno-misleading-indentation
+DEBUG_FLAGS += -Wno-binding-in-condition
 endif
 endif
 ##############
