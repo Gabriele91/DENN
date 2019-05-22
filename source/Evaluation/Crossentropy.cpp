@@ -29,6 +29,16 @@ namespace Denn
         virtual Scalar operator () (const Matrix& pred, const DataSet& dataset)
 		#if 1
         {
+			const int n = dataset.features().cols();
+			const Matrix& target = dataset.labels();
+			auto pred_clamp = pred.array().unaryExpr([](Scalar y)->Scalar{ 
+				const Scalar eps = SCALAR_EPS;
+				return clamp<Scalar>(y,eps,1 - eps); 
+			});
+			return  -(target.array() * pred_clamp.log() + (1 - target.array()) * (1 - pred_clamp).log()).sum() / Scalar(n);
+        }
+		#elif 0
+        {
 			const Scalar eps = SCALAR_EPS;
 			const int n = dataset.features().cols();
 			const Matrix& target = dataset.labels();

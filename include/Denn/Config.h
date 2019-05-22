@@ -83,6 +83,6 @@
 	#if defined(USE_SCALAR_EPS_BY_TYPE)
 		#define SCALAR_EPS (Denn::Constants<Scalar>::epsilon())
 	#else
-		#define SCALAR_EPS (Scalar(1e-6))
+		#define SCALAR_EPS (Scalar(1e-7))
 	#endif
 #endif
