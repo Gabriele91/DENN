@@ -629,11 +629,17 @@ class MNISTDataset(Dataset):
         self.insert(Resource(train_images, train_labels))
         self.insert(Resource(test_images, test_labels), 'test')
 
+
 class NBitParity(Dataset):
 
     """n-bit parity dataset."""
 
-    def __init__(self, nbit=3, normalized=True, onehot=True, validation_all_values = False, test_all_values = False):
+    def __init__(self, nbit=3, 
+                 normalized=True, 
+                 onehot=True, 
+                 validation_all_values = False, 
+                 test_all_values = False,
+                 binary = False):
         super(NBitParity, self).__init__(normalized=normalized, onehot=onehot, kind='cls')
         import copy
         def tofuzzyclass(i):
@@ -650,13 +656,22 @@ class NBitParity(Dataset):
             pydb_x.append([int(x) for x in list(np.binary_repr(i,width=nbit))])
         db_x = np.array(pydb_x)
         db_y = (np.sum(db_x, axis=1) % 2 != 0).astype(float)
-        self.insert(Resource(db_x, tofuzzyclass(db_y)))
+
+        if binary == False:
+             db_y = tofuzzyclass(db_y)
+        else:
+            to_cols = []
+            for x in db_y:
+                to_cols.append([x])
+            db_y = np.array(to_cols).astype(float)
+
+        self.insert(Resource(db_x,db_y))
 
         if validation_all_values:
-            self.insert(Resource(copy.deepcopy(db_x), copy.deepcopy(tofuzzyclass(db_y))), 'validation')
+            self.insert(Resource(copy.deepcopy(db_x), copy.deepcopy(db_y)), 'validation')
 
         if test_all_values:
-            self.insert(Resource(copy.deepcopy(db_x), copy.deepcopy(tofuzzyclass(db_y))), 'test')
+            self.insert(Resource(copy.deepcopy(db_x), copy.deepcopy(db_y)), 'test')
 
 class FashionMNISTDataset(Dataset):
 
