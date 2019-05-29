@@ -41,7 +41,7 @@
 # template/JADE_NN_XOR.config, XOR15ND5, xor_size=12 np=2000 nnodes=5 validation=false clamp=20 rand=2 gens=7000 sub_gens=35 batch=350
 
 # XOR TESTS 22/5/2019
-template/JADE_NN_XOR.config, XOR12ND5, xor_size=12 np=2000 nnodes=5 validation=false clamp=20 rand=2 gens=7000 sub_gens=30 batch=300 
-template/JADE_NN_XOR.config, XOR13ND5, xor_size=13 np=2000 nnodes=5 validation=false clamp=20 rand=2 gens=7000 sub_gens=35 batch=350 
-template/JADE_NN_XOR.config, XOR14ND5, xor_size=14 np=2000 nnodes=5 validation=false clamp=20 rand=2 gens=7000 sub_gens=40 batch=400 
-template/JADE_NN_XOR.config, XOR15ND5, xor_size=15 np=2000 nnodes=5 validation=false clamp=20 rand=2 gens=7000 sub_gens=45 batch=450 
+template/JADE_NN_XOR.config, XOR12ND5, xor_size=12 np=2000 nnodes=5 validation=false clamp=30 rand=2 gens=8000 sub_gens=30 batch=300 
+template/JADE_NN_XOR.config, XOR13ND5, xor_size=13 np=2000 nnodes=5 validation=false clamp=30 rand=2 gens=8000 sub_gens=35 batch=350 
+template/JADE_NN_XOR.config, XOR14ND5, xor_size=14 np=2000 nnodes=5 validation=false clamp=30 rand=2 gens=8000 sub_gens=40 batch=400 
+template/JADE_NN_XOR.config, XOR15ND5, xor_size=15 np=2000 nnodes=5 validation=false clamp=30 rand=2 gens=8000 sub_gens=45 batch=450 
