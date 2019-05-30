@@ -88,17 +88,24 @@ namespace Denn
 
 		Evaluation::SPtr loss_function() const override
 		{
-			return EvaluationFactory::get("cross_entropy");
+			return  m_dataset && m_dataset->get_main_header_info().m_n_classes == 1 ? 
+					EvaluationFactory::get("binary_cross_entropy")  : 
+					EvaluationFactory::get("cross_entropy");
+
 		}
 
 		Evaluation::SPtr validation_function() const override
 		{
-			return  EvaluationFactory::get("accuracy");
+			return  m_dataset && m_dataset->get_main_header_info().m_n_classes == 1 ? 
+					EvaluationFactory::get("binary_accuracy")  : 
+				    EvaluationFactory::get("accuracy");
 		}
 
 		Evaluation::SPtr test_function() const override
 		{
-			return  EvaluationFactory::get("accuracy");
+			return  m_dataset && m_dataset->get_main_header_info().m_n_classes == 1 ? 
+					EvaluationFactory::get("binary_accuracy")  : 
+				    EvaluationFactory::get("accuracy");
 		}
 
 		std::ostream&  output_stream() const override
