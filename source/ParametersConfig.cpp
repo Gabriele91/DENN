@@ -658,6 +658,7 @@ namespace Denn
 				  { "log"  , [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "log"))   return std::log(number(args[0],"log")); else return {0}; } }
 				, { "log10", [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "log10")) return std::log10(number(args[0],"log10")); else return {0}; } }	
 				, { "exp"  , [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "exp"))   return std::exp(number(args[0],"exp")); else return {0}; } }
+				, { "sqrt" , [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "sqrt"))  return std::sqrt(number(args[0],"sqrt")); else return {0}; } }
 				//Cast
 				, { "floor", [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "floor"))  return std::floor(number(args[0],"floor")); else return {0}; } }
 				, { "ceil" , [&](FunctionArgs&& args) -> ExpValue { if (test(args, 1, "ceil"))   return std::ceil(number(args[0],"ceil")); else return {0}; } }
