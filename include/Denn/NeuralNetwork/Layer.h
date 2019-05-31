@@ -301,4 +301,7 @@ namespace Denn
 	}
 	#define REGISTERED_ACTIVATION_LAYER(class_, names_ )\
 		REGISTERED_LAYER(class_, names_, LayerShapeType(SHAPE_ACTIVATION), LayerDescription::MinMax{ 0 })
+
+	#define REGISTERED_ACTIVATION_LAYER_WITH_INPUTS(class_, names_, ... )\
+		REGISTERED_LAYER(class_, names_, LayerShapeType(SHAPE_ACTIVATION), __VA_ARGS__ )
 }
