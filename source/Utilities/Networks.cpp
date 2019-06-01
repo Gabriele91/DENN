@@ -69,9 +69,12 @@ namespace Denn
 				{
 				    if (*ptr=='[')
 				    {
-				        err += type + " does not need params";
-				        return std::make_tuple(nn, err, false);
+						++ptr; //jump [
+						//activation not need a shape
+				    	state = S_READ_INPUTS; 
+						continue;
 				    }
+					//go to finalize
 				    state = S_FINALIZE;
 					continue;
 				}
@@ -285,7 +288,10 @@ namespace Denn
 			// activation case
 			if (LayerFactory::description(type)->m_shape_type == SHAPE_ACTIVATION)
 			{
-				out += type;
+				if(inputs.size())
+					out += type + "[" + inputs + "]";
+				else
+					out += type;
 			}
 			// default case
 			else 

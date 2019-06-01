@@ -176,5 +176,16 @@ namespace Activation
 	{
 		return a < ScalarType(0) ? ScalarType(0) : ScalarType(1.0);
 	}
+	
+	template < typename ScalarType = double >
+	inline ScalarType leaky_relu(const ScalarType& a, const ScalarType& alpha = 0.01)
+	{
+		return std::max(a, ScalarType(0)) - alpha * std::max(-a, ScalarType(0));
+	}
+	template < typename ScalarType = double >
+	inline ScalarType leaky_relu_derivative(const ScalarType& a, const ScalarType& alpha = 0.01)
+	{
+		return a < ScalarType(0) ? alpha : ScalarType(1.0);
+	}
 }
 }

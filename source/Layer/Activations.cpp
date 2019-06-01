@@ -50,6 +50,35 @@ namespace Denn
         RETURN_BACKPROPAGATION(m_grad_bottom);
     }
     //////////////////////////////////////////////////////////////////////////////////////////////////    
+    LeakyReLU::LeakyReLU(const Shape& shape, const Inputs& inputs) : ActivationLayer("leaky_relu", shape, shape)
+    {
+        m_alpha = inputs.size() ? inputs[0] : 0.01;
+    }
+    Layer::SPtr LeakyReLU::copy() const
+    {
+        return std::static_pointer_cast<Layer>(std::make_shared<LeakyReLU>(*this));
+    }
+    const Matrix& LeakyReLU::feedforward(const Matrix& bottom)
+    {  
+        // a = max(0,x) − αmax(0,−x)
+        m_top.resize(bottom.rows(),bottom.cols());
+        m_top.noalias() = bottom.unaryExpr([this](Scalar x) -> Scalar {
+            return Activation::leaky_relu(x,m_alpha);
+        });
+        //return feed
+        return m_top;
+    }
+    const Matrix& LeakyReLU::backpropagate(const Matrix& bottom, const Matrix& grad)
+    {
+        CODE_BACKPROPAGATION(
+            Matrix derivate = bottom.array().unaryExpr([this](Scalar x) -> Scalar {
+                return Activation::leaky_relu_derivative(x,m_alpha);
+            });
+            m_grad_bottom = grad.cwiseProduct(derivate);
+        )
+        RETURN_BACKPROPAGATION(m_grad_bottom);
+    }
+    //////////////////////////////////////////////////////////////////////////////////////////////////      
     Softmax::Softmax(const Shape& shape, const Inputs& inputs) : ActivationLayer("softmax", shape, shape) {}
     Layer::SPtr Softmax::copy() const
     {
