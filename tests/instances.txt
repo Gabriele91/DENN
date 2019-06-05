@@ -77,8 +77,21 @@
 # template/JADE_NN_XOR.config, DEGL_XOR_444_15, gens=6000 clamp=25 rand=25 npp=8 xor_size=15 sub_gens=1 batch=200 force_cpval=true nnodes=4 conet_build=pbest mutation=degl crossover=bin
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 # TEST 31/05/2019
-template/JADE_NN_XOR.config, DEGL_XOR_12_ND5, xor_size=12 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
-template/JADE_NN_XOR.config, DEGL_XOR_13_ND5, xor_size=13 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
-template/JADE_NN_XOR.config, DEGL_XOR_14_ND5, xor_size=14 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
-template/JADE_NN_XOR.config, DEGL_XOR_15_ND5, xor_size=15 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
-template/JADE_NN_XOR.config, DEGL_XOR_16_ND5, xor_size=16 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
+# template/JADE_NN_XOR.config, XOR_12_ND5, xor_size=12 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
+# template/JADE_NN_XOR.config, XOR_13_ND5, xor_size=13 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
+# template/JADE_NN_XOR.config, XOR_14_ND5, xor_size=14 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
+# template/JADE_NN_XOR.config, XOR_15_ND5, xor_size=15 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best 
+# template/JADE_NN_XOR.config, XOR_16_ND5, xor_size=16 nnodes=5 validation=false force_cpval=true np=200 gens=24000 sub_gens=20 batch=200 conet_build=best conet_split=one conet_select=best
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# TEST 05/06/2019
+template/JADE_NN_XOR.config, XOR_12_ND5_ONE, xor_size=12 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=one conet_select=best 
+template/JADE_NN_XOR.config, XOR_13_ND5_ONE, xor_size=13 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=one conet_select=best 
+template/JADE_NN_XOR.config, XOR_14_ND5_ONE, xor_size=14 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=one conet_select=best 
+template/JADE_NN_XOR.config, XOR_15_ND5_ONE, xor_size=15 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=one conet_select=best 
+template/JADE_NN_XOR.config, XOR_16_ND5_ONE, xor_size=16 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=one conet_select=best 
+
+template/JADE_NN_XOR.config, XOR_12_ND5_MATRIX, xor_size=12 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=matrix conet_select=best 
+template/JADE_NN_XOR.config, XOR_13_ND5_MATRIX, xor_size=13 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=matrix conet_select=best 
+template/JADE_NN_XOR.config, XOR_14_ND5_MATRIX, xor_size=14 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=matrix conet_select=best 
+template/JADE_NN_XOR.config, XOR_15_ND5_MATRIX, xor_size=15 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=matrix conet_select=best 
+template/JADE_NN_XOR.config, XOR_16_ND5_MATRIX, xor_size=16 nnodes=5 validation=false force_cpval=true np=400 gens=40000 sub_gens=30 batch=400 crowding=true conet_build=best conet_split=matrix conet_select=best 
