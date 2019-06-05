@@ -50,7 +50,10 @@ namespace Denn
 
 		virtual	void selection() override
 		{
-			population().swap_best();
+			if(*parameters().m_crowding_selection)
+				population().swap_crowding();
+			else 
+				population().swap_best();
 		}
 
 	private:

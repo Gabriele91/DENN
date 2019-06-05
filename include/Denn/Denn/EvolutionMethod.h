@@ -1,5 +1,7 @@
 #pragma once
 #include "Denn/Config.h"
+#include "Individual.h"
+#include "SubPopulation.h"
 
 namespace Denn
 {
@@ -8,8 +10,6 @@ namespace Denn
 	class Parameters;
 	class Random;
 	class Population;
-	class SubPopulation;
-	class Individual;
 	class Mutation;
 	class Crossover;
 
@@ -40,11 +40,14 @@ namespace Denn
 
 		const size_t current_np() const;
 		SubPopulation& population();
+		SubPopulation::Pair population(size_t);
 		const SubPopulation& population() const;
+		const SubPopulation::Pair population(size_t) const;
 		void population_sort();
 
 		const size_t best_parent_id() const;
 		const Individual& parent(size_t) const;
+		const Individual& son(size_t) const;
 
 		Random& random()  const;
 		Random& random(size_t i)  const;

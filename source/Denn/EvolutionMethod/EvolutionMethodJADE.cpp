@@ -66,26 +66,32 @@ namespace Denn
 
 		virtual	void selection() override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if(*parameters().m_crowding_selection)
+				population().crowding_swap_list(m_swap_list);
+			else 
+				population().parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
+			// JADE
 			Scalar sum_f = 0;
 			Scalar sum_f2 = 0;
 			Scalar sum_cr = 0;
 			size_t n_discarded = 0;
 			size_t np = current_np();
-
 			for (size_t i = 0; i != np; ++i)
 			{
-				auto father = population()[i].parent();
-				auto son = population()[i].son();
-				if (loss_function_compare(son->eval(),father->eval()))
-				{
-					if (m_archive_max_size) m_archive.push_back(father->copy());
-					//else if (random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
-					sum_f += son->f();
-					sum_f2 += son->f() * son->f();
-					sum_cr += son->cr();
-					++n_discarded;
-					population().swap(i);
-				}
+				if(m_swap_list[i] < 0) continue;
+				//get
+				auto father = population(i).parent();
+				auto son = population(m_swap_list[i]).son();
+				//save
+				if (m_archive_max_size) m_archive.push_back(father->copy());
+				//compue jade params
+				sum_f += son->f();
+				sum_f2 += son->f() * son->f();
+				sum_cr += son->cr();
+				++n_discarded;
 			}
 			//safe compute muF and muCR 
 			if (n_discarded)
@@ -99,6 +105,9 @@ namespace Denn
 				m_archive[random().index_rand(m_archive.size())] = m_archive.back();
 				m_archive.pop_back();
 			}
+			/////////////////////////////////////////////////////////////
+			//swap
+			population().swap(m_swap_list);
 		}
 
 		virtual const VariantRef get_context_data() const override
@@ -115,6 +124,7 @@ namespace Denn
 		IndividualList	m_archive;
 		Mutation::SPtr  m_mutation;
 		Crossover::SPtr m_crossover;
+		std::vector<int> m_swap_list;
 
 	};
 	REGISTERED_EVOLUTION_METHOD(JADEMethod, "JADE")

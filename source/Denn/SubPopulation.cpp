@@ -297,16 +297,100 @@ namespace Denn
 	{
 		std::swap(m_parents[ind_id], m_sons[ind_id]);
 	}
+	
+    void SubPopulation::swap(const std::vector<int>& swap_list)
+	{
+		for (size_t i = 0; i != size(); ++i)
+			if(swap_list[i] >= 0)
+				swap(swap_list[i]);
+	}
+
 	void SubPopulation::swap_best(bool minimize)
 	{
 		for (size_t i = 0; i != size(); ++i)
 		{
-			if(( minimize && m_sons[i]->eval() < m_parents[i]->eval())
-			|| (!minimize && m_sons[i]->eval() > m_parents[i]->eval()))
+			if(( minimize && m_sons[i]->eval() <= m_parents[i]->eval())
+			|| (!minimize && m_sons[i]->eval() >= m_parents[i]->eval()))
 			{
 				swap(i);
 			}
 		}
+	}
+
+	void SubPopulation::swap_crowding(bool minimize)
+	{
+		std::vector<int> swap_list; 
+		swap_list.reserve(size());
+		crowding_swap_list(swap_list, minimize);
+		swap(swap_list);
+	}
+
+	
+	//swap list
+	void SubPopulation::parent_swap_list(std::vector<int>& swap_list,bool minimize) const
+	{
+		//init all -1
+		swap_list.resize(size());
+		std::fill(swap_list.begin(),swap_list.end(),-1);
+		//swap
+		for (size_t i = 0; i != size(); ++i)
+		{
+			if(( minimize && m_sons[i]->eval() <= m_parents[i]->eval())
+			|| (!minimize && m_sons[i]->eval() >= m_parents[i]->eval()))
+			{
+				swap_list[i] = int(i);
+			}
+		}
+	}
+
+	void SubPopulation::crowding_swap_list(std::vector<int>& swap_list, bool minimize) const
+	{
+		//init all -1
+		swap_list.resize(size());
+		std::fill(swap_list.begin(),swap_list.end(),-1);
+		//swap
+		for (size_t i = 1; i < size(); ++i)
+		{
+			//search target
+			int target_i = 0;
+			Scalar terget_dist = distance(*m_sons[i], *m_parents[0]);
+			for (size_t j = 1; j < size(); ++j)
+			{
+				Scalar j_dist = distance(*m_sons[i], *m_parents[j]);
+				if (j_dist < terget_dist) 
+				{
+					target_i = j;
+					terget_dist = j_dist;
+				}
+			}
+			//target eval default = the closest
+			Scalar parent_eval = m_parents[target_i]->eval(); 
+			//else the last swapped
+			if(swap_list[target_i] >= 0)
+				parent_eval = m_sons[swap_list[target_i]]->eval();
+			//test
+			if(( minimize && m_sons[i]->eval() <= parent_eval)
+			|| (!minimize && m_sons[i]->eval() >= parent_eval))
+			{
+				swap_list[target_i] = i;
+			} 
+		}
+	}
+
+	std::vector<int> SubPopulation::parent_swap_list(bool minimize) const
+	{
+		std::vector<int> swap_list; 
+		swap_list.reserve(size());
+		parent_swap_list(swap_list, minimize);
+		return swap_list;
+	}
+
+	std::vector<int> SubPopulation::crowding_swap_list(bool minimize) const
+	{
+		std::vector<int> swap_list; 
+		swap_list.reserve(size());
+		crowding_swap_list(swap_list, minimize);
+		return swap_list;
 	}
 
 	SubPopulation::SPtr SubPopulation::copy() const

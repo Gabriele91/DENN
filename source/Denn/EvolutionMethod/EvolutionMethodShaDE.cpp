@@ -67,6 +67,14 @@ namespace Denn
 
 		virtual	void selection() override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if(*parameters().m_crowding_selection)
+				population().crowding_swap_list(m_swap_list);
+			else 
+				population().parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
+			// SHADE
 			//F
 			Scalar sum_f = 0;
 			Scalar sum_f2 = 0;
@@ -76,30 +84,26 @@ namespace Denn
 			Scalar delta_f = 0;
 			Scalar sum_delta_f = 0;
 			size_t n_discarded = 0;
-			//pop
 			size_t np = current_np();
-
+			//compute shade params
 			for (size_t i = 0; i != np; ++i)
 			{
-				auto father = population()[i].parent();
-				auto son = population()[i].son();
-				if (loss_function_compare(son->eval(),father->eval()))
-				{
-					if (m_archive_max_size) m_archive.push_back(father->copy());
-					//else if (random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
-					//F
-					sum_f += son->f();
-					sum_f2 += son->f() * son->f();
-					//w_k (for mean of Scr)
-					delta_f = std::abs(son->eval() - father->eval());
-					s_delta_f.push_back(delta_f);
-					sum_delta_f += delta_f;
-					//Scr
-					s_cr.push_back(son->cr());
-					++n_discarded;
-					//SWAP
-					population().swap(i);
-				}
+				if(m_swap_list[i] < 0) continue;
+				//get
+				auto father = population(i).parent();
+				auto son = population(m_swap_list[i]).son();
+				//archivie
+				if (m_archive_max_size) m_archive.push_back(father->copy());
+				//F
+				sum_f += son->f();
+				sum_f2 += son->f() * son->f();
+				//w_k (for mean of Scr)
+				delta_f = std::abs(son->eval() - father->eval());
+				s_delta_f.push_back(delta_f);
+				sum_delta_f += delta_f;
+				//Scr
+				s_cr.push_back(son->cr());
+				++n_discarded;
 			}
 			//safe compute muF and muCR 
 			if (n_discarded)
@@ -120,6 +124,9 @@ namespace Denn
 				m_archive[random().index_rand(m_archive.size())] = m_archive.back();
 				m_archive.pop_back();
 			}
+			/////////////////////////////////////////////////////////////
+			//swap
+			population().swap(m_swap_list);
 		}
 		
 		virtual const VariantRef get_context_data() const override
@@ -138,6 +145,7 @@ namespace Denn
 		IndividualList	    m_archive;
 		Mutation::SPtr      m_mutation;
 		Crossover::SPtr     m_crossover;
+		std::vector<int>    m_swap_list;
 
 	};
 	REGISTERED_EVOLUTION_METHOD(SHADEMethod, "SHADE")
@@ -214,6 +222,14 @@ namespace Denn
 
 		virtual	void selection() override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if(*parameters().m_crowding_selection)
+				population().crowding_swap_list(m_swap_list);
+			else 
+				population().parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
+			// L-SHADE
 			//F
 			Scalar sum_f = 0;
 			Scalar sum_f2 = 0;
@@ -276,6 +292,10 @@ namespace Denn
 			}
 			//reduce A
 			reduce_archive();
+			/////////////////////////////////////////////////////////////
+			//!! SWAP BEFORE TO REDUCE THE POPULATION SIZE !!!
+			population().swap(m_swap_list);
+			/////////////////////////////////////////////////////////////
 			//reduce population
 			reduce_population();
 		}
@@ -301,6 +321,7 @@ namespace Denn
 		IndividualList	    m_archive;
 		Mutation::SPtr      m_mutation;
 		Crossover::SPtr     m_crossover;
+		std::vector<int>    m_swap_list;
 
 		//reduce archive
 		void reduce_archive()
