@@ -45,6 +45,13 @@ namespace Denn
 		ReadOnly<size_t>	             m_np            { "number_parents",size_t(16) };
 		ReadOnly<Scalar>	             m_np_perc       { "number_parents_percentage",Scalar(-1) };
 		
+		//stats
+		ReadOnly<bool>	                 m_stats_avg     { "stats_avg",        bool(false), true /* false? */ };
+		ReadOnly<bool>	                 m_stats_variance{ "stats_variance",   bool(false), true /* false? */ };
+		ReadOnly<bool>	                 m_stats_distance{ "stats_distance",   bool(false), true /* false? */ };
+		ReadOnly<std::string>            m_stats_output  { "stats_output",    "stats.json", true /* false? */ };
+
+
 		//coevo
 		ReadOnly<std::string>			 m_conet_build   { "conet_build", "best" };
 		ReadOnly<std::string>			 m_conet_split   { "conet_split", "matrix" };

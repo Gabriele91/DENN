@@ -153,6 +153,11 @@ namespace Denn
 		void crowding_swap_list(std::vector<int>& list, bool minimize = true) const;
 		std::vector<int> parent_swap_list(bool minimize = true) const;
 		std::vector<int> crowding_swap_list(bool minimize = true) const;
+
+		//stats computation
+		Individual::SPtr avg()			 const;
+		Individual::SPtr variance()		 const;
+		double 			 distance_avg()  const;
 		
 	protected:
 		

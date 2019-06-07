@@ -46,6 +46,18 @@ namespace Denn
             m_np_perc, "Percentage of parents respect to parameters", { "-npp"  }
         },
         ParameterInfo {
+            m_stats_avg, "Enable population avg statistics", { "-savg"  }
+        },
+        ParameterInfo {
+            m_stats_variance, "Enable population variance statistics", { "-svar"  }
+        },
+        ParameterInfo {
+            m_stats_distance, "Enable population distance statistics", { "-sdis"  }
+        },
+        ParameterInfo {
+            m_stats_output, "Path of statistics files (<path>/<name>.json)", { "-sdis"  }
+        },
+        ParameterInfo {
             m_conet_build, "How to build the main network", { "-cbnet" },
             [this](Arguments& args) -> bool  
             { 

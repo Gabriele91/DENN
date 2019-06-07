@@ -80,6 +80,8 @@ protected:
 	void execute_a_sub_pass(size_t pass, size_t sub_pass);
 	void execute_update_best(bool first=false);
 	void execute_pass();
+	//statistics
+	void execute_statistics(size_t pass, size_t sub_pass);
 	//load next batch
 	void loss_function_eval_all();
 	bool next_batch();

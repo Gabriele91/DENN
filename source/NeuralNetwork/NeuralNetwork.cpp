@@ -10,7 +10,11 @@ namespace Denn
 	}
 	NeuralNetwork::SPtr NeuralNetwork::copy() const
 	{
-		auto copy = std::make_shared<NeuralNetwork>();		
+		//alloc new nn
+		auto copy = std::make_shared<NeuralNetwork>();	
+		//set random engine
+		copy->m_random = m_random;
+		//copy all layers	
 		for (size_t i = 0; i != size(); ++i)
 		{
 			copy->m_layers.push_back((*this)[i].copy());

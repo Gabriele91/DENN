@@ -303,4 +303,121 @@ namespace Denn
 		}
 		return out;
 	}
+
+	//nn to json
+	JsonObject nn_to_json_object(const NeuralNetwork& nn)
+	{
+		JsonObject jout;
+		if(nn.size())
+		{
+			//input layer is a FC?
+			if(nn[0].name() == "fully_connected")
+				jout["input"]  = nn[0].in_size().width();
+			//search the last fully_connected layer 
+			//TODO test the intermedie layers (have to be ACTIVATION type)
+			for(int i = nn.size()-1; i > 0; --i)
+				if(nn[i].name() == "fully_connected")
+					jout["output"] = nn[nn.size()-1].out_size().width();
+			//weights
+			jout["layout"] = get_string_from_network(nn);
+			jout["weights"] = nn_weights_to_json_array(nn);
+		}
+		//return
+		return jout;
+	}
+
+	//nn from json
+	NeuralNetwork nn_from_json_object(const JsonObject& jnn)
+	{
+		NeuralNetwork nnout;
+		//test
+		int in1D = 1;
+		int out1D = 1;
+		//test
+		auto input_it = jnn.find("input");
+		auto out_it = jnn.find("ouput");
+		//iterator test
+		if( input_it != jnn.end() && input_it->second.is_number())
+			in1D = input_it->second.number();
+		if( out_it != jnn.end() && out_it->second.is_number())
+			out1D = out_it->second.number();
+		//its
+		auto layout_it = jnn.find("layout");
+		auto weights_it = jnn.find("weights");
+		//test
+		if( layout_it == jnn.end() || !layout_it->second.is_string())
+			return nnout;
+		//test
+		if( weights_it == jnn.end() || !weights_it->second.is_array())
+			return nnout;
+		//parsing
+		auto status_nn = get_network_from_string(layout_it->second.string(), in1D, out1D);
+		//test
+		if(!std::get<2>(status_nn))
+			return nnout;
+		else 
+			nnout = std::get<0>(status_nn);
+		//weights
+		if(!nn_weights_from_json_object(nnout, weights_it->second.array()))
+			return nnout; //return void NN?
+		//ok
+		return nnout;
+	}
+
+	//nn weights to json
+	JsonArray nn_weights_to_json_array(const NeuralNetwork& nn)
+	{
+		//save w layer
+		JsonArray wl;
+		//serialize net
+		for (size_t i = 0; i != nn.size(); ++i)
+		{
+			JsonArray wm;
+			for (size_t m = 0; m != nn[i].size(); ++m)
+				wm.push_back(json_array_from_matrix(nn[i][m]));
+			wl.push_back(wm);
+		}
+		return wl;
+	}
+
+	//nn weights from json
+	bool nn_weights_from_json_object(NeuralNetwork& nn, const JsonArray& w)
+	{
+		if(nn.size() !=  w.size()) return false;
+		//deserialize net
+		for (size_t i = 0; i != nn.size(); ++i)
+		{
+			//test
+			if(!w[i].is_array() || nn[i].size() !=  w[i].array().size())
+			 	return false;
+			//deserialize
+			for (size_t m = 0; m != nn[i].size(); ++m)
+			{
+				nn[i][m] = matrix_from_json_array(w[i].array());
+			}
+		}
+		return true;
+	}
+	
+	//to json
+	JsonObject to_json_objects(const NeuralNetwork& nn)
+	{
+		JsonObject jout;
+		//get layout
+		jout["layout"] = get_string_from_network(nn);
+		//save w layer
+		JsonArray wl;
+		//serialize net
+		for (size_t i = 0; i != nn.size(); ++i)
+		{
+			JsonArray wm;
+			for (size_t m = 0; m != nn[i].size(); ++m)
+				wm.push_back(json_array_from_matrix(nn[i][m]));
+			wl.push_back(wm);
+		}
+		jout["weights"] = wl;
+		return jout;
+	}
+	//from json
+	NeuralNetwork from_json(const JsonObject& nn);
 }

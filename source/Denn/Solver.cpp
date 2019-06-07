@@ -157,6 +157,8 @@ namespace Denn
 		for (size_t sub_pass = 0; sub_pass != n_sub_pass; ++sub_pass)
 		{
 			execute_a_sub_pass(pass, sub_pass);
+			//execute statistics
+			execute_statistics(pass, sub_pass);
 		}
 		//end pass
 		for(auto emethod : evolution_methods())

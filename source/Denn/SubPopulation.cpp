@@ -409,5 +409,53 @@ namespace Denn
 		return new_pop;
 	}
 
+	
+	Individual::SPtr SubPopulation::avg() const
+	{
+		if(!size()) return nullptr;
+		//copy the first element
+		auto iavg = parents()[0]->copy();
+		//sum all others elements
+		for(size_t i = 1;i < size(); ++i)
+			iavg->array() += parents()[i]->array();
+		//divide for the pop size
+		iavg->array() /= Scalar(size());
+		//return
+		return iavg;
+	}
+
+	Individual::SPtr SubPopulation::variance() const
+	{
+		if(!size()) return nullptr;
+		//compute avg
+		auto iavg = avg();
+		//init output "ivar"
+		auto ivar = parents()[0]->copy();
+		//fill to 0
+		ivar->array().fill(Scalar(0));
+		//sum  (x-avg)^2
+		for(size_t i = 0;i < size(); ++i)
+			ivar->array() += (parents()[i]->array() - iavg->array()).square();
+		//sqrt(sum((x-avg)^2))
+		ivar->array() = ivar->array().sqrt();
+		//return
+		return ivar;
+	}
+
+	double SubPopulation::distance_avg() const
+	{
+		if(!size()) return Scalar(0);
+		//init
+		Scalar dist = 0;
+		//for each element for each other
+		for(size_t i = 0;i < size(); ++i)
+		for(size_t j = i+1;j < size(); ++j)
+		{
+			dist = distance(parents()[i]->array(),parents()[j]->array());
+		}
+		//retrun avg
+		return dist / (size()*(size()-1) / Scalar(2));
+	}
+
 
 }
