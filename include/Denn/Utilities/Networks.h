@@ -21,6 +21,8 @@ namespace Denn
 	(
 		const NeuralNetwork& nn
 	);
+	//nn struct to json
+	JsonObject nn_struct_to_json_object(const NeuralNetwork& nn);
 	//nn to json
 	JsonObject nn_to_json_object(const NeuralNetwork& nn);
 	//nn from json

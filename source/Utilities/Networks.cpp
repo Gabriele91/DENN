@@ -304,6 +304,25 @@ namespace Denn
 		return out;
 	}
 
+	JsonObject nn_struct_to_json_object(const NeuralNetwork& nn)
+	{
+		JsonObject jout;
+		if(nn.size())
+		{
+			//input layer is a FC?
+			if(nn[0].name() == "fully_connected")
+				jout["input"]  = nn[0].in_size().width();
+			//search the last fully_connected layer 
+			//TODO test the intermedie layers (have to be ACTIVATION type)
+			for(int i = nn.size()-1; i > 0; --i)
+				if(nn[i].name() == "fully_connected")
+					jout["output"] = nn[nn.size()-1].out_size().width();
+			//weights
+			jout["layout"] = get_string_from_network(nn);
+		}
+		//return
+		return jout;
+	}
 	//nn to json
 	JsonObject nn_to_json_object(const NeuralNetwork& nn)
 	{

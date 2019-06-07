@@ -46,6 +46,9 @@ namespace Denn
             m_np_perc, "Percentage of parents respect to parameters", { "-npp"  }
         },
         ParameterInfo {
+            m_stats_onefile, "Save statistics only on one file", { "-sof"  }
+        },
+        ParameterInfo {
             m_stats_avg, "Enable population avg statistics", { "-savg"  }
         },
         ParameterInfo {

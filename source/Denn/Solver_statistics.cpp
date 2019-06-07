@@ -18,14 +18,14 @@ namespace Denn
             //array of stats
             JsonObject jstats;
             //layout
-            jstats["layout"] = get_string_from_network(m_start_network);
+            jstats["struct"] = nn_struct_to_json_object(m_start_network);
             //avg
             #if 1
             if(*parameters().m_stats_avg)
             {
                 auto avgnn = m_start_network.copy();
                 for(const auto& sub : population()) sub->avg()->copy_to(*avgnn);
-                jstats["avgs"] = nn_to_json_object(*avgnn);
+                jstats["avgs"] = nn_weights_to_json_array(*avgnn);
             }
             #endif
             //variance
@@ -34,7 +34,7 @@ namespace Denn
             {
                 auto varnn = m_start_network.copy();
                 for(const auto& sub : population()) sub->variance()->copy_to(*varnn);
-                jstats["variances"] = nn_to_json_object(*varnn);
+                jstats["variances"] = nn_weights_to_json_array(*varnn);
             }
             #endif
             //distances
@@ -46,16 +46,37 @@ namespace Denn
                 jstats["distances"] = jsub_distances;
             }
             #endif
-            //ouput file
-			auto path = Filesystem::get_directory(parameters().m_stats_output);
-			auto name = Filesystem::get_basename(parameters().m_stats_output);
-			auto ext  = Filesystem::get_extension(parameters().m_stats_output);
-            //gen
-            auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
-            //ouput
-			auto outputpath = path + "/" +  name + "_" + std::to_string(gen) + ext;	
-            //dump
-            std::ofstream(outputpath) << Json(jstats);
+            //save in the same file or in multiple files
+            if(*parameters().m_stats_onefile)
+            {
+                Json o_json;
+                //append mode
+                if(Filesystem::exists(parameters().m_stats_output))
+                    o_json.parser(Filesystem::text_file_read_all(parameters().m_stats_output));
+                else 
+                    o_json.document() = JsonArray();
+                //gen
+                auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
+                //add as name
+                jstats["generation"] = double(gen);
+                //add new sample
+                o_json.document().array().push_back(jstats);
+                //dump
+                std::ofstream(*parameters().m_stats_output) << o_json;
+            }
+            else 
+            {
+                //ouput file
+                auto path = Filesystem::get_directory(parameters().m_stats_output);
+                auto name = Filesystem::get_basename(parameters().m_stats_output);
+                auto ext  = Filesystem::get_extension(parameters().m_stats_output);
+                //gen
+                auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
+                //ouput
+                auto outputpath = path + "/" +  name + "_" + std::to_string(gen) + ext;	
+                //dump
+                std::ofstream(outputpath) << Json(jstats);
+            }
         }
     }
 }
