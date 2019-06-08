@@ -3,6 +3,7 @@
 #include <iterator>
 #include "Denn/Config.h"
 #include "Denn/Instance.h"
+#include "Denn/Core/Json.h"
 #include "Denn/DataSet/DataSetLoader.h"
 #include "Denn/DataSet/TestSetStream.h"
 #include "Population.h"
@@ -73,6 +74,9 @@ public:
 	Scalar test_function_worst() const;
 
 protected:
+	//help
+	size_t n_sup_pass() const ;
+	size_t n_pass() const ;
     //funcs
 	bool init();
     //Denn
@@ -133,7 +137,8 @@ protected:
 	TestSetStream         m_dataset_batch;
     //shell info
 	RuntimeOutput::SPtr   m_output;
-
+	//statistics info
+	Json m_statistics;
 };
 
 } // Denn

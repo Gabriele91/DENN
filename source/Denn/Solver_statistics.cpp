@@ -15,28 +15,32 @@ namespace Denn
         || *parameters().m_stats_distance
         )
         {
+            if(!pass && !sub_pass || !*parameters().m_stats_onefile)
+            {
+                m_statistics.document() = JsonArray();
+            }
             //array of stats
             JsonObject jstats;
             //layout
             jstats["struct"] = nn_struct_to_json_object(m_start_network);
+            //generation
+            auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
+            //save generation
+            jstats["generation"] = double(gen);
             //avg
-            #if 1
             if(*parameters().m_stats_avg)
             {
                 auto avgnn = m_start_network.copy();
                 for(const auto& sub : population()) sub->avg()->copy_to(*avgnn);
                 jstats["avgs"] = nn_weights_to_json_array(*avgnn);
             }
-            #endif
             //variance
-            #if 1
             if(*parameters().m_stats_variance)
             {
                 auto varnn = m_start_network.copy();
                 for(const auto& sub : population()) sub->variance()->copy_to(*varnn);
                 jstats["variances"] = nn_weights_to_json_array(*varnn);
             }
-            #endif
             //distances
             #if 1
             if(*parameters().m_stats_variance)
@@ -46,36 +50,30 @@ namespace Denn
                 jstats["distances"] = jsub_distances;
             }
             #endif
+            //add new sample
+            m_statistics.document().array().push_back(jstats);
             //save in the same file or in multiple files
             if(*parameters().m_stats_onefile)
             {
-                Json o_json;
-                //append mode
-                if(Filesystem::exists(parameters().m_stats_output))
-                    o_json.parser(Filesystem::text_file_read_all(parameters().m_stats_output));
-                else 
-                    o_json.document() = JsonArray();
-                //gen
-                auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
-                //add as name
-                jstats["generation"] = double(gen);
-                //add new sample
-                o_json.document().array().push_back(jstats);
-                //dump
-                std::ofstream(*parameters().m_stats_output) << o_json;
+                if( (sub_pass+1) == n_sup_pass()
+                 && (pass+1) == n_pass() )
+                { 
+                    //dump
+                    std::ofstream(*parameters().m_stats_output) << Json(m_statistics);
+                    //clean
+                    m_statistics.document() = JsonArray();
+                }
             }
-            else 
+            else
             {
                 //ouput file
                 auto path = Filesystem::get_directory(parameters().m_stats_output);
                 auto name = Filesystem::get_basename(parameters().m_stats_output);
                 auto ext  = Filesystem::get_extension(parameters().m_stats_output);
-                //gen
-                auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
                 //ouput
                 auto outputpath = path + "/" +  name + "_" + std::to_string(gen) + ext;	
                 //dump
-                std::ofstream(outputpath) << Json(jstats);
+                std::ofstream(outputpath) << Json(m_statistics);
             }
         }
     }

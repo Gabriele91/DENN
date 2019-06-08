@@ -102,6 +102,16 @@ namespace Denn
 		;
 	}
 	/////////////////////////////////////////////////////////////////
+	//help
+	size_t Solver::n_sup_pass() const
+	{
+		return *parameters().m_sub_gens;
+	}
+	size_t Solver::n_pass() const
+	{
+		return ((size_t)parameters().m_generations / (size_t)parameters().m_sub_gens);
+	}
+	/////////////////////////////////////////////////////////////////
 	//gen random function
 	Solver::RandomFunction Solver::gen_random_func() const
 	{

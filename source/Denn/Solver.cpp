@@ -117,17 +117,16 @@ namespace Denn
 		//init all
 		if (!init()) return m_start_network;
 		//global info
-		const size_t n_global_pass = ((size_t)parameters().m_generations / 
-									  (size_t)parameters().m_sub_gens);
-		const size_t n_sub_pass = parameters().m_sub_gens;
+		const size_t const_n_pass = n_pass();
+		const size_t const_n_sub_pass = n_sup_pass();
 		//default best
 		execute_update_best(true);
 		//start output
 		m_output->start();
 		//main loop
-		for (size_t pass = 0; pass != n_global_pass; ++pass)
+		for (size_t pass = 0; pass != const_n_pass; ++pass)
 		{
-			execute_a_pass(pass, n_sub_pass);
+			execute_a_pass(pass, const_n_sub_pass);
 			//next
 			next_batch();
 		}
