@@ -3,7 +3,7 @@
 #define DEFINE_TO_STR(s) VALUE_TO_STR(s)
 
 #define DENN_VER_MAJOR   2
-#define DENN_VER_MINOR   1
+#define DENN_VER_MINOR   2
 #define DENN_VER_PATCH   0
 
 #define DENN_VER_STR \
