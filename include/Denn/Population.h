@@ -37,7 +37,7 @@ namespace Denn
 		//costum
 		void best(size_t& out_i, Scalar& out_eval) const;
 		Individual::SPtr best() const;
-		
+
 		//sort
 		void sort();
 
@@ -103,7 +103,15 @@ namespace Denn
 		//swap
 		void the_best_sons_become_parents();
 		void swap(size_t i);
+		void swap(size_t i, size_t j);
 		void swap_all();
+		void swap(const std::vector<int> &swap_list);
+		void swap_crowding();
+		//swap list
+		void parent_swap_list(std::vector<int> &list) const;
+		void crowding_swap_list(std::vector<int> &list) const;
+		std::vector<int> parent_swap_list() const;
+		std::vector<int> crowding_swap_list() const;
 		//restart
 		void restart
 		(

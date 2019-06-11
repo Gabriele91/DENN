@@ -261,12 +261,100 @@ namespace Denn
 		sons()[i] = individual_tmp;
 	}
 
+	void DoubleBufferPopulation::swap(size_t i,size_t j)
+	{
+		auto individual_tmp = parents()[i];
+		parents()[i] = sons()[j];
+		sons()[j] = individual_tmp;
+	}
+
 	void DoubleBufferPopulation::swap_all()
 	{
 		for (size_t i = 0; i != parents().size(); ++i)
 			swap(i);
 	}
 
+	void DoubleBufferPopulation::swap(const std::vector<int> &swap_list)
+	{
+		for (size_t i = 0; i != size(); ++i)
+			if (swap_list[i] >= 0)
+				swap(swap_list[i]);
+	}
+	
+	void DoubleBufferPopulation::swap_crowding()
+	{
+		std::vector<int> swap_list;
+		swap_list.reserve(size());
+		crowding_swap_list(swap_list);
+		swap(swap_list);
+	}
+
+	//swap list
+	void DoubleBufferPopulation::parent_swap_list(std::vector<int> &swap_list) const
+	{
+		//init all -1
+		swap_list.resize(size());
+		std::fill(swap_list.begin(), swap_list.end(), -1);
+		//swap
+		for (size_t i = 0; i != size(); ++i)
+		{
+			if ((m_minimize_loss_function && sons()[i]->m_eval <= parents()[i]->m_eval) 
+			|| (!m_minimize_loss_function && sons()[i]->m_eval >= parents()[i]->m_eval))
+			{
+				swap_list[i] = int(i);
+			}
+		}
+	}
+
+	void DoubleBufferPopulation::crowding_swap_list(std::vector<int> &swap_list) const
+	{
+		//init all -1
+		swap_list.resize(size());
+		std::fill(swap_list.begin(), swap_list.end(), -1);
+		//swap
+		for (size_t i = 1; i < size(); ++i)
+		{
+			//search target
+			int target_i = 0;
+			Scalar terget_dist = distance<const NeuralNetwork, const NeuralNetwork>(sons()[i]->m_network, parents()[0]->m_network);
+			for (size_t j = 1; j < size(); ++j)
+			{
+				Scalar j_dist = distance<const NeuralNetwork, const NeuralNetwork>(sons()[i]->m_network, parents()[j]->m_network);
+				if (j_dist < terget_dist)
+				{
+					target_i = j;
+					terget_dist = j_dist;
+				}
+			}
+			//target eval default = the closest
+			Scalar parent_eval = parents()[target_i]->m_eval;
+			//else the last swapped
+			if (swap_list[target_i] >= 0)
+				parent_eval = sons()[swap_list[target_i]]->m_eval;
+			//test
+			if ((m_minimize_loss_function && sons()[i]->m_eval <= parent_eval) ||
+				(!m_minimize_loss_function && sons()[i]->m_eval >= parent_eval))
+			{
+				swap_list[target_i] = i;
+			}
+		}
+	}
+
+	std::vector<int> DoubleBufferPopulation::parent_swap_list() const
+	{
+		std::vector<int> swap_list;
+		swap_list.reserve(size());
+		parent_swap_list(swap_list);
+		return swap_list;
+	}
+
+	std::vector<int> DoubleBufferPopulation::crowding_swap_list() const
+	{
+		std::vector<int> swap_list;
+		swap_list.reserve(size());
+		crowding_swap_list(swap_list);
+		return swap_list;
+	}
 	//restart
 	void DoubleBufferPopulation::restart
 	(

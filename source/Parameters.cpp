@@ -208,6 +208,10 @@ namespace Denn
         },
 
         ParameterInfo { 
+            m_crowding_selection, "Enable the crowding selection instead of parent selection", { "-cs"  }
+        },
+        
+        ParameterInfo { 
             m_default_f, "Default F factor for DE", { "-f"  }
         },
         ParameterInfo { 

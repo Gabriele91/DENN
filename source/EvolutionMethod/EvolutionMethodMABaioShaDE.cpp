@@ -142,6 +142,13 @@ namespace Denn
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if (*parameters().m_crowding_selection)
+				dpopulation.crowding_swap_list(m_swap_list);
+			else
+				dpopulation.parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
 			//F
 			Scalar sum_f = 0;
 			Scalar sum_f2 = 0;
@@ -158,26 +165,25 @@ namespace Denn
 			//
 			for (size_t i = 0; i != np; ++i)
 			{
+				if (m_swap_list[i] < 0) continue;
+
 				Individual::SPtr father = dpopulation.parents()[i];
-				Individual::SPtr son = dpopulation.sons()[i];
-				if (loss_function_compare(son->m_eval, father->m_eval))
-				{
-					if (m_archive_max_size) m_archive.push_back(father->copy());
-					//max
-					m_last_rewards += std::abs(std::abs(son->m_eval) - std::abs(father->m_eval)); // / std::abs(father->m_eval);
-					//F
-					sum_f += son->m_f;
-					sum_f2 += son->m_f * son->m_f;
-					//w_k (for mean of Scr)
-					delta_f = std::abs(std::abs(son->m_eval) - std::abs(father->m_eval));
-					s_delta_f.push_back(delta_f);
-					sum_delta_f += delta_f;
-					//Scr
-					s_cr.push_back(son->m_cr);
-					++n_discarded;
-					//SWAP
-					dpopulation.swap(i);
-				}
+				Individual::SPtr son = dpopulation.sons()[m_swap_list[i]];
+				//copy
+				if (m_archive_max_size) 
+					m_archive.push_back(father->copy());
+				//max
+				m_last_rewards += std::abs(std::abs(son->m_eval) - std::abs(father->m_eval)); // / std::abs(father->m_eval);
+				//F
+				sum_f += son->m_f;
+				sum_f2 += son->m_f * son->m_f;
+				//w_k (for mean of Scr)
+				delta_f = std::abs(std::abs(son->m_eval) - std::abs(father->m_eval));
+				s_delta_f.push_back(delta_f);
+				sum_delta_f += delta_f;
+				//Scr
+				s_cr.push_back(son->m_cr);
+				++n_discarded;
 			}
 			//safe compute muF and muCR 
 			if (n_discarded)
@@ -198,6 +204,9 @@ namespace Denn
 				m_archive[main_random().index_rand(m_archive.size())] = m_archive.last();
 				m_archive.pop_back();
 			}
+			/////////////////////////////////////////////////////////////
+			//swap
+			dpopulation.swap(m_swap_list);
 		}
 
 
@@ -225,6 +234,7 @@ namespace Denn
 		std::vector<Mutation::SPtr>      m_mutations_list;
 		MultiArmedBanditsBAIO<Mutation>  m_mutations;
 		Crossover::SPtr                  m_crossover;
+		std::vector<int>    			 m_swap_list;
 
 	};
 	REGISTERED_EVOLUTION_METHOD(MAB_SHADEMethod, "MAB-SHADE")

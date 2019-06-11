@@ -88,20 +88,28 @@ namespace Denn
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if (*parameters().m_crowding_selection)
+				dpopulation.crowding_swap_list(m_swap_list);
+			else
+				dpopulation.parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
 			size_t np = current_np();
 			for (size_t i = 0; i != np; ++i)
 			{
+				if (m_swap_list[i] < 0)
+					continue;
+
 				Individual::SPtr father = dpopulation.parents()[i];
-				Individual::SPtr son = dpopulation.sons()[i];
-				if (loss_function_compare(son->m_eval,father->m_eval))
-				{
-					dpopulation.swap(i);
-					metadata_swap(i);	
-					//debug
-					#ifdef DEBUG_SaMDE
-					m_winners[0][i] = m_winners[1][i];
-					#endif 
-				}
+				Individual::SPtr son = dpopulation.sons()[m_swap_list[i]];
+
+				dpopulation.swap(i, m_swap_list[i]);
+				metadata_swap(i, m_swap_list[i]);
+				//debug
+				#ifdef DEBUG_SaMDE
+				m_winners[0][i] = m_winners[1][m_swap_list[i]];
+				#endif 
 			}
 			//debug
 			#ifdef DEBUG_SaMDE
@@ -129,6 +137,7 @@ namespace Denn
 		using ListListMetadata   = std::vector<ListMetadata>;
 		using DoubleListMetadata = std::array<ListListMetadata, 2>;
 		//population
+		std::vector<int>    m_swap_list;
 		DoubleListMetadata  m_double_list_mdata;
 		//help metadata
 		void init_metadata()
@@ -156,7 +165,11 @@ namespace Denn
 		//swap
 		void metadata_swap(size_t i)
 		{
-			std::swap(m_double_list_mdata[0][i],m_double_list_mdata[1][i]);
+			std::swap(m_double_list_mdata[0][i], m_double_list_mdata[1][i]);
+		}
+		void metadata_swap(size_t i, size_t j)
+		{
+			std::swap(m_double_list_mdata[0][i], m_double_list_mdata[1][j]);
 		}
 		//chouse v id 
 		size_t stochastic_roulette_wheel(ListMetadata& values, size_t i)

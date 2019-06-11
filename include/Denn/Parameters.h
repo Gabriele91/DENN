@@ -104,6 +104,7 @@ namespace Denn
 		ReadOnly<std::string>                m_crossover_type{ "crossover","bin" };
 		ReadOnly<std::string>                m_evolution_type    { "evolution_method","JDE" };
 		ReadOnly<std::string>                m_sub_evolution_type{ "sub_evolution_method","JDE" };
+		ReadOnly<bool> 					     m_crowding_selection{"crowding_selection", bool(false)};
 		//backpropagation + SGD
 		ReadOnly<Scalar>					 m_learning_rate{ "learning_rate", Scalar(0.001) };
 		ReadOnly<Scalar>					 m_decay	    { "decay", Scalar(0.00005) };

@@ -49,7 +49,10 @@ namespace Denn
 
 		virtual	void selection(DoubleBufferPopulation& population) override
 		{
-			population.the_best_sons_become_parents();
+			if (*parameters().m_crowding_selection)
+				population.swap_crowding();
+			else
+				population.the_best_sons_become_parents();
 		}
 
 	private:
