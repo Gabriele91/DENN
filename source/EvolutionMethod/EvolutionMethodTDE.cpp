@@ -45,12 +45,15 @@ namespace Denn
 			i_output.m_network.no_0_weights();
 		}
 
-		virtual	void selection(DoubleBufferPopulation& population) override
+		virtual void selection(DoubleBufferPopulation &population) override
 		{
-			population.the_best_sons_become_parents();
+			if (*parameters().m_crowding_selection)
+				population.swap_crowding();
+			else
+				population.the_best_sons_become_parents();
 		}
-        
-    private:
+
+	private:
 
         Mutation::SPtr m_mutation;
         Mutation::SPtr m_trig_mutation;

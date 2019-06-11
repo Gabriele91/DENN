@@ -68,6 +68,13 @@ namespace Denn
 
 		virtual	void selection(DoubleBufferPopulation& dpopulation) override
 		{
+			/////////////////////////////////////////////////////////////
+			//get swap list
+			if(*parameters().m_crowding_selection)
+				dpopulation.crowding_swap_list(m_swap_list);
+			else
+				dpopulation.parent_swap_list(m_swap_list);
+			/////////////////////////////////////////////////////////////
 			Scalar sum_f = 0;
 			Scalar sum_f2 = 0;
 			Scalar sum_cr = 0;
@@ -76,18 +83,17 @@ namespace Denn
 
 			for (size_t i = 0; i != np; ++i)
 			{
+				if(m_swap_list[i] < 0) continue;
+				//refs
 				Individual::SPtr father = dpopulation.parents()[i];
-				Individual::SPtr son = dpopulation.sons()[i];
-				if (loss_function_compare(son->m_eval,father->m_eval))
-				{
-					if (m_archive_max_size) m_archive.push_back(father->copy());
-					//else if (main_random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
-					sum_f += son->m_f;
-					sum_f2 += son->m_f * son->m_f;
-					sum_cr += son->m_cr;
-					++n_discarded;
-					dpopulation.swap(i);
-				}
+				Individual::SPtr son = dpopulation.sons()[m_swap_list[i]];
+				//compare?
+				if (m_archive_max_size) m_archive.push_back(father->copy());
+				//else if (main_random().uniform() < Scalar(m_archive_max_size) / Scalar(m_archive_max_size + n_discarded))
+				sum_f += son->m_f;
+				sum_f2 += son->m_f * son->m_f;
+				sum_cr += son->m_cr;
+				++n_discarded;
 			}
 			//safe compute muF and muCR 
 			if (n_discarded)
@@ -101,6 +107,9 @@ namespace Denn
 				m_archive[main_random().index_rand(m_archive.size())] = m_archive.last();
 				m_archive.pop_back();
 			}
+			/////////////////////////////////////////////////////////////
+			//swap
+			dpopulation.swap(m_swap_list);
 		}
 
 		virtual const VariantRef get_context_data() const override
@@ -117,7 +126,7 @@ namespace Denn
 		Population	    m_archive;
 		Mutation::SPtr  m_mutation;
 		Crossover::SPtr m_crossover;
-
+		std::vector<int> m_swap_list;
 	};
 	REGISTERED_EVOLUTION_METHOD(JADEMethod, "JADE")
 }

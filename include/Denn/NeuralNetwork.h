@@ -125,7 +125,8 @@ inline NeuralNetwork::Scalar distance_pow2<const NeuralNetwork>(const NeuralNetw
 	//value
 	Scalar dpow2 = 0.0;
 	//sum
-	for(size_t i = 0; i!=a.size() ; ++i) dpow2 += distance_pow2(a[i],b[i]);
+	for(size_t i = 0; i!=a.size() ; ++i)
+		dpow2 += distance_pow2<const Layer>(a[i], b[i]);
 	//return 
 	return dpow2;
 }
