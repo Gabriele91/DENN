@@ -471,11 +471,83 @@ namespace Denn
 	//execute a pass
 	void DennAlgorithm::execute_pass(size_t gen)
 	{
+		//vector
+		static std::vector<Individual::SPtr> last_parents;
+
+		//success rate info
+		if(*m_params.m_save_success_rate)
+		{
+			//get np
+			size_t np = current_np();
+			//get parents
+			auto& parents = m_population.parents();
+			//clear
+			last_parents.clear();
+			last_parents.reserve(np);
+			//copy
+			for (size_t i = 0; i != np; ++i) last_parents.push_back(parents[i]->copy());
+		}
+
 		m_e_method->start_a_subgen_pass(m_population);
 		if (m_thpool) parallel_execute_pass(*m_thpool);
 		else          serial_execute_pass();
 		m_e_method->end_a_subgen_pass(m_population);
 
+		//success rate compute and save
+		if(*m_params.m_save_success_rate)
+		{
+			//get np
+			size_t np = current_np();
+			//get parents
+			auto& parents = m_population.parents();
+			//count
+			size_t nsuccess = 0;
+			//copy
+			for (size_t i = 0; i != np; ++i) 
+				nsuccess += size_t(distance<const NeuralNetwork,const NeuralNetwork>(parents[i]->m_network, last_parents[i]->m_network) > SCALAR_EPS);
+			//save
+			if(!Filesystem::exists(m_params.m_success_rate_output))
+			{
+				std::ofstream ofile(*m_params.m_success_rate_output, std::ios_base::app | std::ios_base::out);
+				ofile << "generation, success"  << std::endl;
+				ofile << gen << ", " << (Scalar(nsuccess) / np)  << std::endl;
+			}
+			else
+			{
+				std::ofstream ofile(*m_params.m_success_rate_output, std::ios_base::app);
+				ofile << gen << ", " << (Scalar(nsuccess) / np) << std::endl;
+			}
+		}
+
+		//distance to all
+		if(*m_params.m_save_population_avg_dis && current_np())
+		{
+			//get np
+			size_t np = current_np();
+			//get parents
+			auto& parents = m_population.parents();
+			//avg dits
+			Scalar avg_dis = 0;
+			//compute avg
+			for (size_t i = 1; i <= np; ++i)
+			for (size_t j = i+1; j <= np; ++j)
+			{
+				avg_dis += distance<const NeuralNetwork,const NeuralNetwork>(parents[i-1]->m_network, parents[j-1]->m_network);
+			}
+			avg_dis /= (np * (np-1)) / 2;	
+			//save
+			if(!Filesystem::exists(m_params.m_population_avg_dis_output))
+			{
+				std::ofstream ofile(*m_params.m_population_avg_dis_output, std::ios_base::app | std::ios_base::out);
+				ofile << "generation, delta"  << std::endl;
+				ofile << gen << ", " << avg_dis << std::endl;
+			}
+			else
+			{
+				std::ofstream ofile(*m_params.m_population_avg_dis_output, std::ios_base::app);
+				ofile << gen << ", " << avg_dis << std::endl;
+			}
+		}
 		//delta of pop
 		if(*m_params.m_save_population_var && current_np())
 		{

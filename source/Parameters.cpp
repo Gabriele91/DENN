@@ -90,10 +90,22 @@ namespace Denn
             m_save_population_var, "Enable the saving of population var result during the evolution", { "-spv" }
         },
         ParameterInfo {
+            m_save_population_avg_dis, "Enable the saving of csv, which will contain the avg distance among all individuals of the population", { "-spd" }
+        },
+        ParameterInfo {
+            m_save_success_rate, "Enable the saving of csv, which will contain the success rate among all individuals of the population for each generation", { "-spd" }
+        },
+        ParameterInfo {
             m_intermediate_output, "Path of output of intermediete result (<path>/<name results>.<format>)", { "-io" }
         },
         ParameterInfo {
-            m_population_var_output, "Path of output of population var result (<path>/<name results>.<format>)", { "-ipv" }
+            m_population_var_output, "Path of output of population var result (<path>/<name results>.<format>)", { "-pvo" }
+        },
+        ParameterInfo {
+            m_population_avg_dis_output, "Path of output of csv, which will contain the avg distance among all individuals of the population for each generation", { "-pdo" }
+        },
+        ParameterInfo {
+            m_success_rate_output, "Path of the output of the csv, which will contain the success rate among all individuals of the population for each generation", { "-pdo" }
         },
         ParameterInfo {
             m_evolution_type, "Type of evolution method", { "--evolution",    "-em"  },
