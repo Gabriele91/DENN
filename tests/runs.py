@@ -17,11 +17,40 @@ PATH_TMPDIR=os.path.join(ROOT,"_tmp_runs_")
 PATH_INSTANCES=os.path.join(ROOT,"instances.txt")
 NRUNS=10
 
+def test_if_output_olready_exists(jpath):
+    import json
+    outjson = None
+    try:
+        with open(jpath) as fjson:
+            jtext = fjson.read()
+            jtext = jtext.replace("-nan", "-0")
+            jtext = jtext.replace("nan", "0")
+            outjson = json.loads(jtext)
+    except:
+        return False
+    #test is none
+    if outjson is None:
+        return False 
+    #test is accuracy field
+    elif not("accuracy" in outjson):
+        return False
+    #test is time field
+    elif not("time" in outjson):
+        return False
+    #else, ok exists
+    else:
+        return True
+
 def execute_denn(denn, tmpdir, template, name, args, idrun, get_only_output=False):
     name_output = TEMPLATE_OUTPUT.format(name,idrun)
     full_output = os.path.join(tmpdir,PATH_RESDIR,name_output)
     path_stdout = os.path.join(tmpdir,CALL_OUTPUT_STD)
     path_stderr = os.path.join(tmpdir,CALL_OUTPUT_STDERR)
+    #test it the output olready exists
+    if test_if_output_olready_exists(full_output):
+        print("{} olready exists, jump execution".format(full_output))
+        return full_output
+    #else 
     if not get_only_output:
         with open(path_stdout,"a+") as ofile:
             with open(path_stderr,"a+") as errfile:
