@@ -52,6 +52,9 @@ namespace Denn
             m_stats_avg, "Enable population avg statistics", { "-savg"  }
         },
         ParameterInfo {
+            m_stats_samples, "Get a statistics sample after N gens", { "-ssmp"  }
+        },
+        ParameterInfo {
             m_stats_variance, "Enable population variance statistics", { "-svar"  }
         },
         ParameterInfo {

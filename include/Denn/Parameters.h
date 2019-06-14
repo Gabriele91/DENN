@@ -46,7 +46,8 @@ namespace Denn
 		ReadOnly<Scalar>	             m_np_perc       { "number_parents_percentage",Scalar(-1) };
 		
 		//stats
-		ReadOnly<bool>	                 m_stats_onefile { "stats_onefile",    bool(true), true /* false? */ };
+		ReadOnly<bool>	                 m_stats_onefile { "stats_onefile",    bool(true) , true /* false? */ };
+		ReadOnly<size_t>	             m_stats_samples { "stats_samples",              1, true /* false? */ };
 		ReadOnly<bool>	                 m_stats_avg     { "stats_avg",        bool(false), true /* false? */ };
 		ReadOnly<bool>	                 m_stats_variance{ "stats_variance",   bool(false), true /* false? */ };
 		ReadOnly<bool>	                 m_stats_distance{ "stats_distance",   bool(false), true /* false? */ };
