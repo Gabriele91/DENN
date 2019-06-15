@@ -19,7 +19,7 @@ namespace Denn
         auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
         //samples
         if( *parameters().m_stats_samples > 1 
-        &&((*parameters().m_stats_samples) % gen != 0)
+        &&( !gen || (*parameters().m_stats_samples) % gen != 0 )
         )
         {
             return;
