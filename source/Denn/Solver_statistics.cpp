@@ -18,8 +18,10 @@ namespace Denn
         //generation
         auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
         //samples
-        if( *parameters().m_stats_samples > 1 
-        &&( gen && (gen % (*parameters().m_stats_samples)) != 0 )
+        if(     *parameters().m_stats_samples > 1                    //get all?
+            && ( gen && (gen % (*parameters().m_stats_samples)) != 0 //get a sample
+            && (!( (gen+1) == *parameters().m_generations ))         //have to get last (in onder to save)
+        )
         )
         {
             return;
@@ -60,18 +62,18 @@ namespace Denn
             if(!m_statistics.document().is_array())
             {
                 //init as array
-                m_statistics = Json(JsonArray());
+                m_statistics.document() = JsonArray();
             }
             //add new sample
             m_statistics.document().array().push_back(std::move(jstats));
             //save
-            if( (sub_pass+1) == n_sup_pass()
-             && (pass+1) == n_pass() )
+            if( (gen+1) == *parameters().m_generations )
             { 
                 //dump
-                std::ofstream(*parameters().m_stats_output) << Json(m_statistics);
+                std::ofstream(*parameters().m_stats_output) << m_statistics;
                 //clean
-                m_statistics = Json(JsonArray());
+                m_statistics.document().array().clear();
+                m_statistics.document().array().shrink_to_fit();
             }
         }
         else
