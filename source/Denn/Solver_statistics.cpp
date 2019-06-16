@@ -19,13 +19,13 @@ namespace Denn
         auto gen = pass * (*parameters().m_sub_gens) + sub_pass;
         //samples
         if( *parameters().m_stats_samples > 1 
-        &&( !gen || (*parameters().m_stats_samples) % gen != 0 )
+        &&( !gen || (gen % (*parameters().m_stats_samples)) != 0 )
         )
         {
             return;
         }
         //pass
-        if(!pass && !sub_pass || !*parameters().m_stats_onefile)
+        if(!gen || !*parameters().m_stats_onefile)
         {
             m_statistics.document() = JsonArray();
         }
@@ -51,7 +51,7 @@ namespace Denn
         }
         //distances
         #if 1
-        if(*parameters().m_stats_variance)
+        if(*parameters().m_stats_distance)
         {
             JsonArray jsub_distances;
             for(const auto&  sub : population()) jsub_distances.push_back(sub->distance_avg());
