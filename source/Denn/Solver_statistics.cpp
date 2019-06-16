@@ -24,11 +24,6 @@ namespace Denn
         {
             return;
         }
-        //pass
-        if(!gen || !*parameters().m_stats_onefile)
-        {
-            m_statistics.document() = JsonArray();
-        }
         //array of stats
         JsonObject jstats;
         //layout
@@ -58,18 +53,25 @@ namespace Denn
             jstats["distances"] = jsub_distances;
         }
         #endif
-        //add new sample
-        m_statistics.document().array().push_back(jstats);
         //save in the same file or in multiple files
         if(*parameters().m_stats_onefile)
         {
+            //first
+            if(!m_statistics.document().is_array())
+            {
+                //init as array
+                m_statistics = Json(JsonArray());
+            }
+            //add new sample
+            m_statistics.document().array().push_back(std::move(jstats));
+            //save
             if( (sub_pass+1) == n_sup_pass()
-                && (pass+1) == n_pass() )
+             && (pass+1) == n_pass() )
             { 
                 //dump
                 std::ofstream(*parameters().m_stats_output) << Json(m_statistics);
                 //clean
-                m_statistics.document() = JsonArray();
+                m_statistics = Json(JsonArray());
             }
         }
         else
@@ -81,7 +83,7 @@ namespace Denn
             //ouput
             auto outputpath = path + "/" +  name + "_" + std::to_string(gen) + ext;	
             //dump
-            std::ofstream(outputpath) << Json(m_statistics);
+            std::ofstream(outputpath) << Json(jstats);
         }
     }
 }
