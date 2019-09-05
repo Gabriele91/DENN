@@ -146,13 +146,16 @@ namespace Denn
         void swap(size_t ind_id);
         void swap(const std::vector<int>& swap_list);
         void swap_best(bool minimize = true);
+        void swap_best_no_double(bool minimize = true);
         void swap_crowding(bool minimize = true);
 
 		//swap list
-		void parent_swap_list(std::vector<int>& list, bool minimize = true) const;
-		void crowding_swap_list(std::vector<int>& list, bool minimize = true) const;
-		std::vector<int> parent_swap_list(bool minimize = true) const;
-		std::vector<int> crowding_swap_list(bool minimize = true) const;
+		void swap_best_list(std::vector<int>& list, bool minimize = true) const;
+		void swap_best_no_double_list(std::vector<int>& list, bool minimize = true) const;
+		void swap_crowding_list(std::vector<int>& list, bool minimize = true) const;
+		std::vector<int> swap_best_list(bool minimize = true) const;
+		std::vector<int> swap_best_no_double_list(bool minimize = true) const;
+		std::vector<int> swap_crowding_list(bool minimize = true) const;
 
 		//stats computation
 		Individual::SPtr avg()			 const;

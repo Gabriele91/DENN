@@ -5,7 +5,8 @@
 
 namespace Denn
 {
-    
+
+// CoEV
 class SplitNetwork
 {
 public:
@@ -141,6 +142,53 @@ public:
 			++i;
 		}
 		return GN_SIZE;
+	}
+};
+
+//DE
+class SelectionType
+{
+public:
+	enum Value
+	{
+		ST_BEST,
+		ST_BEST_NO_DOUBLE,
+		ST_CROWING,
+		ST_SIZE
+	};
+
+	static std::vector<std::string> list_of_de_selectors()
+	{
+		return {"best", "best_no_double", "crowing"};
+	}
+
+	static std::string names_of_selectors(const std::string &sep = ", ")
+	{
+		std::stringstream sout;
+		auto list = list_of_de_selectors();
+		std::copy(list.begin(), list.end() - 1, std::ostream_iterator<std::string>(sout, sep.c_str()));
+		sout << *(list.end() - 1);
+		return sout.str();
+	}
+
+	static bool exists(const std::string &value)
+	{
+		for (auto &type : list_of_de_selectors())
+			if (type == value)
+				return true;
+		return false;
+	}
+
+	static Value get(const std::string &value)
+	{
+		int i = 0;
+		for (auto &type : list_of_de_selectors())
+		{
+			if (type == value)
+				return Value(i);
+			++i;
+		}
+		return ST_SIZE;
 	}
 };
 

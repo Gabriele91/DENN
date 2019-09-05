@@ -59,10 +59,7 @@ namespace Denn
 
 		virtual	void selection() override
 		{
-			if(*parameters().m_crowding_selection)
-				population().swap_crowding();
-			else 
-				population().swap_best();
+			performe_selection();
 		}
 
 	protected:

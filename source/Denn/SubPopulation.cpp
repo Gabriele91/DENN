@@ -317,17 +317,25 @@ namespace Denn
 		}
 	}
 
+	void SubPopulation::swap_best_no_double(bool minimize)
+	{
+		std::vector<int> swap_list; 
+		swap_list.reserve(size());
+		swap_best_no_double_list(swap_list, minimize);
+		swap(swap_list);
+	}
+
 	void SubPopulation::swap_crowding(bool minimize)
 	{
 		std::vector<int> swap_list; 
 		swap_list.reserve(size());
-		crowding_swap_list(swap_list, minimize);
+		swap_crowding_list(swap_list, minimize);
 		swap(swap_list);
 	}
 
 	
 	//swap list
-	void SubPopulation::parent_swap_list(std::vector<int>& swap_list,bool minimize) const
+	void SubPopulation::swap_best_list(std::vector<int>& swap_list,bool minimize) const
 	{
 		//init all -1
 		swap_list.resize(size());
@@ -343,7 +351,30 @@ namespace Denn
 		}
 	}
 
-	void SubPopulation::crowding_swap_list(std::vector<int>& swap_list, bool minimize) const
+	void SubPopulation::swap_best_no_double_list(std::vector<int>& swap_list,bool minimize) const
+	{
+		//list of swap
+		swap_best_list(swap_list);
+		//factor
+		Scalar factor = std::pow( Scalar(0.1), m_sons[0]->array().size() );
+		//disable double swap
+		for (size_t i = 0; i != size(); ++i)
+		{
+			if(swap_list[i] > -1)
+			{
+				for (size_t j = 0; j != size(); ++j)
+				{
+					if(i != j && distance(*m_sons[i], *m_parents[j]) < factor) 
+					{
+						swap_list[i] = -1;
+						break;
+					}
+				}
+			}
+		}
+	}
+
+	void SubPopulation::swap_crowding_list(std::vector<int>& swap_list, bool minimize) const
 	{
 		//init all -1
 		swap_list.resize(size());
@@ -377,19 +408,27 @@ namespace Denn
 		}
 	}
 
-	std::vector<int> SubPopulation::parent_swap_list(bool minimize) const
+	std::vector<int> SubPopulation::swap_best_list(bool minimize) const
 	{
 		std::vector<int> swap_list; 
 		swap_list.reserve(size());
-		parent_swap_list(swap_list, minimize);
+		swap_best_list(swap_list, minimize);
 		return swap_list;
 	}
 
-	std::vector<int> SubPopulation::crowding_swap_list(bool minimize) const
+	std::vector<int> SubPopulation::swap_best_no_double_list(bool minimize) const
 	{
 		std::vector<int> swap_list; 
 		swap_list.reserve(size());
-		crowding_swap_list(swap_list, minimize);
+		swap_best_no_double_list(swap_list, minimize);
+		return swap_list;
+	}
+
+	std::vector<int> SubPopulation::swap_crowding_list(bool minimize) const
+	{
+		std::vector<int> swap_list; 
+		swap_list.reserve(size());
+		swap_crowding_list(swap_list, minimize);
 		return swap_list;
 	}
 

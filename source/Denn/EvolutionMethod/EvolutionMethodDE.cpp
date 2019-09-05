@@ -48,13 +48,7 @@ namespace Denn
 			output.eval() = solver().loss_function_eval(output, id_target);
 		}
 
-		virtual	void selection() override
-		{
-			if(*parameters().m_crowding_selection)
-				population().swap_crowding();
-			else 
-				population().swap_best();
-		}
+		virtual	void selection() override { performe_selection(); }
 
 	private:
 

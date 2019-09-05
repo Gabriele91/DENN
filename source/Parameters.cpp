@@ -183,8 +183,22 @@ namespace Denn
               }
             , { "string", CrossoverFactory::list_of_crossovers() }
         },
-        ParameterInfo { 
-            m_crowding_selection, "Enable the crowding selection instead of parent selection", { "-cs"  }
+        ParameterInfo {
+              m_selection_type
+			, { m_evolution_type }
+            , "Type of DE selection"
+            , { "-se"  }
+            , [this](Arguments& args) -> bool
+              {
+                  std::string str_c_type = args.get_string();
+                  //all lower case
+                  std::transform(str_c_type.begin(),str_c_type.end(), str_c_type.begin(), ::tolower);
+                  //save
+                  m_selection_type = str_c_type;
+                  //ok
+                  return SelectionType::exists(*m_selection_type);
+              }
+            , { "string", SelectionType::list_of_de_selectors() }
         },
         ParameterInfo { 
             m_default_f, "Default F factor for DE", { "-f"  }
@@ -391,11 +405,15 @@ namespace Denn
             [this](Arguments& args) -> bool { std::cout << CrossoverFactory::names_of_crossovers() << std::endl; return true; } 
         },
         ParameterInfo{
+            "Print list of selection", { "--selection-list",    "-selist"  }, 
+            [this](Arguments& args) -> bool { std::cout << SelectionType::names_of_selectors() << std::endl; return true; } 
+        },
+        ParameterInfo{
             "Print list of runtime output", { "--runtime_output-list",    "-rolist"  }, 
             [this](Arguments& args) -> bool { std::cout << RuntimeOutputFactory::names_of_runtime_outputs() << std::endl; return true; } 
         },
 		ParameterInfo{
-			"Print list of serializer",{ "--serializer-list",    "-slist" },
+			"Print list of serializer",{ "--serializer-list",    "-sslist" },
 			[this](Arguments& args) -> bool { std::cout << SerializeOutputFactory::names_of_serialize_outputs() << std::endl; return true; }
 		},
 		ParameterInfo{

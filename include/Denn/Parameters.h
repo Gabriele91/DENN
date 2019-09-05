@@ -77,7 +77,7 @@ namespace Denn
 		ReadOnly<Scalar>	             m_perc_of_best { "perc_of_best", Scalar(0.1) };
 		//DEGL
 		ReadOnly<Scalar>                m_degl_scalar_weight{ "degl_scalar_weight",Scalar(0.5) };
-		ReadOnly<size_t>                m_degl_neighborhood { "degl_neighborhood", Scalar(1)   };
+		ReadOnly<size_t>                m_degl_neighborhood { "degl_neighborhood", size_t(3)   };
 		//TDE
 		ReadOnly<Scalar>				 m_trig_m        { "trig_m", Scalar(0.05) };
 		//Init distribution		
@@ -95,9 +95,9 @@ namespace Denn
 		ReadOnly<size_t>	             m_threads_pop   { "threads_pop", size_t(2) };
 		//type of DE
 		ReadOnly<std::string>                m_mutation_type      { "mutation","rand/1" };
-		ReadOnly<std::string>                m_crossover_type     { "crossover","bin" };
-		ReadOnly<std::string>                m_evolution_type     { "evolution_method","JDE" };		
-		ReadOnly<bool>                       m_crowding_selection { "crowding_selection", bool(false) };
+		ReadOnly<std::string>                m_crossover_type     { "crossover","bin" };	
+		ReadOnly<std::string>                m_selection_type     { "selection", "best" };
+		ReadOnly<std::string>                m_evolution_type     { "evolution_method","JDE" };	
 		//backpropagation + SGD
 		ReadOnly<Scalar>					 m_learning_rate{ "learning_rate", Scalar(0.001) };
 		ReadOnly<Scalar>					 m_decay	    { "decay", Scalar(0.00005) };

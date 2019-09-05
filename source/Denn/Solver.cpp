@@ -34,6 +34,8 @@ namespace Denn
 			m_dataset_batch.start_read_batch(*parameters().m_batch_size, *parameters().m_batch_offset);
 		//init random engine
 		m_main_random.reinit(*parameters().m_seed);
+		//selection type
+		m_selection = SelectionType::get(*parameters().m_selection_type);
 		//gen clamp functions
 		m_clamp_function = gen_clamp_func();
 		//clear random engines

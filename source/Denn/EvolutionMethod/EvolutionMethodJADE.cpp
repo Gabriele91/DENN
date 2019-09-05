@@ -68,10 +68,7 @@ namespace Denn
 		{
 			/////////////////////////////////////////////////////////////
 			//get swap list
-			if(*parameters().m_crowding_selection)
-				population().crowding_swap_list(m_swap_list);
-			else 
-				population().parent_swap_list(m_swap_list);
+			performe_selection(m_swap_list);
 			/////////////////////////////////////////////////////////////
 			// JADE
 			Scalar sum_f = 0;

@@ -20,7 +20,7 @@ namespace Denn
         //samples
         if(     *parameters().m_stats_samples > 1                    //get all?
             && ( gen && (gen % (*parameters().m_stats_samples)) != 0 //get a sample
-            && (!( (gen+1) == *parameters().m_generations ))         //have to get last (in onder to save)
+            && (!( (gen+1) == *parameters().m_generations ))         //get the last sample (and save all)
         )
         )
         {

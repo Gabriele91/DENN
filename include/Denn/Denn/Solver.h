@@ -37,6 +37,10 @@ public:
 	const EvolutionMethodList& evolution_methods() const;
 	const ClampFunction& clamp_function() const;
 
+	//performe selection
+	void performe_selection(SubPopulation& sub_pop, bool minimize=true) const;
+	void performe_selection(SubPopulation& sub_pop, std::vector<int>& idxs, bool minimize=true) const;
+
     //random
 	Random& random(size_t i) const;
 	Random& random() const;
@@ -119,6 +123,7 @@ protected:
     EvolutionMethodList m_e_methods;
     Population::SPtr m_population;
 	ClampFunction m_clamp_function;
+	SelectionType::Value m_selection;
     //eval
 	Evaluation::SPtr m_loss_function;
 	Evaluation::SPtr m_validation_function;

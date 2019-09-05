@@ -112,6 +112,28 @@ namespace Denn
 		return ((size_t)parameters().m_generations / (size_t)parameters().m_sub_gens);
 	}
 	/////////////////////////////////////////////////////////////////
+	void Solver::performe_selection(SubPopulation& sub_pop, bool minimize) const
+	{
+		switch (m_selection)
+		{
+		default:
+		case SelectionType::ST_BEST: sub_pop.swap_best(minimize); break;
+		case SelectionType::ST_BEST_NO_DOUBLE: sub_pop.swap_best_no_double(minimize); break;		
+		case SelectionType::ST_CROWING: sub_pop.swap_crowding(minimize); break;		
+		}
+	}
+	void Solver::performe_selection(SubPopulation& sub_pop, std::vector<int>& idxs, bool minimize) const
+	{
+		switch (m_selection)
+		{
+		default:
+		case SelectionType::ST_BEST: sub_pop.swap_best_list(idxs,minimize); break;
+		case SelectionType::ST_BEST_NO_DOUBLE: sub_pop.swap_best_no_double_list(idxs,minimize); break;		
+		case SelectionType::ST_CROWING: sub_pop.swap_crowding_list(idxs,minimize); break;		
+		}
+
+	}
+	/////////////////////////////////////////////////////////////////
 	//gen random function
 	Solver::RandomFunction Solver::gen_random_func() const
 	{

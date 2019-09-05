@@ -30,7 +30,10 @@ namespace Denn
 	SubPopulation::Pair EvolutionMethod::population(size_t i)              { return population()[i];    }		
 	const SubPopulation& EvolutionMethod::population() const               { return m_sub_population;    }		
 	const SubPopulation::Pair EvolutionMethod::population(size_t i) const  { return population()[i];    }		
-	void EvolutionMethod::population_sort()                    { return population().sort(solver().loss_function()->minimize()); }
+	void EvolutionMethod::population_sort()                    			   { return population().sort(solver().loss_function()->minimize()); }
+	void EvolutionMethod::performe_selection()                             { solver().performe_selection(population(), solver().loss_function()->minimize());       }
+	void EvolutionMethod::performe_selection(std::vector<int>& idxs)       { solver().performe_selection(population(), idxs, solver().loss_function()->minimize()); }
+
 
 	
 	const Individual& EvolutionMethod::parent(size_t i) const { return *population().parents()[i]; }
