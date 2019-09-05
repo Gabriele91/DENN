@@ -63,11 +63,11 @@ namespace Denn
 			Scalar* w_final_array = output.array().data();
 			Scalar* w_g_m_array   = g_m.data();
 			Scalar* w_l_m_array   = l_m.data();
-			for(Matrix::Index i=0; i != output.matrix().size(); ++i)
+			for(Matrix::Index i=0; i != output.array().size(); ++i)
 				w_final_array[i] = Denn::lerp(w_l_m_array[i], w_g_m_array[i], scalar_weight);
 
 			//clamp
-			output.matrix() = output.matrix().unaryExpr(solver().clamp_function());
+			output.array() = output.array().unaryExpr(solver().clamp_function());
 		}
 	};
 	REGISTERED_MUTATION(DEGL, "degl")
