@@ -78,7 +78,7 @@ namespace Denn
 		ReadOnly<Scalar>	             m_perc_of_best { "perc_of_best", Scalar(0.1) };
 		//DEGL
 		ReadOnly<Scalar>                m_degl_scalar_weight{ "degl_scalar_weight",Scalar(0.5) };
-		ReadOnly<size_t>                m_degl_neighborhood { "degl_neighborhood", Scalar(1)   };
+		ReadOnly<size_t>                m_degl_neighborhood { "degl_neighborhood", Scalar(5)   };
 		//TDE
 		ReadOnly<Scalar>				 m_trig_m        { "trig_m", Scalar(0.05) };
 		//Init distribution		

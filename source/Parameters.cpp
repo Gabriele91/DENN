@@ -157,7 +157,7 @@ namespace Denn
         },
         ParameterInfo {
               m_mutations_list_type
-		    , { m_evolution_type, { Variant("MAB-SHADE"), Variant("SAMDE") } }
+		    , { m_evolution_type, { Variant("MAB-SHADE"), Variant("UCB1SHADE"), Variant("SAMDE") } }
             , "List of mutations"
             , { "-ml"  }
             , [this](Arguments& args) -> bool
@@ -233,8 +233,8 @@ namespace Denn
 				
 		ParameterInfo{
 			 m_archive_size
-			, { m_evolution_type,{ Variant("JADE"), Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE") } }
-			, "Archive size (JADE/SHADE/L-SHADE/MAB-SHADE)",{ "-as" }
+			, { m_evolution_type,{ Variant("JADE"), Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE"), Variant("UCB1SHADE") } }
+			, "Archive size (JADE/SHADE/L-SHADE/MAB-SHADE/UCB1SHADE)",{ "-as" }
 		},				
 		ParameterInfo{
 			  m_f_cr_adapt
@@ -245,8 +245,8 @@ namespace Denn
 
 		ParameterInfo{
 			  m_shade_h
-			, { m_evolution_type,{ Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE") } }
-		    , "Size of archive of mu_f and mu_cr (SHADE/L-SHADE/MAB-SHADE)",{ "-shah" }
+			, { m_evolution_type,{ Variant("SHADE"), Variant("L-SHADE"), Variant("MAB-SHADE"), Variant("UCB1SHADE") } }
+		    , "Size of archive of mu_f and mu_cr (SHADE/L-SHADE/MAB-SHADE/UCB1SHADE)",{ "-shah" }
 		}, 
 
 		ParameterInfo{
