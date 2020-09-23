@@ -1,0 +1,4 @@
+#Requirements for datasets code
+numpy
+tqdm
+pandas
