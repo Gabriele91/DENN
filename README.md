@@ -1,7 +1,23 @@
 # DENN: Differential Evolution for Neural Networks
 
-DENN is a framework designed and developed aims to train Deep Neural Networks 
+DENN is a framework designed and developed to train Deep Neural Networks 
 using the Differential Evolution as the optimizer.
+
+# How to use
+
+First of all you have to generate the dataset file, in order to do that, execution the following commands:
+
+    cd dataset 
+    python3 build_*
+    cd ..
+
+Then compile the DENN framework, running  the following command:
+
+    make release
+
+Finally, choude one of the template and run it, for instance: 
+
+    Relese/DENN-float template/JADE_NN_MNIST.config
 
 ## History
 The first implementation of this algorithm was in [2017](https://github.com/Gabriele91/DENN-Tensorflow/) . Then we have developed a standard-alone implementation: [DENN-LITE](https://github.com/Gabriele91/DENN-LITE/), on which we have implemented the JADE, ADE, SHADE, and other DE variants, applied on classification and [algorithm learning problems](https://github.com/Gabriele91/DENN-LITE/tree/nram).
