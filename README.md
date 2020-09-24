@@ -7,7 +7,7 @@ using the Differential Evolution as the optimizer.
 
 First of all you have to generate the dataset file, in order to do that, execution the following commands:
 
-    cd dataset 
+    cd datasets
     python3 build_*
     cd ..
 
