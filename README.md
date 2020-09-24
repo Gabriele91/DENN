@@ -17,7 +17,7 @@ Then compile the DENN framework, running  the following command:
 
 Finally, choude one of the template and run it, for instance: 
 
-    Relese/DENN-float template/JADE_NN_MNIST.config
+    Release/DENN-float template/JADE_NN_MNIST.config
 
 ## History
 The first implementation of this algorithm was in [2017](https://github.com/Gabriele91/DENN-Tensorflow/) . Then we have developed a standard-alone implementation: [DENN-LITE](https://github.com/Gabriele91/DENN-LITE/), on which we have implemented the JADE, ADE, SHADE, and other DE variants, applied on classification and [algorithm learning problems](https://github.com/Gabriele91/DENN-LITE/tree/nram).
