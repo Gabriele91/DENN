@@ -14,8 +14,8 @@ First of all you have to generate the dataset file, in order to do that, executi
 Then compile the DENN framework, running  the following command:
 
     make release
-
-Finally, choude one of the template and run it, for instance: 
+    
+Finally, choose one of the templates and run it, for instance:  
 
     Release/DENN-float template/JADE_NN_MNIST.config
 
