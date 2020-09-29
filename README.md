@@ -1,12 +1,13 @@
 # DENN: Differential Evolution for Neural Networks
 
 DENN is a framework designed and developed to train Deep Neural Networks 
-using the Differential Evolution as the optimizer.
+using the Differential Evolution as optimizer.
 
 # How to use
 
 First of all you have to generate the dataset file, in order to do that, execution the following commands:
 
+    python3 -m pip install -r requirements.txt
     cd datasets
     python3 build_*
     cd ..
