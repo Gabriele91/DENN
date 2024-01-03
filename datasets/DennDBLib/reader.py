@@ -548,7 +548,6 @@ class HAROnlyTraining_Dataset(Dataset):
         #return
         self.insert(Resource(data, labels))
             
-
 class GasSensorArrayDriftDataset(Dataset):
 
     """Gas Sensor Array Drif dataset."""
@@ -628,7 +627,6 @@ class MNISTDataset(Dataset):
 
         self.insert(Resource(train_images, train_labels))
         self.insert(Resource(test_images, test_labels), 'test')
-
 
 class NBitParity(Dataset):
 
@@ -720,7 +718,6 @@ def load_mnist_labels(file_name, onehot, num_classes=10):
         else:
             data = labels
         return data
-
 
 READER_LIST = {
     'MNISTDataset': MNISTDataset,

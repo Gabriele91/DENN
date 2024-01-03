@@ -1,9 +1,10 @@
 import os
 from DennDBLib.creator import nbit_parity 
+import argparse
 
-def main():
+def main(start,end):
     for binary in [False, True]:
-        for nbit in range(5,19):        
+        for nbit in range(start,end):        
             print("Start generation: xor{}{}.db.gz".format(nbit, "_bin" if  binary else ""))
             nbit_parity("xor{}{}.db".format(nbit, "_bin" if  binary else ""), nbit=nbit, 
                 validation_all_values=False, 
@@ -22,4 +23,8 @@ def main():
             )
 
 if __name__ == '__main__':
-    main()
+    parser = argparse.ArgumentParser(description='Generate xor datasets between [start,end)')
+    parser.add_argument('--start', type=int, default=5)
+    parser.add_argument('--end', type=int, default=19)
+    args = parser.parse_args()
+    main(args.start,args.end)
