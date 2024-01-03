@@ -180,6 +180,7 @@ namespace Denn
 	}
 	void Solver::execute_pass()
 	{
+		#if 0
 		//it ev
 		auto it_emethod = m_e_methods.begin();
 		//execute
@@ -206,7 +207,35 @@ namespace Denn
 			emethod->end_a_subgen_pass();
 			//next
 			++it_emethod;
-		}	
+		}
+		#else 	
+		//start
+		for(auto emethod : m_e_methods)
+			emethod->start_a_subgen_pass();
+		//step
+		for (int i = 0; i < population().size(); ++i)    
+		{
+			//ref
+			EvolutionMethod* emethod = m_e_methods[i].get();
+			SubPopulation* subpop = population()[i].get();
+			//subpop
+			for (size_t i = 0; i < subpop->size(); ++i)
+			{
+				m_promises.push_back(m_thpool->push_task([emethod, i, subpop]()
+				{
+					emethod->create_a_individual(i, *(*subpop)[i].son());
+				}));
+			}
+		}
+		//wait
+		for (auto& promise : m_promises) promise.wait();
+		//end 
+		for(auto emethod : m_e_methods)
+		{
+			emethod->selection();		
+			emethod->end_a_subgen_pass();
+		}
+		#endif
 	}
 	//eval
 	void Solver::loss_function_eval_all()
